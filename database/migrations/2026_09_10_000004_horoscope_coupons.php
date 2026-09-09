@@ -44,7 +44,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->nullableMorphs('reference');
             $table->timestamps();
-            $table->unique(['coupon_id', 'user_id', 'reference_type', 'reference_id']);
+            $table->unique(['coupon_id', 'user_id', 'reference_type', 'reference_id'], 'cr_unique_coupon_user_ref');
         });
     }
 
