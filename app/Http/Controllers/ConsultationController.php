@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Events\CallSignalUpdated;
 use App\Events\ConsultationMessageSent;
+use App\Models\CallRecording;
 use App\Models\Consultation;
+use App\Models\ConsultationEvent;
 use App\Models\ConsultationMessage;
 use App\Models\User;
 use App\Services\ConsultationService;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,10 +24,13 @@ class ConsultationController extends Controller
     {
         $user = $request->user();
         $q = Consultation::where('customer_id', $user->id)->orWhere('astrologer_id', $user->id);
+        $missed = (clone $q)->where('status', 'cancelled')->where('end_reason', 'missed')->count();
         $list = $q->latest()->paginate(15)->through(fn (Consultation $c) => [
             'id' => $c->id,
             'type' => $c->type,
             'status' => $c->status,
+            'end_reason' => $c->end_reason,
+            'missed_by' => $c->missed_by,
             'rate_per_min' => number_format($c->rate_per_min_paise / 100, 2),
             'billed_minutes' => round($c->billed_seconds / 60, 1),
             'amount' => number_format($c->amount_paise / 100, 2),
@@ -34,6 +40,7 @@ class ConsultationController extends Controller
         return Inertia::render('consult/index', [
             'consultations' => $list,
             'balance' => (new WalletService)->balancePaise($user) / 100,
+            'missedCount' => $missed,
         ]);
     }
 
@@ -62,6 +69,16 @@ class ConsultationController extends Controller
         $w = new WalletService;
         $balance = $w->balancePaise($request->user()->id === $consultation->customer_id ? $consultation->customer : $consultation->astrologer);
 
+        $iceServers = [['urls' => ['stun:stun.l.google.com:19302']]];
+        $turnUrls = config('services.call.turn_urls', []);
+        if ($turnUrls !== []) {
+            $iceServers[] = [
+                'urls' => $turnUrls,
+                'username' => config('services.call.turn_username'),
+                'credential' => config('services.call.turn_credential'),
+            ];
+        }
+
         return Inertia::render('consult/show', [
             'consultation' => [
                 'id' => $consultation->id,
@@ -79,6 +96,18 @@ class ConsultationController extends Controller
             'balance' => $balance / 100,
             'minsLeft' => $w->minsLeft($balance, $consultation->rate_per_min_paise),
             'signal' => $consultation->signal ? ['channel' => $consultation->signal->channel, 'provider' => $consultation->signal->provider] : null,
+            'iceServers' => $iceServers,
+            'events' => $consultation->events()->latest()->limit(30)->get()->map(fn ($e) => [
+                'id' => $e->id, 'kind' => $e->kind, 'actor_id' => $e->actor_id,
+                'created_at' => $e->created_at->toIso8601String(), 'meta' => $e->meta,
+            ])->values(),
+            'recordings' => $consultation->recordings()->latest()->get()->map(fn ($r) => [
+                'id' => $r->id, 'mime' => $r->mime, 'size_kb' => round($r->size_bytes / 1024, 1),
+                'duration_seconds' => $r->duration_seconds, 'created_at' => $r->created_at->toIso8601String(),
+                'url' => route('consult.recording.download', [$consultation, $r]),
+            ])->values(),
+            'missedBy' => $consultation->missed_by,
+            'connectedAt' => $consultation->connected_at?->toIso8601String(),
         ]);
     }
 
@@ -164,6 +193,46 @@ class ConsultationController extends Controller
             'candidate' => $v['candidate'] ?? null,
         ]))->toOthers();
 
+        ConsultationEvent::create([
+            'consultation_id' => $consultation->id, 'actor_id' => $request->user()->id,
+            'kind' => 'signal', 'meta' => ['signal' => $v['kind']],
+        ]);
+
         return response()->json(['ok' => true]);
+    }
+
+    public function storeRecording(Request $request, Consultation $consultation): JsonResponse
+    {
+        abort_unless(in_array($request->user()->id, [$consultation->customer_id, $consultation->astrologer_id], true), 403);
+        $v = $request->validate([
+            'recording' => ['required', 'file', 'max:51200', 'mimetypes:audio/webm,video/webm,audio/mpeg,audio/mp4,video/mp4'],
+            'duration_seconds' => ['nullable', 'integer', 'min:1', 'max:14400'],
+        ]);
+
+        $path = $v['recording']->store('recordings/'.$consultation->id, 'local');
+        $rec = CallRecording::create([
+            'consultation_id' => $consultation->id,
+            'user_id' => $request->user()->id,
+            'path' => $path,
+            'disk' => 'local',
+            'mime' => $v['recording']->getMimeType(),
+            'size_bytes' => $v['recording']->getSize() ?? 0,
+            'duration_seconds' => $v['duration_seconds'] ?? null,
+            'status' => 'ready',
+        ]);
+        ConsultationEvent::create([
+            'consultation_id' => $consultation->id, 'actor_id' => $request->user()->id,
+            'kind' => 'recording', 'meta' => ['recording_id' => $rec->id],
+        ]);
+
+        return response()->json(['id' => $rec->id, 'size_kb' => round($rec->size_bytes / 1024, 1)]);
+    }
+
+    public function downloadRecording(Request $request, Consultation $consultation, CallRecording $recording)
+    {
+        abort_unless($recording->consultation_id === $consultation->id, 404);
+        abort_unless(in_array($request->user()->id, [$consultation->customer_id, $consultation->astrologer_id], true) || $request->user()->isAdmin(), 403);
+
+        return Storage::disk($recording->disk)->download($recording->path);
     }
 }

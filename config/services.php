@@ -45,6 +45,9 @@ return [
         'provider' => env('CALL_PROVIDER', 'reverb'),
         'agora_app_id' => env('AGORA_APP_ID'),
         'agora_cert' => env('AGORA_CERT'),
+        'turn_urls' => env('TURN_URLS') ? explode(',', (string) env('TURN_URLS')) : [],
+        'turn_username' => env('TURN_USERNAME'),
+        'turn_credential' => env('TURN_CREDENTIAL'),
     ],
 
     'consult' => [

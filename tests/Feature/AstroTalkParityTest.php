@@ -3,12 +3,15 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Models\CallRecording;
 use App\Models\LiveSession;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\ConsultationService;
 use App\Services\WalletService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class AstroTalkParityTest extends TestCase
@@ -129,5 +132,49 @@ class AstroTalkParityTest extends TestCase
         $this->actingAs($u)->postJson("/live/{$live->id}/join")->assertOk();
         $this->actingAs($u)->postJson("/live/{$live->id}/message", ['body' => 'Hello?'])->assertOk();
         $this->assertDatabaseHas('live_messages', ['live_session_id' => $live->id]);
+    }
+
+    public function test_missed_queue_timeout_marks_no_charge(): void
+    {
+        $c = User::factory()->create(['role' => 'customer', 'email_verified_at' => now()]);
+        $a = $this->astrologer(20);
+        app(WalletService::class)->credit($c, 50000, 'miss-rc');
+        $con = app(ConsultationService::class)->request($c, $a, 'call');
+        $con->update(['requested_at' => now()->subMinutes(10)]);
+        $count = app(ConsultationService::class)->timeoutStaleQueued(5);
+        $this->assertEquals(1, $count);
+        $this->assertEquals('cancelled', $con->fresh()->status);
+        $this->assertEquals('missed', $con->fresh()->end_reason);
+        $this->assertEquals(50000, app(WalletService::class)->balancePaise($c));
+    }
+
+    public function test_recording_upload_and_download(): void
+    {
+        $c = User::factory()->create(['role' => 'customer', 'email_verified_at' => now()]);
+        $a = $this->astrologer(20);
+        app(WalletService::class)->credit($c, 50000, 'rec-rc');
+        $svc = app(ConsultationService::class);
+        $con = $svc->request($c, $a, 'call');
+        $svc->accept($a, $con);
+
+        $file = UploadedFile::fake()->create('note.webm', 100, 'audio/webm');
+        $this->actingAs($c)->postJson("/consult/{$con->id}/recordings", ['recording' => $file])->assertOk();
+        $this->assertDatabaseHas('call_recordings', ['consultation_id' => $con->id]);
+        $rec = CallRecording::first();
+        $this->actingAs($c)->get("/consult/{$con->id}/recordings/{$rec->id}")->assertOk();
+        $this->actingAs($a)->get("/consult/{$con->id}/recordings/{$rec->id}")->assertOk();
+    }
+
+    public function test_shipment_update_notifies_customer(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'email_verified_at' => now()]);
+        $u = User::factory()->create(['role' => 'customer', 'email_verified_at' => now()]);
+        $order = Order::create(['user_id' => $u->id, 'status' => 'paid', 'subtotal_paise' => 1000, 'total_paise' => 1000]);
+        $this->actingAs($admin)->post("/admin/ops/shipments/{$order->id}", [
+            'shipping_status' => 'shipped', 'carrier' => 'Delhivery', 'tracking_number' => 'DLV123',
+        ])->assertRedirect();
+        $this->assertEquals('shipped', $order->fresh()->shipping_status);
+        $this->assertDatabaseHas('shipments', ['order_id' => $order->id, 'status' => 'shipped']);
+        $this->actingAs($u)->get("/shop/orders/{$order->id}")->assertOk();
     }
 }

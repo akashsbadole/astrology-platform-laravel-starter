@@ -10,6 +10,8 @@ type Props = {
             id: number;
             type: string;
             status: string;
+            end_reason: string | null;
+            missed_by: string | null;
             rate_per_min: string;
             billed_minutes: number;
             amount: string;
@@ -17,20 +19,25 @@ type Props = {
         }>;
     };
     balance: number;
+    missedCount: number;
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Consultations', href: '/consultations' },
 ];
 
-export default function ConsultIndex({ consultations, balance }: Props) {
+export default function ConsultIndex({
+    consultations,
+    balance,
+    missedCount,
+}: Props) {
     return (
         <>
             <Head title="My consultations" />
             <div className="mx-auto flex max-w-2xl flex-col gap-4 p-4">
                 <Heading
                     title="Consultations"
-                    description={`Wallet ₹${Number(balance).toFixed(2)} — per-minute billing`}
+                    description={`Wallet ₹${Number(balance).toFixed(2)} — per-minute billing${missedCount > 0 ? ` · ${missedCount} missed (no charge)` : ''}`}
                 />
                 {consultations.data.map((c) => (
                     <Card key={c.id}>
@@ -42,10 +49,23 @@ export default function ConsultIndex({ consultations, balance }: Props) {
                                 <p className="text-muted-foreground text-xs">
                                     {c.billed_minutes} min · ₹{c.amount} ·{' '}
                                     {new Date(c.created_at).toLocaleString()}
+                                    {c.end_reason === 'missed'
+                                        ? ` · missed by ${c.missed_by ?? 'astrologer'} (no charge)`
+                                        : ''}
                                 </p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Badge>{c.status}</Badge>
+                                <Badge
+                                    variant={
+                                        c.end_reason === 'missed'
+                                            ? 'destructive'
+                                            : undefined
+                                    }
+                                >
+                                    {c.end_reason === 'missed'
+                                        ? 'missed'
+                                        : c.status}
+                                </Badge>
                                 {(c.status === 'queued' ||
                                     c.status === 'active') && (
                                     <Link

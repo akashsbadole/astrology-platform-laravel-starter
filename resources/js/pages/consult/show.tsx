@@ -32,6 +32,24 @@ type Props = {
     balance: number;
     minsLeft: number;
     signal: { channel: string; provider: string } | null;
+    iceServers: RTCIceServer[];
+    events: Array<{
+        id: number;
+        kind: string;
+        actor_id: number | null;
+        created_at: string;
+        meta: Record<string, unknown> | null;
+    }>;
+    recordings: Array<{
+        id: number;
+        mime: string | null;
+        size_kb: number;
+        duration_seconds: number | null;
+        created_at: string;
+        url: string;
+    }>;
+    missedBy: string | null;
+    connectedAt: string | null;
 };
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Consult', href: '#' }];
@@ -43,6 +61,11 @@ export default function ConsultShow({
     balance: initBal,
     minsLeft: initMins,
     signal,
+    iceServers,
+    events,
+    recordings: initRecordings,
+    missedBy,
+    connectedAt,
 }: Props) {
     const [consultation, setConsultation] = useState(init);
     const [messages, setMessages] = useState<Msg[]>(initMsgs);
@@ -52,6 +75,12 @@ export default function ConsultShow({
     const [callState, setCallState] = useState<'idle' | 'calling' | 'in-call'>(
         'idle',
     );
+    const [connState, setConnState] = useState<string>('new');
+    const [iceFailed, setIceFailed] = useState(false);
+    const [recordings, setRecordings] = useState(initRecordings);
+    const [recording, setRecording] = useState(false);
+    const recorderRef = useRef<MediaRecorder | null>(null);
+    const chunksRef = useRef<Blob[]>([]);
     const bottomRef = useRef<HTMLDivElement>(null);
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -77,7 +106,11 @@ export default function ConsultShow({
 
     const ensurePC = async (video: boolean) => {
         if (pcRef.current) return pcRef.current;
-        const pc = new RTCPeerConnection();
+        const servers =
+            iceServers.length > 0
+                ? iceServers
+                : [{ urls: ['stun:stun.l.google.com:19302'] }];
+        const pc = new RTCPeerConnection({ iceServers: servers });
         pcRef.current = pc;
         const stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
@@ -91,6 +124,20 @@ export default function ConsultShow({
             if (remoteVideoRef.current && video)
                 remoteVideoRef.current.srcObject = s;
             if (remoteAudioRef.current) remoteAudioRef.current.srcObject = s;
+        };
+        pc.onconnectionstatechange = () => {
+            const state = pc.connectionState;
+            setConnState(state);
+            if (state === 'failed') setIceFailed(true);
+            if (state === 'connected') setIceFailed(false);
+        };
+        pc.oniceconnectionstatechange = () => {
+            if (
+                pc.iceConnectionState === 'failed' ||
+                pc.iceConnectionState === 'disconnected'
+            ) {
+                setIceFailed(true);
+            }
         };
         pc.onicecandidate = (e) => {
             if (e.candidate)
@@ -233,6 +280,76 @@ export default function ConsultShow({
         pcRef.current?.close();
         pcRef.current = null;
         setCallState('idle');
+        setConnState('closed');
+    };
+
+    const retryMedia = async () => {
+        pcRef.current?.close();
+        pcRef.current = null;
+        setIceFailed(false);
+        setConnState('new');
+        await startCall();
+    };
+
+    const toggleRecording = async () => {
+        if (recorderRef.current && recording) {
+            recorderRef.current.stop();
+            return;
+        }
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+            });
+            const rec = new MediaRecorder(stream, {
+                mimeType: MediaRecorder.isTypeSupported('audio/webm')
+                    ? 'audio/webm'
+                    : undefined,
+            });
+            chunksRef.current = [];
+            rec.ondataavailable = (e) => {
+                if (e.data.size > 0) chunksRef.current.push(e.data);
+            };
+            rec.onstop = async () => {
+                setRecording(false);
+                const blob = new Blob(chunksRef.current, {
+                    type: rec.mimeType || 'audio/webm',
+                });
+                const form = new FormData();
+                form.append('recording', blob, 'note.webm');
+                const res = await fetch(
+                    `/consult/${consultation.id}/recordings`,
+                    {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            Accept: 'application/json',
+                            'X-XSRF-TOKEN': getCsrfTokenFromCookie(),
+                        },
+                        body: form,
+                    },
+                );
+                if (res.ok) {
+                    const j = await res.json();
+                    setRecordings((r) => [
+                        ...r,
+                        {
+                            id: j.id,
+                            mime: blob.type,
+                            size_kb: blob.size / 1024,
+                            duration_seconds: null,
+                            created_at: new Date().toISOString(),
+                            url: `/consult/${consultation.id}/recordings/${j.id}`,
+                        },
+                    ]);
+                }
+                stream.getTracks().forEach((t) => t.stop());
+            };
+            recorderRef.current = rec;
+            rec.start();
+            setRecording(true);
+        } catch {
+            alert('Mic blocked — cannot record.');
+        }
     };
 
     useEffect(
@@ -268,6 +385,17 @@ export default function ConsultShow({
                         Accept (astrologer) / waiting…
                     </Button>
                 )}
+                {missedBy && (
+                    <p className="rounded bg-red-50 p-2 text-sm text-red-700">
+                        Missed {consultation.type} — no answer by {missedBy}. No
+                        charge. Try another astrologer or re-request.
+                    </p>
+                )}
+                {connectedAt && (
+                    <p className="text-muted-foreground text-xs">
+                        Media connected {new Date(connectedAt).toLocaleString()}
+                    </p>
+                )}
                 {(consultation.type === 'call' ||
                     consultation.type === 'video') && (
                     <Card>
@@ -278,8 +406,25 @@ export default function ConsultShow({
                                 {signal?.channel ??
                                     `consult-${consultation.id}`}
                                 . Timer + billing shared with chat. State:{' '}
-                                {callState}.
+                                {callState} · connection: {connState}
+                                {iceServers.length > 1
+                                    ? ' · TURN failover on'
+                                    : ' · STUN only (set TURN_URLS for strict NATs)'}
+                                .
                             </p>
+                            {iceFailed && (
+                                <p className="rounded bg-red-50 p-2 text-sm text-red-700">
+                                    Media path failed (strict NAT/firewall?).
+                                    Chat keeps billing, media is separate.{' '}
+                                    <button
+                                        type="button"
+                                        className="underline"
+                                        onClick={retryMedia}
+                                    >
+                                        Retry media
+                                    </button>
+                                </p>
+                            )}
                             {consultation.type === 'video' && (
                                 <div className="grid grid-cols-2 gap-2">
                                     <video
@@ -312,6 +457,15 @@ export default function ConsultShow({
                                         Leave call (chat continues)
                                     </Button>
                                 )}
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={toggleRecording}
+                                >
+                                    {recording
+                                        ? 'Stop note'
+                                        : 'Record voice note'}
+                                </Button>
                                 <Button
                                     size="sm"
                                     variant="outline"
@@ -371,6 +525,42 @@ export default function ConsultShow({
                             : ''}
                         .
                     </p>
+                )}
+                <Card>
+                    <CardContent className="space-y-1 py-3 text-xs">
+                        <p className="font-medium">Call history</p>
+                        {events.map((e) => (
+                            <p key={e.id} className="text-muted-foreground">
+                                {new Date(e.created_at).toLocaleString()} ·{' '}
+                                {e.kind}
+                                {e.meta != null &&
+                                typeof e.meta.reason === 'string'
+                                    ? ` (${e.meta.reason})`
+                                    : ''}
+                            </p>
+                        ))}
+                        {events.length === 0 && (
+                            <p className="text-muted-foreground">
+                                No media events yet.
+                            </p>
+                        )}
+                    </CardContent>
+                </Card>
+                {recordings.length > 0 && (
+                    <Card>
+                        <CardContent className="space-y-1 py-3 text-xs">
+                            <p className="font-medium">Voice notes</p>
+                            {recordings.map((r) => (
+                                <p key={r.id}>
+                                    <a className="underline" href={r.url}>
+                                        Note #{r.id}
+                                    </a>{' '}
+                                    · {r.size_kb.toFixed(0)} KB ·{' '}
+                                    {new Date(r.created_at).toLocaleString()}
+                                </p>
+                            ))}
+                        </CardContent>
+                    </Card>
                 )}
             </div>
         </>

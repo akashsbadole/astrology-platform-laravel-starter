@@ -86,7 +86,39 @@ class ShopController extends Controller
     public function orders(Request $request): Response
     {
         return Inertia::render('shop/orders', [
-            'orders' => Order::where('user_id', $request->user()->id)->latest()->paginate(15),
+            'orders' => Order::where('user_id', $request->user()->id)->latest()->paginate(15)->through(fn (Order $o) => [
+                'id' => $o->id, 'status' => $o->status, 'total_paise' => $o->total_paise,
+                'shipping_status' => $o->shipping_status, 'tracking_number' => $o->tracking_number,
+                'created_at' => $o->created_at->toIso8601String(),
+            ]),
+        ]);
+    }
+
+    public function showOrder(Request $request, Order $order): Response
+    {
+        abort_unless($order->user_id === $request->user()->id, 403);
+        $order->load(['items.product:id,name', 'shipments']);
+
+        return Inertia::render('shop/order-show', [
+            'order' => [
+                'id' => $order->id, 'status' => $order->status,
+                'total' => $order->total_paise / 100,
+                'shipping_status' => $order->shipping_status,
+                'tracking_number' => $order->tracking_number,
+                'carrier' => $order->carrier,
+                'shipped_at' => $order->shipped_at?->toIso8601String(),
+                'delivered_at' => $order->delivered_at?->toIso8601String(),
+                'created_at' => $order->created_at->toIso8601String(),
+            ],
+            'items' => $order->items->map(fn ($i) => [
+                'id' => $i->id, 'qty' => $i->qty, 'price' => $i->price_paise / 100,
+                'name' => $i->product->name ?? 'Item',
+            ])->values(),
+            'timeline' => $order->shipments->map(fn ($s) => [
+                'id' => $s->id, 'status' => $s->status, 'carrier' => $s->carrier,
+                'tracking_number' => $s->tracking_number, 'note' => $s->note,
+                'created_at' => $s->created_at->toIso8601String(),
+            ])->values(),
         ]);
     }
 

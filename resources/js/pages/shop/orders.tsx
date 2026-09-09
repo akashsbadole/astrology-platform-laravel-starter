@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import Heading from '@/components/heading';
 import { Card, CardContent } from '@/components/ui/card';
 import type { BreadcrumbItem } from '@/types';
@@ -15,6 +15,8 @@ export default function ShopOrders({
             id: number;
             status: string;
             total_paise: number;
+            shipping_status: string;
+            tracking_number: string | null;
             created_at: string;
         }>;
     };
@@ -28,7 +30,16 @@ export default function ShopOrders({
                     <Card key={o.id}>
                         <CardContent className="flex justify-between py-3 text-sm">
                             <span>
-                                #{o.id} · {o.status}
+                                <Link
+                                    className="underline"
+                                    href={`/shop/orders/${o.id}`}
+                                >
+                                    #{o.id}
+                                </Link>{' '}
+                                · {o.status} · {o.shipping_status}
+                                {o.tracking_number
+                                    ? ` · ${o.tracking_number}`
+                                    : ''}
                             </span>
                             <span>₹{(o.total_paise / 100).toFixed(2)}</span>
                         </CardContent>

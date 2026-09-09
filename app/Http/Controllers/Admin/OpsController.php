@@ -13,8 +13,10 @@ use App\Models\Order;
 use App\Models\Payout;
 use App\Models\Product;
 use App\Models\Refund;
+use App\Models\Shipment;
 use App\Models\SupportTicket;
 use App\Models\User;
+use App\Notifications\ShipmentUpdated;
 use App\Services\PayoutService;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
@@ -157,5 +159,43 @@ class OpsController extends Controller
     public function support(): Response
     {
         return Inertia::render('admin/ops/support', ['tickets' => SupportTicket::latest()->paginate(20)]);
+    }
+
+    public function shipments(): Response
+    {
+        return Inertia::render('admin/ops/shipments', [
+            'orders' => Order::with('user:id,name')->latest()->paginate(20)->through(fn (Order $o) => [
+                'id' => $o->id, 'customer' => $o->user->name ?? '#'.$o->user_id,
+                'status' => $o->status, 'shipping_status' => $o->shipping_status,
+                'tracking_number' => $o->tracking_number, 'carrier' => $o->carrier,
+                'total' => $o->total_paise / 100,
+            ]),
+        ]);
+    }
+
+    public function updateShipment(Request $request, Order $order): RedirectResponse
+    {
+        $v = $request->validate([
+            'shipping_status' => ['required', 'in:pending,packed,shipped,in_transit,delivered,cancelled'],
+            'carrier' => ['nullable', 'string', 'max:100'],
+            'tracking_number' => ['nullable', 'string', 'max:100'],
+            'note' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $order->update([
+            'shipping_status' => $v['shipping_status'],
+            'carrier' => $v['carrier'] ?? $order->carrier,
+            'tracking_number' => $v['tracking_number'] ?? $order->tracking_number,
+            'shipped_at' => in_array($v['shipping_status'], ['shipped', 'in_transit', 'delivered'], true) ? ($order->shipped_at ?? now()) : $order->shipped_at,
+            'delivered_at' => $v['shipping_status'] === 'delivered' ? now() : $order->delivered_at,
+        ]);
+        Shipment::create([
+            'order_id' => $order->id, 'status' => $v['shipping_status'],
+            'carrier' => $v['carrier'] ?? null, 'tracking_number' => $v['tracking_number'] ?? null,
+            'note' => $v['note'] ?? null,
+        ]);
+        $order->user->notify(new ShipmentUpdated($order->fresh()));
+
+        return back()->with('status', 'Shipment updated.');
     }
 }

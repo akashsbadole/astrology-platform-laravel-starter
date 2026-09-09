@@ -86,6 +86,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('consult/{consultation}/end', [ConsultationController::class, 'end'])->name('consult.end');
     Route::post('consult/{consultation}/message', [ConsultationController::class, 'sendMessage'])->name('consult.message');
     Route::post('consult/{consultation}/signal', [ConsultationController::class, 'signal'])->name('consult.signal');
+    Route::post('consult/{consultation}/recordings', [ConsultationController::class, 'storeRecording'])->name('consult.recording.store');
+    Route::get('consult/{consultation}/recordings/{recording}', [ConsultationController::class, 'downloadRecording'])->name('consult.recording.download');
 
     Route::get('support', [SupportController::class, 'index'])->name('support.index');
     Route::post('support/tickets', [SupportController::class, 'storeTicket'])->name('support.ticket');
@@ -101,6 +103,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('shop/cart', [ShopController::class, 'addToCart'])->name('shop.cart.add');
     Route::post('shop/checkout', [ShopController::class, 'checkout'])->name('shop.checkout');
     Route::post('shop/orders/{order}/verify', [ShopController::class, 'verify'])->name('shop.verify');
+    Route::get('shop/orders/{order}', [ShopController::class, 'showOrder'])->name('shop.order.show');
     Route::get('shop-orders', [ShopController::class, 'orders'])->name('shop.orders');
 
     Route::get('bookings/{booking}/chat', [ChatController::class, 'show'])->name('chat.show');
@@ -220,6 +223,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('ops/banners', [AdminOpsController::class, 'banners'])->name('ops.banners');
         Route::post('ops/banners', [AdminOpsController::class, 'storeBanner'])->name('ops.banners.store');
         Route::get('ops/support', [AdminOpsController::class, 'support'])->name('ops.support');
+        Route::get('ops/shipments', [AdminOpsController::class, 'shipments'])->name('ops.shipments');
+        Route::post('ops/shipments/{order}', [AdminOpsController::class, 'updateShipment'])->name('ops.shipments.update');
     });
 });
 

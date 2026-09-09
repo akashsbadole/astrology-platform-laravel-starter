@@ -12,7 +12,7 @@ class Consultation extends Model
     protected $fillable = [
         'customer_id', 'astrologer_id', 'booking_id', 'type', 'status',
         'rate_per_min_paise', 'requested_at', 'started_at', 'ended_at',
-        'billed_seconds', 'amount_paise', 'end_reason',
+        'billed_seconds', 'amount_paise', 'end_reason', 'connected_at', 'missed_by',
     ];
 
     protected function casts(): array
@@ -21,6 +21,7 @@ class Consultation extends Model
             'requested_at' => 'datetime',
             'started_at' => 'datetime',
             'ended_at' => 'datetime',
+            'connected_at' => 'datetime',
         ];
     }
 
@@ -42,6 +43,16 @@ class Consultation extends Model
     public function signal(): HasOne
     {
         return $this->hasOne(CallSignal::class);
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(ConsultationEvent::class);
+    }
+
+    public function recordings(): HasMany
+    {
+        return $this->hasMany(CallRecording::class);
     }
 
     public function rateRupees(): float

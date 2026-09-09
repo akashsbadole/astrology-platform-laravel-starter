@@ -7,6 +7,7 @@ use App\Events\ConsultationTick;
 use App\Events\ConsultationUpdated;
 use App\Models\AstrologerEarning;
 use App\Models\Consultation;
+use App\Models\ConsultationEvent;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -77,6 +78,7 @@ class ConsultationService
         ]);
 
         broadcast(new ConsultationUpdated($c->fresh()))->toOthers();
+        ConsultationEvent::create(['consultation_id' => $c->id, 'actor_id' => $customer->id, 'kind' => 'requested', 'meta' => ['type' => $type]]);
 
         return $c;
     }
@@ -87,6 +89,7 @@ class ConsultationService
         abort_unless($c->status === 'queued', 422);
         $c->update(['status' => 'active', 'started_at' => now()]);
         broadcast(new ConsultationUpdated($c->fresh()))->toOthers();
+        ConsultationEvent::create(['consultation_id' => $c->id, 'actor_id' => $astrologer->id, 'kind' => 'accepted']);
 
         return $c->fresh();
     }
@@ -112,6 +115,10 @@ class ConsultationService
         $c->increment('billed_seconds', $seconds);
         $c->increment('amount_paise', $charge);
         $c = $c->fresh();
+        if ($c->connected_at === null) {
+            $c->update(['connected_at' => now()]);
+            ConsultationEvent::create(['consultation_id' => $c->id, 'actor_id' => $user->id, 'kind' => 'connected', 'meta' => ['seconds' => $seconds]]);
+        }
 
         $left = $this->wallets->balancePaise($customer);
         $minsLeft = $this->wallets->minsLeft($left, $c->rate_per_min_paise);
@@ -136,6 +143,7 @@ class ConsultationService
                 return ['consultation' => $c, 'balance_paise' => $left, 'mins_left' => 0, 'low' => true, 'ended' => true];
             }
             $c->update(['status' => 'ended', 'ended_at' => now(), 'end_reason' => $reason]);
+            ConsultationEvent::create(['consultation_id' => $c->id, 'actor_id' => null, 'kind' => 'ended', 'meta' => ['reason' => $reason, 'billed_seconds' => $c->billed_seconds]]);
             // Split (configurable commission)
             $gross = (int) $c->amount_paise;
             $commission = (int) round($gross * $this->commissionRate());
@@ -153,5 +161,23 @@ class ConsultationService
 
             return ['consultation' => $c->fresh(), 'balance_paise' => $left, 'mins_left' => 0, 'low' => true, 'ended' => true];
         });
+    }
+
+    /**
+     * Mark stale queued requests as missed (default 5 min without accept).
+     *
+     * @return int number timed out
+     */
+    public function timeoutStaleQueued(int $minutes = 5): int
+    {
+        $cutoff = now()->subMinutes($minutes);
+        $stale = Consultation::where('status', 'queued')->where('requested_at', '<', $cutoff)->get();
+        foreach ($stale as $c) {
+            $c->update(['status' => 'cancelled', 'end_reason' => 'missed', 'missed_by' => 'astrologer', 'ended_at' => now()]);
+            ConsultationEvent::create(['consultation_id' => $c->id, 'actor_id' => null, 'kind' => 'missed', 'meta' => ['missed_by' => 'astrologer']]);
+            broadcast(new ConsultationEnded($c->fresh()))->toOthers();
+        }
+
+        return $stale->count();
     }
 }
