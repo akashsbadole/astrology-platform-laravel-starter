@@ -85,6 +85,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('consult/{consultation}/heartbeat', [ConsultationController::class, 'heartbeat'])->name('consult.heartbeat');
     Route::post('consult/{consultation}/end', [ConsultationController::class, 'end'])->name('consult.end');
     Route::post('consult/{consultation}/message', [ConsultationController::class, 'sendMessage'])->name('consult.message');
+    Route::post('consult/{consultation}/signal', [ConsultationController::class, 'signal'])->name('consult.signal');
 
     Route::get('support', [SupportController::class, 'index'])->name('support.index');
     Route::post('support/tickets', [SupportController::class, 'storeTicket'])->name('support.ticket');
@@ -94,10 +95,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('live/{liveSession}', [LiveController::class, 'show'])->name('live.show');
     Route::post('live/{liveSession}/join', [LiveController::class, 'join'])->name('live.join');
     Route::post('live/{liveSession}/gift', [LiveController::class, 'gift'])->name('live.gift');
+    Route::post('live/{liveSession}/message', [LiveController::class, 'message'])->name('live.message');
 
     Route::get('shop/cart', [ShopController::class, 'cart'])->name('shop.cart');
     Route::post('shop/cart', [ShopController::class, 'addToCart'])->name('shop.cart.add');
     Route::post('shop/checkout', [ShopController::class, 'checkout'])->name('shop.checkout');
+    Route::post('shop/orders/{order}/verify', [ShopController::class, 'verify'])->name('shop.verify');
     Route::get('shop-orders', [ShopController::class, 'orders'])->name('shop.orders');
 
     Route::get('bookings/{booking}/chat', [ChatController::class, 'show'])->name('chat.show');

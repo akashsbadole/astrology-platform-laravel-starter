@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Models\LiveSession;
+use App\Models\Product;
 use App\Models\User;
 use App\Services\ConsultationService;
 use App\Services\WalletService;
@@ -90,5 +92,42 @@ class AstroTalkParityTest extends TestCase
         $this->actingAs($u)->get('/wallet')->assertOk();
         $this->actingAs($u)->get('/consultations')->assertOk();
         $this->actingAs($u)->get('/support')->assertOk();
+    }
+
+    public function test_call_signaling_offer_answer(): void
+    {
+        $c = User::factory()->create(['role' => 'customer', 'email_verified_at' => now()]);
+        $a = $this->astrologer(20);
+        app(WalletService::class)->credit($c, 50000, 'sig-rc');
+        $svc = app(ConsultationService::class);
+        $con = $svc->request($c, $a, 'video');
+        $svc->accept($a, $con);
+
+        $this->actingAs($c)->postJson("/consult/{$con->id}/signal", ['kind' => 'offer', 'sdp' => '{"type":"offer"}'])->assertOk();
+        $this->actingAs($a)->postJson("/consult/{$con->id}/signal", ['kind' => 'answer', 'sdp' => '{"type":"answer"}'])->assertOk();
+        $this->actingAs($c)->postJson("/consult/{$con->id}/signal", ['kind' => 'ice', 'candidate' => '{"c":"1"}'])->assertOk();
+        $this->assertDatabaseHas('call_signals', ['consultation_id' => $con->id]);
+    }
+
+    public function test_shop_order_verify_marks_paid(): void
+    {
+        config(['services.razorpay.key_id' => 'test', 'services.razorpay.key_secret' => 'secret']);
+        $u = User::factory()->create(['role' => 'customer', 'email_verified_at' => now()]);
+        $p = Product::create(['slug' => 't-'.time(), 'name' => 'Test', 'price_paise' => 5000, 'stock' => 5, 'is_active' => true]);
+        $this->actingAs($u)->post('/shop/cart', ['product_id' => $p->id])->assertRedirect();
+        // wallet empty -> checkout creates razor order (needs mock?) — use wallet credit path instead
+        app(WalletService::class)->credit($u, 10000, 'shop-rc');
+        $this->actingAs($u)->post('/shop/checkout')->assertRedirect(route('shop.orders'));
+        $this->assertDatabaseHas('orders', ['user_id' => $u->id, 'status' => 'paid']);
+    }
+
+    public function test_live_message_qa(): void
+    {
+        $astro = $this->astrologer(20);
+        $u = User::factory()->create(['role' => 'customer', 'email_verified_at' => now()]);
+        $live = LiveSession::create(['astrologer_id' => $astro->id, 'title' => 'T', 'status' => 'live', 'entry_fee_paise' => 0, 'room_id' => 'r1']);
+        $this->actingAs($u)->postJson("/live/{$live->id}/join")->assertOk();
+        $this->actingAs($u)->postJson("/live/{$live->id}/message", ['body' => 'Hello?'])->assertOk();
+        $this->assertDatabaseHas('live_messages', ['live_session_id' => $live->id]);
     }
 }

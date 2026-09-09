@@ -13,6 +13,7 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Live room', href: '/live' }];
 export default function LiveShow({
     session,
     isParticipant,
+    messages: initMessages = [],
 }: {
     session: {
         id: number;
@@ -22,17 +23,27 @@ export default function LiveShow({
         astrologer_name: string;
     };
     isParticipant: boolean;
+    messages?: Array<{ id: number; sender_name: string; body: string }>;
 }) {
     const [gifts, setGifts] = useState<
         Array<{ gift: string; amount_paise: number }>
     >([]);
     const [amt, setAmt] = useState('51');
+    const [messages, setMessages] = useState(initMessages);
+    const [question, setQuestion] = useState('');
 
     useEcho(
         `live.${session.id}`,
         'LiveGiftSent',
         (p: { gift: string; amount_paise: number }) => {
             setGifts((g) => [...g, p]);
+        },
+    );
+    useEcho<{ id: number; sender_name: string; body: string }>(
+        `live.${session.id}`,
+        'LiveMessageSent',
+        (p) => {
+            setMessages((m) => [...m, p]);
         },
     );
 
@@ -47,6 +58,25 @@ export default function LiveShow({
             },
             body: JSON.stringify({ gift: 'rose', amount: parseFloat(amt) }),
         });
+    };
+
+    const ask = async () => {
+        if (!question.trim()) return;
+        const res = await fetch(`/live/${session.id}/message`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': getCsrfTokenFromCookie(),
+            },
+            body: JSON.stringify({ body: question }),
+        });
+        if (res.ok) {
+            const m = await res.json();
+            setMessages((cur) => [...cur, m]);
+            setQuestion('');
+        }
     };
 
     return (
@@ -90,6 +120,31 @@ export default function LiveShow({
                                     {(g.amount_paise / 100).toFixed(0)}
                                 </p>
                             ))}
+                            <div className="border-t pt-2">
+                                <p className="text-sm font-medium">Q&A</p>
+                                <div className="max-h-48 space-y-1 overflow-y-auto py-2">
+                                    {messages.map((m) => (
+                                        <p key={m.id} className="text-sm">
+                                            <span className="font-medium">
+                                                {m.sender_name}:
+                                            </span>{' '}
+                                            {m.body}
+                                        </p>
+                                    ))}
+                                </div>
+                                <div className="flex gap-2">
+                                    <Input
+                                        value={question}
+                                        onChange={(e) =>
+                                            setQuestion(e.target.value)
+                                        }
+                                        placeholder="Ask a question…"
+                                    />
+                                    <Button size="sm" onClick={ask}>
+                                        Ask
+                                    </Button>
+                                </div>
+                            </div>
                         </CardContent>
                     </Card>
                 )}

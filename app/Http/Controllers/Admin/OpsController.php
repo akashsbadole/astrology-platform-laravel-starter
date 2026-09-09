@@ -15,6 +15,7 @@ use App\Models\Product;
 use App\Models\Refund;
 use App\Models\SupportTicket;
 use App\Models\User;
+use App\Services\PayoutService;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -58,9 +59,9 @@ class OpsController extends Controller
         return Inertia::render('admin/ops/payouts', ['payouts' => Payout::latest()->paginate(20), 'earnings' => AstrologerEarning::latest()->limit(20)->get()]);
     }
 
-    public function approvePayout(Payout $payout): RedirectResponse
+    public function approvePayout(Payout $payout, PayoutService $payouts): RedirectResponse
     {
-        $payout->update(['status' => 'paid', 'utr' => 'UTR'.time()]);
+        $payouts->process($payout);
 
         return back();
     }

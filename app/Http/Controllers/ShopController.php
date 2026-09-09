@@ -89,4 +89,28 @@ class ShopController extends Controller
             'orders' => Order::where('user_id', $request->user()->id)->latest()->paginate(15),
         ]);
     }
+
+    public function verify(Request $request, Order $order): RedirectResponse
+    {
+        abort_unless($order->user_id === $request->user()->id, 403);
+        abort_unless($order->status === 'pending', 422, 'Order already processed.');
+
+        $v = $request->validate([
+            'razorpay_order_id' => ['required', 'string'],
+            'razorpay_payment_id' => ['required', 'string'],
+            'razorpay_signature' => ['required', 'string'],
+        ]);
+        abort_unless($v['razorpay_order_id'] === $order->razorpay_order_id, 422, 'Order mismatch.');
+
+        $ok = app(RazorpayService::class)->verifySignature($v['razorpay_order_id'], $v['razorpay_payment_id'], $v['razorpay_signature']);
+        abort_unless($ok, 422, 'Payment verification failed.');
+
+        $order->update(['status' => 'paid', 'razorpay_payment_id' => $v['razorpay_payment_id']]);
+        foreach ($order->items as $item) {
+            $item->product?->decrement('stock', $item->qty);
+        }
+        Cart::where('user_id', $request->user()->id)->first()?->items()->delete();
+
+        return redirect()->route('shop.orders')->with('status', 'Order paid. Thank you!');
+    }
 }

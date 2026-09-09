@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Events\LiveGiftSent;
+use App\Events\LiveMessageSent;
 use App\Models\AstrologerEarning;
 use App\Models\LiveGift;
+use App\Models\LiveMessage;
 use App\Models\LiveSession;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
@@ -25,6 +27,10 @@ class LiveController extends Controller
 
     public function show(LiveSession $liveSession): Response
     {
+        $messages = LiveMessage::where('live_session_id', $liveSession->id)->with('sender:id,name')->latest()->limit(50)->get()->reverse()->values()->map(fn (LiveMessage $m) => [
+            'id' => $m->id, 'sender_name' => $m->sender->name, 'body' => $m->body,
+        ]);
+
         return Inertia::render('live/show', [
             'session' => [
                 'id' => $liveSession->id, 'title' => $liveSession->title, 'description' => $liveSession->description,
@@ -32,6 +38,7 @@ class LiveController extends Controller
                 'astrologer_name' => $liveSession->astrologer->name,
             ],
             'isParticipant' => $liveSession->participants()->where('user_id', request()->user()?->id)->exists(),
+            'messages' => $messages,
         ]);
     }
 
@@ -58,5 +65,16 @@ class LiveController extends Controller
         broadcast(new LiveGiftSent($g))->toOthers();
 
         return response()->json(['ok' => true]);
+    }
+
+    public function message(Request $request, LiveSession $liveSession): JsonResponse
+    {
+        abort_unless($liveSession->participants()->where('user_id', $request->user()->id)->exists() || $request->user()->id === $liveSession->astrologer_id, 403);
+        $v = $request->validate(['body' => ['required', 'string', 'max:500']]);
+        $m = LiveMessage::create(['live_session_id' => $liveSession->id, 'sender_id' => $request->user()->id, 'body' => $v['body']]);
+        $m->load('sender:id,name');
+        broadcast(new LiveMessageSent($m))->toOthers();
+
+        return response()->json(['id' => $m->id, 'sender_name' => $m->sender->name, 'body' => $m->body]);
     }
 }

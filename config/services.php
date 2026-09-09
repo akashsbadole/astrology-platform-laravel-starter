@@ -47,6 +47,17 @@ return [
         'agora_cert' => env('AGORA_CERT'),
     ],
 
+    'consult' => [
+        'commission_rate' => (float) env('CONSULT_COMMISSION_RATE', 0.25),
+        'min_start_minutes' => (int) env('WALLET_MIN_START_MINUTES', 5),
+        'tick_seconds' => (int) env('RATE_TICK_SECONDS', 30),
+        'low_balance_minutes' => (float) env('LOW_BALANCE_MINUTES', 2),
+    ],
+
+    'fcm' => [
+        'server_key' => env('FCM_SERVER_KEY'),
+    ],
+
     'sms' => [
         'driver' => env('SMS_DRIVER', 'log'),
         'twilio_sid' => env('TWILIO_SID'),

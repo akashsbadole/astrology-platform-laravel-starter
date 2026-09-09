@@ -22,6 +22,16 @@ class ConsultationService
 
     public function __construct(private readonly WalletService $wallets) {}
 
+    public function minStartMinutes(): int
+    {
+        return (int) config('services.consult.min_start_minutes', self::MIN_START_MINUTES);
+    }
+
+    public function commissionRate(): float
+    {
+        return (float) config('services.consult.commission_rate', self::COMMISSION_RATE);
+    }
+
     public function rateFor(User $astrologer, string $type): int
     {
         $profile = $astrologer->astrologerProfile;
@@ -53,7 +63,8 @@ class ConsultationService
 
         // First-free coupon: allow 5 free minutes once per astrologer (tracked via meta, no debit until 300s)
         $balance = $this->wallets->balancePaise($customer);
-        abort_unless($this->wallets->canStart($balance, $rate, self::MIN_START_MINUTES), 422, 'Low balance. Recharge for at least '.self::MIN_START_MINUTES.' minutes (₹'.number_format($rate * self::MIN_START_MINUTES / 100, 2).').');
+        $minStart = $this->minStartMinutes();
+        abort_unless($this->wallets->canStart($balance, $rate, $minStart), 422, 'Low balance. Recharge for at least '.$minStart.' minutes (₹'.number_format($rate * $minStart / 100, 2).').');
 
         $c = Consultation::create([
             'customer_id' => $customer->id,
@@ -125,9 +136,9 @@ class ConsultationService
                 return ['consultation' => $c, 'balance_paise' => $left, 'mins_left' => 0, 'low' => true, 'ended' => true];
             }
             $c->update(['status' => 'ended', 'ended_at' => now(), 'end_reason' => $reason]);
-            // Split
+            // Split (configurable commission)
             $gross = (int) $c->amount_paise;
-            $commission = (int) round($gross * self::COMMISSION_RATE);
+            $commission = (int) round($gross * $this->commissionRate());
             AstrologerEarning::create([
                 'astrologer_id' => $c->astrologer_id,
                 'reference_type' => Consultation::class,

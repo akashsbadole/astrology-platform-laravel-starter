@@ -49,9 +49,59 @@ export default function ConsultShow({
     const [balance, setBalance] = useState(initBal);
     const [minsLeft, setMinsLeft] = useState(initMins);
     const [body, setBody] = useState('');
-    const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+    const [callState, setCallState] = useState<'idle' | 'calling' | 'in-call'>(
+        'idle',
+    );
     const bottomRef = useRef<HTMLDivElement>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const localVideoRef = useRef<HTMLVideoElement>(null);
+    const remoteVideoRef = useRef<HTMLVideoElement>(null);
+    const remoteAudioRef = useRef<HTMLAudioElement>(null);
+    const pcRef = useRef<RTCPeerConnection | null>(null);
+
+    const postSignal = async (
+        kind: string,
+        sdp?: string,
+        candidate?: string,
+    ) => {
+        await fetch(`/consult/${consultation.id}/signal`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': getCsrfTokenFromCookie(),
+            },
+            body: JSON.stringify({ kind, sdp, candidate }),
+        });
+    };
+
+    const ensurePC = async (video: boolean) => {
+        if (pcRef.current) return pcRef.current;
+        const pc = new RTCPeerConnection();
+        pcRef.current = pc;
+        const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video,
+        });
+        stream.getTracks().forEach((t) => pc.addTrack(t, stream));
+        if (localVideoRef.current && video)
+            localVideoRef.current.srcObject = stream;
+        pc.ontrack = (e) => {
+            const [s] = e.streams;
+            if (remoteVideoRef.current && video)
+                remoteVideoRef.current.srcObject = s;
+            if (remoteAudioRef.current) remoteAudioRef.current.srcObject = s;
+        };
+        pc.onicecandidate = (e) => {
+            if (e.candidate)
+                void postSignal(
+                    'ice',
+                    undefined,
+                    JSON.stringify(e.candidate.toJSON()),
+                );
+        };
+        return pc;
+    };
 
     useEcho(
         `consultation.${consultation.id}`,
@@ -81,6 +131,36 @@ export default function ConsultShow({
             setMessages((c) => [...c, p]);
         },
     );
+    useEcho<{
+        kind: string;
+        data: { from: number; sdp: string | null; candidate: string | null };
+    }>(`consultation.${consultation.id}`, 'CallSignalUpdated', async (p) => {
+        if (p.data.from === currentUserId) return;
+        const video = consultation.type === 'video';
+        try {
+            if (p.kind === 'offer' && p.data.sdp) {
+                const pc = await ensurePC(video);
+                await pc.setRemoteDescription(JSON.parse(p.data.sdp));
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+                await postSignal('answer', JSON.stringify(pc.localDescription));
+                setCallState('in-call');
+            } else if (p.kind === 'answer' && p.data.sdp && pcRef.current) {
+                await pcRef.current.setRemoteDescription(
+                    JSON.parse(p.data.sdp),
+                );
+                setCallState('in-call');
+            } else if (p.kind === 'ice' && p.data.candidate && pcRef.current) {
+                await pcRef.current.addIceCandidate(
+                    JSON.parse(p.data.candidate),
+                );
+            } else if (p.kind === 'leave') {
+                setCallState('idle');
+            }
+        } catch {
+            // keep chat usable if media fails
+        }
+    });
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -135,24 +215,31 @@ export default function ConsultShow({
         }
     };
 
-    const startPreview = async () => {
+    const startCall = async () => {
         try {
-            const s = await navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: consultation.type === 'video',
-            });
-            setLocalStream(s);
-            if (videoRef.current) videoRef.current.srcObject = s;
+            const video = consultation.type === 'video';
+            const pc = await ensurePC(video);
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            await postSignal('offer', JSON.stringify(pc.localDescription));
+            setCallState('calling');
         } catch {
             alert('Mic/camera blocked. Chat still works.');
         }
     };
 
+    const leaveCall = async () => {
+        await postSignal('leave');
+        pcRef.current?.close();
+        pcRef.current = null;
+        setCallState('idle');
+    };
+
     useEffect(
         () => () => {
-            localStream?.getTracks().forEach((t) => t.stop());
+            pcRef.current?.close();
         },
-        [localStream],
+        [],
     );
 
     const mm = Math.floor(consultation.billed_seconds / 60);
@@ -186,28 +273,45 @@ export default function ConsultShow({
                     <Card>
                         <CardContent className="space-y-2 py-4">
                             <p className="text-muted-foreground text-sm">
-                                Voice/Video via {signal?.provider ?? 'reverb'}{' '}
-                                channel{' '}
+                                Real P2P {consultation.type} via{' '}
+                                {signal?.provider ?? 'reverb'} channel{' '}
                                 {signal?.channel ??
                                     `consult-${consultation.id}`}
-                                . Timer + billing shared with chat.
+                                . Timer + billing shared with chat. State:{' '}
+                                {callState}.
                             </p>
                             {consultation.type === 'video' && (
-                                <video
-                                    ref={videoRef}
-                                    autoPlay
-                                    muted
-                                    playsInline
-                                    className="h-48 w-full rounded bg-black"
-                                />
+                                <div className="grid grid-cols-2 gap-2">
+                                    <video
+                                        ref={localVideoRef}
+                                        autoPlay
+                                        muted
+                                        playsInline
+                                        className="h-36 w-full rounded bg-black"
+                                    />
+                                    <video
+                                        ref={remoteVideoRef}
+                                        autoPlay
+                                        playsInline
+                                        className="h-36 w-full rounded bg-black"
+                                    />
+                                </div>
                             )}
+                            <audio ref={remoteAudioRef} autoPlay />
                             <div className="flex gap-2">
-                                <Button size="sm" onClick={startPreview}>
-                                    Enable mic
-                                    {consultation.type === 'video'
-                                        ? '/camera'
-                                        : ''}
-                                </Button>
+                                {callState === 'idle' ? (
+                                    <Button size="sm" onClick={startCall}>
+                                        Start {consultation.type}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={leaveCall}
+                                    >
+                                        Leave call (chat continues)
+                                    </Button>
+                                )}
                                 <Button
                                     size="sm"
                                     variant="outline"

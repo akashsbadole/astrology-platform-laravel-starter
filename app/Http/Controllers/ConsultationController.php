@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CallSignalUpdated;
 use App\Events\ConsultationMessageSent;
 use App\Models\Consultation;
 use App\Models\ConsultationMessage;
@@ -132,5 +133,37 @@ class ConsultationController extends Controller
         broadcast(new ConsultationMessageSent($m))->toOthers();
 
         return response()->json(['id' => $m->id, 'sender_id' => $m->sender_id, 'sender_name' => $m->sender->name, 'body' => $m->body, 'created_at' => $m->created_at->toIso8601String()]);
+    }
+
+    public function signal(Request $request, Consultation $consultation): JsonResponse
+    {
+        abort_unless(in_array($request->user()->id, [$consultation->customer_id, $consultation->astrologer_id], true), 403);
+        abort_unless(in_array($consultation->type, ['call', 'video'], true), 422, 'Signaling only for call/video.');
+        abort_unless($consultation->status === 'active', 422, 'Session not active.');
+        $v = $request->validate([
+            'kind' => ['required', 'in:offer,answer,ice,leave'],
+            'sdp' => ['nullable', 'string', 'max:20000'],
+            'candidate' => ['nullable', 'string', 'max:5000'],
+        ]);
+
+        $signal = $consultation->signal()->firstOrCreate(
+            ['consultation_id' => $consultation->id],
+            ['provider' => config('services.call.provider', 'reverb'), 'channel' => 'consult-'.$consultation->id]
+        );
+        $payload = $signal->payload ?? [];
+        $payload[$v['kind'].'_'.now()->timestamp.'_'.$request->user()->id] = [
+            'from' => $request->user()->id,
+            'sdp' => $v['sdp'] ?? null,
+            'candidate' => $v['candidate'] ?? null,
+        ];
+        $signal->update(['payload' => $payload]);
+
+        broadcast(new CallSignalUpdated($signal->fresh(), $v['kind'], [
+            'from' => $request->user()->id,
+            'sdp' => $v['sdp'] ?? null,
+            'candidate' => $v['candidate'] ?? null,
+        ]))->toOthers();
+
+        return response()->json(['ok' => true]);
     }
 }
