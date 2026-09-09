@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Notifications\ShipmentUpdated;
 use App\Services\PayoutService;
 use App\Services\WalletService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -26,12 +27,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class OpsController extends Controller
 {
-    public function dashboard(): Response
+    public function dashboard(): Response|JsonResponse
     {
         $gross = AstrologerEarning::sum('gross_paise') / 100;
         $commission = AstrologerEarning::sum('commission_paise') / 100;
 
-        return Inertia::render('admin/ops/dashboard', [
+        $payload = [
             'stats' => [
                 'gross' => $gross, 'commission' => $commission,
                 'orders' => Order::count(), 'payouts_pending' => Payout::where('status', 'requested')->count(),
@@ -39,7 +40,13 @@ class OpsController extends Controller
                 'disputes_open' => Dispute::where('status', 'open')->count(),
                 'tickets_open' => SupportTicket::where('status', 'open')->count(),
             ],
-        ]);
+        ];
+
+        if (request()->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('admin/ops/dashboard', $payload);
     }
 
     public function coupons(): Response

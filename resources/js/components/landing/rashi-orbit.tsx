@@ -1,16 +1,16 @@
 const RASHI_SYMBOLS = [
-    { symbol: "♈", name: "Mesha", color: "text-red-500" },
-    { symbol: "♉", name: "Vrishabha", color: "text-emerald-500" },
-    { symbol: "♊", name: "Mithuna", color: "text-amber-500" },
-    { symbol: "♋", name: "Karka", color: "text-sky-400" },
-    { symbol: "♌", name: "Simha", color: "text-orange-500" },
-    { symbol: "♍", name: "Kanya", color: "text-teal-400" },
-    { symbol: "♎", name: "Tula", color: "text-rose-500" },
-    { symbol: "♏", name: "Vrishchika", color: "text-red-600" },
-    { symbol: "♐", name: "Dhanu", color: "text-orange-600" },
-    { symbol: "♑", name: "Makara", color: "text-slate-400" },
-    { symbol: "♒", name: "Kumbha", color: "text-sky-500" },
-    { symbol: "♓", name: "Meena", color: "text-indigo-500" },
+    { symbol: '♈', name: 'Mesha', color: 'text-red-500' },
+    { symbol: '♉', name: 'Vrishabha', color: 'text-emerald-500' },
+    { symbol: '♊', name: 'Mithuna', color: 'text-amber-500' },
+    { symbol: '♋', name: 'Karka', color: 'text-sky-400' },
+    { symbol: '♌', name: 'Simha', color: 'text-orange-500' },
+    { symbol: '♍', name: 'Kanya', color: 'text-teal-400' },
+    { symbol: '♎', name: 'Tula', color: 'text-rose-500' },
+    { symbol: '♏', name: 'Vrishchika', color: 'text-red-600' },
+    { symbol: '♐', name: 'Dhanu', color: 'text-orange-600' },
+    { symbol: '♑', name: 'Makara', color: 'text-slate-400' },
+    { symbol: '♒', name: 'Kumbha', color: 'text-sky-500' },
+    { symbol: '♓', name: 'Meena', color: 'text-indigo-500' },
 ];
 
 export default function RashiOrbit() {

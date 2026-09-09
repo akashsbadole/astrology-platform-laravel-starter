@@ -1,13 +1,13 @@
-import { Head, Link, usePage } from "@inertiajs/react";
-import { dashboard, login, register } from "@/routes";
-import blog from "@/routes/blog";
-import RashiOrbit from "@/components/landing/rashi-orbit";
-import CalendarWidget from "@/components/landing/calendar-widget";
-import PanchangGrid from "@/components/landing/panchang-grid";
-import MuhuratTimings from "@/components/landing/muhurat-timings";
-import FestivalCard from "@/components/landing/festival-card";
-import BlogCard from "@/components/landing/blog-card";
-import CtaButton from "@/components/landing/cta-button";
+import { Head, Link, usePage } from '@inertiajs/react';
+import { dashboard, login, register } from '@/routes';
+import blog from '@/routes/blog';
+import RashiOrbit from '@/components/landing/rashi-orbit';
+import CalendarWidget from '@/components/landing/calendar-widget';
+import PanchangGrid from '@/components/landing/panchang-grid';
+import MuhuratTimings from '@/components/landing/muhurat-timings';
+import FestivalCard from '@/components/landing/festival-card';
+import BlogCard from '@/components/landing/blog-card';
+import CtaButton from '@/components/landing/cta-button';
 
 type Blog = {
     id: number;
@@ -68,17 +68,17 @@ export default function Welcome() {
 
     const panchangItems = [
         {
-            label: "Tithi",
+            label: 'Tithi',
             name: tithi.name,
             extra: `${tithi.paksha} Paksha #${tithi.number}`,
         },
         {
-            label: "Nakshatra",
+            label: 'Nakshatra',
             name: nakshatra.name,
             extra: `Pada ${nakshatra.pada}`,
         },
-        { label: "Yoga", name: yoga.name, extra: `#${yoga.number}` },
-        { label: "Karana", name: karana.name, extra: `#${karana.number}` },
+        { label: 'Yoga', name: yoga.name, extra: `#${yoga.number}` },
+        { label: 'Karana', name: karana.name, extra: `#${karana.number}` },
     ];
 
     return (
@@ -155,7 +155,7 @@ export default function Welcome() {
                         <div className="relative z-10 flex flex-col items-center gap-8 text-center lg:flex-row lg:items-center lg:gap-12 lg:text-left">
                             <div className="flex-1 space-y-4 sm:space-y-6">
                                 <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
-                                    Discover Your{" "}
+                                    Discover Your{' '}
                                     <span className="bg-gradient-to-r from-white via-orange-100 to-white bg-clip-text text-transparent">
                                         Cosmic Destiny
                                     </span>
@@ -332,28 +332,28 @@ export default function Welcome() {
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {[
                                 {
-                                    title: "Expert Vedic Astrologers",
+                                    title: 'Expert Vedic Astrologers',
                                     description:
-                                        "Verified astrologers with deep knowledge of Vedic scriptures and predictive techniques.",
-                                    icon: "🧘",
+                                        'Verified astrologers with deep knowledge of Vedic scriptures and predictive techniques.',
+                                    icon: '🧘',
                                 },
                                 {
-                                    title: "Accurate Panchang & Muhurat",
+                                    title: 'Accurate Panchang & Muhurat',
                                     description:
-                                        "Real-time Panchang calculations for any location with precise muhurat timings.",
-                                    icon: "📿",
+                                        'Real-time Panchang calculations for any location with precise muhurat timings.',
+                                    icon: '📿',
                                 },
                                 {
-                                    title: "Personalized Kundli & Remedies",
+                                    title: 'Personalized Kundli & Remedies',
                                     description:
-                                        "Detailed birth chart analysis with dosha remedies, gemstone, and ritual suggestions.",
-                                    icon: "🔮",
+                                        'Detailed birth chart analysis with dosha remedies, gemstone, and ritual suggestions.',
+                                    icon: '🔮',
                                 },
                                 {
-                                    title: "Live Consultation",
+                                    title: 'Live Consultation',
                                     description:
-                                        "Chat, call, or video consult with astrologers anytime, anywhere.",
-                                    icon: "📞",
+                                        'Chat, call, or video consult with astrologers anytime, anywhere.',
+                                    icon: '📞',
                                 },
                             ].map((item) => (
                                 <div
@@ -375,10 +375,10 @@ export default function Welcome() {
 
                         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                             {[
-                                { value: "15+", label: "Years Expertise" },
-                                { value: "50K+", label: "Happy Users" },
-                                { value: "200+", label: "Expert Astrologers" },
-                                { value: "1M+", label: "Consultations" },
+                                { value: '15+', label: 'Years Expertise' },
+                                { value: '50K+', label: 'Happy Users' },
+                                { value: '200+', label: 'Expert Astrologers' },
+                                { value: '1M+', label: 'Consultations' },
                             ].map((stat) => (
                                 <div
                                     key={stat.label}

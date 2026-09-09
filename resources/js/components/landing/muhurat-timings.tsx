@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Period {
     starts_at: string;
@@ -13,19 +13,19 @@ interface MuhuratTimingsProps {
 
 const periods = [
     {
-        label: "Rahu Kalam",
-        data: "rahuKalam" as const,
-        description: "Avoid new beginnings",
+        label: 'Rahu Kalam',
+        data: 'rahuKalam' as const,
+        description: 'Avoid new beginnings',
     },
     {
-        label: "Yamaganda",
-        data: "yamaganda" as const,
-        description: "Inauspicious for important tasks",
+        label: 'Yamaganda',
+        data: 'yamaganda' as const,
+        description: 'Inauspicious for important tasks',
     },
     {
-        label: "Gulika Kalam",
-        data: "gulikaKalam" as const,
-        description: "Unfavorable for auspicious work",
+        label: 'Gulika Kalam',
+        data: 'gulikaKalam' as const,
+        description: 'Unfavorable for auspicious work',
     },
 ];
 

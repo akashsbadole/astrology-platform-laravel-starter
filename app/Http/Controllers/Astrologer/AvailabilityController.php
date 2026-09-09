@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Astrologer;
 
 use App\Http\Controllers\Controller;
 use App\Models\AstrologerAvailability;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -14,7 +15,7 @@ class AvailabilityController extends Controller
 {
     private const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    public function index(Request $request): Response
+    public function index(Request $request): Response|JsonResponse
     {
         $slots = $request->user()
             ->availabilities()
@@ -29,13 +30,16 @@ class AvailabilityController extends Controller
                 'end_time' => substr($slot->end_time, 0, 5),
             ]);
 
-        return Inertia::render('astrologer/availability', [
-            'slots' => $slots,
-            'days' => self::DAYS,
-        ]);
+        $payload = ['slots' => $slots, 'days' => self::DAYS];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('astrologer/availability', $payload);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'day_of_week' => ['required', 'integer', 'between:0,6'],
@@ -52,21 +56,31 @@ class AvailabilityController extends Controller
             ->exists();
 
         if ($overlaps) {
-            throw ValidationException::withMessages([
-                'start_time' => 'This overlaps with an existing slot on that day.',
-            ]);
+            $msg = 'This overlaps with an existing slot on that day.';
+            if ($request->wantsJson()) {
+                return response()->json(['message' => $msg], 422);
+            }
+            throw ValidationException::withMessages(['start_time' => $msg]);
         }
 
-        $user->availabilities()->create($validated);
+        $slot = $user->availabilities()->create($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json(['id' => $slot->id, 'day_label' => self::DAYS[$slot->day_of_week], 'start_time' => $slot->start_time, 'end_time' => $slot->end_time]);
+        }
 
         return back()->with('status', 'availability-added');
     }
 
-    public function destroy(Request $request, AstrologerAvailability $availability): RedirectResponse
+    public function destroy(Request $request, AstrologerAvailability $availability): RedirectResponse|JsonResponse
     {
         abort_unless($availability->user_id === $request->user()->id, 403);
 
         $availability->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
 
         return back()->with('status', 'availability-removed');
     }

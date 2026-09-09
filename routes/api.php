@@ -23,7 +23,7 @@ Route::group(['middleware' => ['guest']], function () {
     Route::post('auth/otp/verify', [\App\Http\Controllers\Auth\OtpController::class, 'verify'])->name('api.otp.verify');
 
     Route::post('auth/social/{provider}', [\App\Http\Controllers\Auth\SocialAuthController::class, 'redirect'])->name('api.social.redirect');
-    Route::get('auth/social/{provider/callback}', [\App\Http\Controllers\Auth\SocialAuthController::class, 'callback'])->name('api.social.callback');
+    Route::get('auth/social/{provider}/callback', [\App\Http\Controllers\Auth\SocialAuthController::class, 'callback'])->name('api.social.callback');
 });
 
 /*

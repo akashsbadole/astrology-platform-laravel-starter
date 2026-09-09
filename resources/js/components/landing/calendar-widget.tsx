@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface CalendarWidgetProps {
     todayFormatted: string;
@@ -23,20 +23,20 @@ export default function CalendarWidget({
     sunset,
 }: CalendarWidgetProps) {
     const items = [
-        { label: "Moon Rashi", value: moonRashi, icon: "🌙" },
-        { label: "Lunar Phase", value: lunarPhase, icon: "🌕" },
+        { label: 'Moon Rashi', value: moonRashi, icon: '🌙' },
+        { label: 'Lunar Phase', value: lunarPhase, icon: '🌕' },
         {
-            label: "Tithi",
+            label: 'Tithi',
             value: `${tithi.name} (${tithi.paksha} #${tithi.number})`,
-            icon: "📅",
+            icon: '📅',
         },
         {
-            label: "Nakshatra",
+            label: 'Nakshatra',
             value: `${nakshatra.name} Pada ${nakshatra.pada}`,
-            icon: "⭐",
+            icon: '⭐',
         },
-        { label: "Sunrise", value: sunrise, icon: "🌅" },
-        { label: "Sunset", value: sunset, icon: "🌇" },
+        { label: 'Sunrise', value: sunrise, icon: '🌅' },
+        { label: 'Sunset', value: sunset, icon: '🌇' },
     ];
 
     return (

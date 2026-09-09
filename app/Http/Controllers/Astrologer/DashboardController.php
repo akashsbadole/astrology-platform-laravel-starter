@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Astrologer;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request): Response|JsonResponse
     {
         $profile = $request->user()->astrologerProfile;
 
-        return Inertia::render('astrologer/dashboard', [
+        $payload = [
             'profile' => $profile ? [
                 'status' => $profile->status,
                 'rejection_reason' => $profile->rejection_reason,
@@ -27,6 +28,12 @@ class DashboardController extends Controller
                 'rating_avg' => (float) $profile->rating_avg,
                 'rating_count' => $profile->rating_count,
             ] : null,
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('astrologer/dashboard', $payload);
     }
 }

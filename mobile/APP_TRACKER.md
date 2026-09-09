@@ -367,7 +367,7 @@ astrology-platform-laravel-starter/
 | M1  | Backend JSON + Sanctum      | OTP login returns token; key endpoints JSON                                            | ✅  |
 | M2  | Auth + public screens       | Login → Home → Browse → Astrologer profile                                             | ✅  |
 | M3  | Customer core               | Wallet + consult chat + bookings                                                       | ✅  |
-| M4  | Shop + pooja + support      | Full customer feature set (§6)                                                         | ✅   |
+| M4  | Shop + pooja + support      | Full customer feature set (§6)                                                         | ✅  |
 | M5  | Astrologer app              | §6 Astrologer set                                                                      |
 | M6  | Admin app                   | §6 Admin set                                                                           |
 | M7  | Realtime + payments + calls | §7.2–7.6                                                                               |

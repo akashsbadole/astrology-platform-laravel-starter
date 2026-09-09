@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AstrologerProfile;
 use App\Notifications\AstrologerApplicationApproved;
 use App\Notifications\AstrologerApplicationRejected;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,7 +14,7 @@ use Inertia\Response;
 
 class AstrologerController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|JsonResponse
     {
         $status = $request->string('status')->toString() ?: null;
 
@@ -33,13 +34,16 @@ class AstrologerController extends Controller
                 'created_at' => $profile->created_at?->diffForHumans(),
             ]);
 
-        return Inertia::render('admin/astrologers/index', [
-            'astrologers' => $astrologers,
-            'filters' => ['status' => $status],
-        ]);
+        $payload = ['astrologers' => $astrologers, 'filters' => ['status' => $status]];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('admin/astrologers/index', $payload);
     }
 
-    public function approve(AstrologerProfile $astrologer): RedirectResponse
+    public function approve(AstrologerProfile $astrologer): RedirectResponse|JsonResponse
     {
         $astrologer->update([
             'status' => 'approved',
@@ -50,10 +54,14 @@ class AstrologerController extends Controller
         $astrologer->loadMissing('user');
         $astrologer->user->notify(new AstrologerApplicationApproved);
 
+        if (request()->wantsJson()) {
+            return response()->json(['ok' => true, 'status' => 'approved']);
+        }
+
         return back()->with('status', 'astrologer-approved');
     }
 
-    public function reject(Request $request, AstrologerProfile $astrologer): RedirectResponse
+    public function reject(Request $request, AstrologerProfile $astrologer): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'rejection_reason' => ['required', 'string', 'max:500'],
@@ -67,6 +75,10 @@ class AstrologerController extends Controller
 
         $astrologer->loadMissing('user');
         $astrologer->user->notify(new AstrologerApplicationRejected($validated['rejection_reason']));
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'status' => 'rejected']);
+        }
 
         return back()->with('status', 'astrologer-rejected');
     }
