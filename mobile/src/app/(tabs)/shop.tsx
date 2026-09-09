@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-    Alert,
     FlatList,
     Pressable,
     StyleSheet,
@@ -19,12 +18,11 @@ export default function ShopScreen() {
     const router = useRouter();
     const [cartCount, setCartCount] = useState(0);
 
-    const addToCart = (name: string) => {
+    const openProduct = (slug: string) => router.push(`/shop/${slug}`);
+
+    const addToCart = (productId: number) => {
         setCartCount((c) => c + 1);
-        Alert.alert(
-            'Added to cart 🛒',
-            `${name} added.\nCart & checkout screens arrive with tracker §4.2.`,
-        );
+        router.push({ pathname: '/cart', params: { product_id: String(productId) } });
     };
 
     return (
@@ -65,46 +63,51 @@ export default function ShopScreen() {
                 }}
                 showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => (
-                    <Card style={styles.product}>
-                        <View style={styles.emojiWrap}>
-                            <Text style={{ fontSize: 40 }}>{item.emoji}</Text>
-                            {item.tag ? (
-                                <Badge
-                                    label={item.tag}
-                                    tone="gold"
-                                    style={styles.tag}
-                                />
-                            ) : null}
-                        </View>
-                        <Text
-                            style={[typography.small, { color: colors.text }]}
-                            numberOfLines={2}
-                        >
-                            {item.name}
-                        </Text>
-                        <View style={styles.priceRow}>
+                    <Pressable
+                        onPress={() => openProduct(item.slug)}
+                        style={styles.cardWrap}
+                    >
+                        <Card style={styles.product}>
+                            <View style={styles.emojiWrap}>
+                                <Text style={{ fontSize: 40 }}>{item.emoji}</Text>
+                                {item.tag ? (
+                                    <Badge
+                                        label={item.tag}
+                                        tone="gold"
+                                        style={styles.tag}
+                                    />
+                                ) : null}
+                            </View>
                             <Text
-                                style={[
-                                    typography.subtitle,
-                                    { color: colors.gold },
+                                style={[typography.small, { color: colors.text }]}
+                                numberOfLines={2}
+                            >
+                                {item.name}
+                            </Text>
+                            <View style={styles.priceRow}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.gold },
+                                    ]}
+                                >
+                                    {inr(item.price)}
+                                </Text>
+                                {item.mrp ? (
+                                    <Text style={styles.mrp}>{inr(item.mrp)}</Text>
+                                ) : null}
+                            </View>
+                            <Pressable
+                                onPress={() => addToCart(item.id)}
+                                style={({ pressed }) => [
+                                    styles.addBtn,
+                                    { opacity: pressed ? 0.8 : 1 },
                                 ]}
                             >
-                                {inr(item.price)}
-                            </Text>
-                            {item.mrp ? (
-                                <Text style={styles.mrp}>{inr(item.mrp)}</Text>
-                            ) : null}
-                        </View>
-                        <Pressable
-                            onPress={() => addToCart(item.name)}
-                            style={({ pressed }) => [
-                                styles.addBtn,
-                                { opacity: pressed ? 0.8 : 1 },
-                            ]}
-                        >
-                            <Text style={styles.addText}>Add</Text>
-                        </Pressable>
-                    </Card>
+                                <Text style={styles.addText}>Add</Text>
+                            </Pressable>
+                        </Card>
+                    </Pressable>
                 )}
             />
         </Screen>
@@ -125,6 +128,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 14,
         paddingVertical: 8,
     },
+    cardWrap: { flex: 1 },
     product: { flex: 1, gap: 8 },
     emojiWrap: {
         alignItems: 'center',
