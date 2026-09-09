@@ -16,11 +16,10 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class OtpController extends Controller
 {
-    public function __construct(
+        public function __construct(
         private readonly OtpService $otps,
         private readonly SmsService $sms,
     ) {}
@@ -30,7 +29,7 @@ class OtpController extends Controller
         return Inertia::render('auth/otp-request');
     }
 
-    public function request(Request $request): RedirectResponse
+    public function request(Request $request): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'identifier' => ['required', 'string', 'max:100'],
@@ -39,6 +38,9 @@ class OtpController extends Controller
         $identifier = strtolower(trim($validated['identifier']));
 
         if ($this->otps->tooManyAttempts($identifier)) {
+            if ($request->wantsJson()) {
+                return response()->json(['message' => 'Too many attempts. Please try again in 10 minutes.'], 429);
+            }
             return back()->withErrors(['identifier' => 'Too many attempts. Please try again in 10 minutes.']);
         }
 
@@ -55,6 +57,15 @@ class OtpController extends Controller
                 // No account yet — still pretend success, code shown in logs for dev.
                 Log::info('[OTP] email='.$identifier.' code='.$code);
             }
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => $isPhone ? 'OTP sent via SMS.' : 'OTP sent via email.',
+                'identifier' => $identifier,
+                'channel' => $isPhone ? 'sms' : 'email',
+                'debug_code' => app()->isLocal() ? $code : null,
+            ]);
         }
 
         return redirect()->route('otp.verify.show', ['identifier' => $identifier]);
@@ -77,6 +88,9 @@ class OtpController extends Controller
         $identifier = strtolower(trim($validated['identifier']));
 
         if (! $this->otps->verify($identifier, $validated['code'])) {
+            if ($request->wantsJson()) {
+                return response()->json(['message' => 'Invalid or expired code.'], 422);
+            }
             return back()->withErrors(['code' => 'Invalid or expired code.']);
         }
 
@@ -97,7 +111,8 @@ class OtpController extends Controller
                 'phone_verified_at' => now(),
             ]);
             $user->ensureReferralCode();
-            $referrals->attach($user, $request->session()->get('referral_code'));
+            $refCode = $request->hasSession() ? $request->session()->get('referral_code') : null;
+            $referrals->attach($user, $refCode);
         } elseif ($isPhone && ! $user->phone_verified_at) {
             $user->forceFill(['phone_verified_at' => now()])->saveQuietly();
         }

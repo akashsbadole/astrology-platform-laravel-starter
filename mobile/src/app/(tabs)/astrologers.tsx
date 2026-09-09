@@ -1,13 +1,14 @@
 import { Search } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import AstrologerCard from '@/components/AstrologerCard';
 import Chip from '@/components/ui/Chip';
 import EmptyState from '@/components/ui/EmptyState';
 import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
-import { mockAstrologers } from '@/lib/mock';
+import api, { apiErrorMessage } from '@/lib/api';
+import type { Astrologer } from '@/lib/mock';
 
 const FILTERS = ['All', 'Online', 'Vedic', 'Tarot', 'Love', 'Career'] as const;
 const SORTS = ['Rating', 'Price'] as const;
@@ -17,16 +18,31 @@ export default function AstrologersScreen() {
     const [query, setQuery] = useState('');
     const [filter, setFilter] = useState<(typeof FILTERS)[number]>('All');
     const [sort, setSort] = useState<(typeof SORTS)[number]>('Rating');
+    const [astrologers, setAstrologers] = useState<Astrologer[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadAstrologers();
+    }, [filter]);
+
+    const loadAstrologers = async () => {
+        setLoading(true);
+        try {
+            const params: Record<string, unknown> = { per_page: 50 };
+            if (filter === 'Online') params.online = 1;
+            else if (filter !== 'All') params.specialization = filter;
+
+            const { data } = await api.get('/astrologers', { params });
+            setAstrologers(data?.data ?? []);
+        } catch (e) {
+            console.warn('Astrologers load:', apiErrorMessage(e));
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const results = useMemo(() => {
-        let list = [...mockAstrologers];
-        if (filter === 'Online') list = list.filter((a) => a.is_online);
-        else if (filter !== 'All')
-            list = list.filter((a) =>
-                a.specializations.some(
-                    (s) => s.toLowerCase() === filter.toLowerCase(),
-                ),
-            );
+        let list = [...astrologers];
         if (query.trim())
             list = list.filter((a) =>
                 a.name.toLowerCase().includes(query.trim().toLowerCase()),
@@ -37,7 +53,7 @@ export default function AstrologersScreen() {
                 : (a.rate_chat_per_min ?? 0) - (b.rate_chat_per_min ?? 0),
         );
         return list;
-    }, [query, filter, sort]);
+    }, [query, filter, sort, astrologers]);
 
     return (
         <Screen>

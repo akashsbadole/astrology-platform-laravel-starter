@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowDownLeft, ArrowUpRight, Plus } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -14,14 +14,29 @@ import {
 } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 import { inr, timeAgo } from '@/lib/format';
-import { mockTransactions, type WalletTransaction } from '@/lib/mock';
+import type { WalletTransaction } from '@/lib/mock';
 
 const AMOUNTS = [100, 500, 1000, 2000];
 
 export default function WalletScreen() {
     const [amount, setAmount] = useState<number>(500);
     const [loading, setLoading] = useState(false);
-    const [txns] = useState<WalletTransaction[]>(mockTransactions);
+    const [txns, setTxns] = useState<WalletTransaction[]>([]);
+    const [balance, setBalance] = useState<number>(0);
+
+    useEffect(() => {
+        loadWallet();
+    }, []);
+
+    const loadWallet = async () => {
+        try {
+            const { data } = await api.get('/wallet');
+            setBalance(data?.balance ?? 0);
+            setTxns(data?.transactions ?? []);
+        } catch (e) {
+            console.warn('Wallet load:', apiErrorMessage(e));
+        }
+    };
 
     const recharge = async () => {
         setLoading(true);
@@ -57,7 +72,7 @@ export default function WalletScreen() {
                 style={[styles.hero, shadowCard]}
             >
                 <Text style={styles.heroLabel}>AVAILABLE BALANCE</Text>
-                <Text style={styles.heroAmount}>₹850.00</Text>
+                <Text style={styles.heroAmount}>{inr(balance)}</Text>
                 <Text style={styles.heroHint}>
                     Per-minute billing · refunds to wallet
                 </Text>

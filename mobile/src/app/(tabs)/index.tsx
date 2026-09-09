@@ -19,6 +19,7 @@ import {
     Text,
     View,
 } from 'react-native';
+import { useEffect, useState } from 'react';
 import AstrologerCard from '@/components/AstrologerCard';
 import Screen from '@/components/ui/Screen';
 import {
@@ -28,7 +29,10 @@ import {
     shadowCard,
     typography,
 } from '@/constants/theme';
-import { mockAstrologers } from '@/lib/mock';
+import api, { apiErrorMessage } from '@/lib/api';
+import { inr } from '@/lib/format';
+import { useAuth } from '@/contexts/AuthContext';
+import type { Astrologer } from '@/lib/mock';
 
 const QUICK_ACTIONS = [
     { icon: MessageCircle, label: 'Chat', to: '/astrologers' },
@@ -43,7 +47,36 @@ const QUICK_ACTIONS = [
 
 export default function HomeScreen() {
     const router = useRouter();
-    const featured = mockAstrologers.filter((a) => a.is_online);
+    const { user } = useAuth();
+    const [featured, setFeatured] = useState<Astrologer[]>([]);
+    const [balance, setBalance] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadHome();
+    }, []);
+
+    const loadHome = async () => {
+        try {
+            const [astroRes, walletRes] = await Promise.allSettled([
+                api.get('/astrologers', {
+                    params: { online: 1, per_page: 5 },
+                }),
+                api.get('/wallet'),
+            ]);
+
+            if (astroRes.status === 'fulfilled') {
+                setFeatured(astroRes.value.data?.data ?? []);
+            }
+            if (walletRes.status === 'fulfilled') {
+                setBalance(walletRes.value.data?.balance ?? 0);
+            }
+        } catch (e) {
+            console.warn('Home load:', apiErrorMessage(e));
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <Screen padded={false}>
@@ -53,7 +86,10 @@ export default function HomeScreen() {
             >
                 <View style={styles.greetingRow}>
                     <View>
-                        <Text style={styles.hi}>Namaste 🙏</Text>
+                        <Text style={styles.hi}>
+                            Namaste 🙏
+                            {user ? `, ${user.name.split(' ')[0]}` : ''}
+                        </Text>
                         <Text
                             style={[
                                 typography.small,
@@ -80,7 +116,13 @@ export default function HomeScreen() {
                         style={[styles.balanceCard, shadowCard]}
                     >
                         <Text style={styles.balanceLabel}>WALLET BALANCE</Text>
-                        <Text style={styles.balanceAmount}>₹850.00</Text>
+                        <Text style={styles.balanceAmount}>
+                            {balance !== null
+                                ? inr(balance)
+                                : loading
+                                  ? 'Loading…'
+                                  : inr(0)}
+                        </Text>
                         <Text style={styles.balanceHint}>
                             Tap to recharge · first consult gets 5 min free
                         </Text>
@@ -136,23 +178,39 @@ export default function HomeScreen() {
                         <Text style={styles.seeAll}>See all</Text>
                     </Pressable>
                 </View>
-                <FlatList
-                    horizontal
-                    data={featured}
-                    keyExtractor={(a) => String(a.id)}
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 12, paddingRight: 16 }}
-                    renderItem={({ item }) => (
-                        <View style={{ width: 260 }}>
-                            <AstrologerCard
-                                astrologer={item}
-                                onPress={() =>
-                                    router.push(`/astrologer/${item.id}`)
-                                }
-                            />
-                        </View>
-                    )}
-                />
+                {featured.length > 0 ? (
+                    <FlatList
+                        horizontal
+                        data={featured}
+                        keyExtractor={(a) => String(a.id)}
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{
+                            gap: 12,
+                            paddingRight: 16,
+                        }}
+                        renderItem={({ item }) => (
+                            <View style={{ width: 260 }}>
+                                <AstrologerCard
+                                    astrologer={item}
+                                    onPress={() =>
+                                        router.push(`/astrologer/${item.id}`)
+                                    }
+                                />
+                            </View>
+                        )}
+                    />
+                ) : (
+                    <Text
+                        style={[
+                            typography.small,
+                            { color: colors.textFaint, paddingVertical: 8 },
+                        ]}
+                    >
+                        {loading
+                            ? 'Loading featured astrologers…'
+                            : 'No astrologers online right now.'}
+                    </Text>
+                )}
             </ScrollView>
         </Screen>
     );

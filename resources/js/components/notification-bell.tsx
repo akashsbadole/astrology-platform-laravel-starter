@@ -6,17 +6,20 @@ import { Button } from '@/components/ui/button';
 
 export default function NotificationBell() {
     const { auth, unreadNotifications } = usePage<{
-        auth: { user: { id: number } };
+        auth: { user: { id: number } | null };
         unreadNotifications?: number;
     }>().props;
 
     const unread = unreadNotifications ?? 0;
 
+    if (!auth.user) {
+        return null;
+    }
+
     useEcho(
         `App.Models.User.${auth.user.id}`,
         'NotificationSent',
         () => {
-            // Reload shared unread count without full navigation flicker.
             window.dispatchEvent(new CustomEvent('notification-received'));
         },
         [auth.user.id],

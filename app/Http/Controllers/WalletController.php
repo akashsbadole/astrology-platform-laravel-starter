@@ -58,13 +58,27 @@ class WalletController extends Controller
         return response()->json(['order_id' => $order['id'], 'amount' => $order['amount'], 'currency' => $order['currency'], 'key_id' => config('services.razorpay.key_id'), 'discount_paise' => $discount]);
     }
 
-    public function verify(Request $request, WalletService $wallets): RedirectResponse
+        public function verify(Request $request, WalletService $wallets): RedirectResponse|JsonResponse
     {
         $v = $request->validate(['razorpay_order_id' => 'required|string', 'razorpay_payment_id' => 'required|string', 'razorpay_signature' => 'required|string', 'amount' => 'required|numeric|min:1']);
         $ok = app(RazorpayService::class)->verifySignature($v['razorpay_order_id'], $v['razorpay_payment_id'], $v['razorpay_signature']);
         abort_unless($ok, 422, 'Payment verification failed.');
         $paise = (int) round((float) $v['amount'] * 100);
-        $wallets->credit($request->user(), $paise, 'recharge-'.$v['razorpay_payment_id'], null, 'credit', ['order' => $v['razorpay_order_id']]);
+        $txn = $wallets->credit($request->user(), $paise, 'recharge-'.$v['razorpay_payment_id'], null, 'credit', ['order' => $v['razorpay_order_id']]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'ok' => true,
+                'balance' => $wallets->balancePaise($request->user()) / 100,
+                'transaction' => [
+                    'id' => $txn->id,
+                    'type' => $txn->type,
+                    'amount' => $txn->amount_paise / 100,
+                    'balance_after' => $txn->balance_after_paise / 100,
+                    'created_at' => $txn->created_at->toIso8601String(),
+                ],
+            ]);
+        }
 
         return redirect()->route('wallet.index')->with('status', 'Wallet recharged ₹'.number_format($v['amount'], 2));
     }

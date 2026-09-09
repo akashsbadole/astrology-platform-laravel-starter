@@ -112,7 +112,7 @@ export function AppSidebar() {
         },
     ];
 
-    if (auth.user.role === 'customer') {
+    if (auth.user?.role === 'customer') {
         mainNavItems.push(
             {
                 title: 'Find astrologers',
@@ -147,7 +147,7 @@ export function AppSidebar() {
         );
     }
 
-    if (auth.user.role === 'astrologer') {
+    if (auth.user?.role === 'astrologer') {
         mainNavItems.push(
             {
                 title: 'My profile',
@@ -167,7 +167,7 @@ export function AppSidebar() {
         );
     }
 
-    if (auth.user.role === 'admin') {
+    if (auth.user?.role === 'admin') {
         mainNavItems.push(
             {
                 title: 'Astrologers',

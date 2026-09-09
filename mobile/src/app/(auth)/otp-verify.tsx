@@ -6,10 +6,12 @@ import OtpInput from '@/components/ui/OtpInput';
 import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
-import { setSession, type SessionUser } from '@/lib/session';
+import { useAuth } from '@/contexts/AuthContext';
+import type { SessionUser } from '@/lib/session';
 
 export default function OtpVerifyScreen() {
     const router = useRouter();
+    const { login } = useAuth();
     const params = useLocalSearchParams<{ identifier?: string }>();
     const identifier = params.identifier ?? '';
     const [code, setCode] = useState('');
@@ -23,41 +25,32 @@ export default function OtpVerifyScreen() {
     }, [seconds]);
 
     const finishLogin = async (token: string, user: SessionUser) => {
-        await setSession(token, user);
-        router.replace('/');
+        await login(token, user);
+        router.replace('/(tabs)/');
     };
 
     const verify = async () => {
+        if (code.replace(/\s/g, '').length !== 6) return;
         setLoading(true);
         try {
-            // Tracker §3.1/§8.2: POST /auth/otp/verify → { token, user } once Sanctum lands.
             const { data } = await api.post('/auth/otp/verify', {
                 identifier,
                 code: code.trim(),
             });
-            await finishLogin(
-                data.token ?? 'session',
-                data.user ?? { id: 0, name: 'You', role: 'customer' },
-            );
+
+            await finishLogin(data.token, data.user);
         } catch (e) {
-            Alert.alert(
-                'Demo mode',
-                `${apiErrorMessage(e)}\n\nSimulating a successful login for now (tracker §8.2).`,
-                [
-                    {
-                        text: 'Enter app',
-                        onPress: () =>
-                            finishLogin('demo-token', {
-                                id: 0,
-                                name: 'You',
-                                role: 'customer',
-                            }),
-                    },
-                ],
-            );
+            Alert.alert('Verification failed', apiErrorMessage(e), [
+                { text: 'OK' },
+            ]);
         } finally {
             setLoading(false);
         }
+    };
+
+    const resend = () => {
+        router.back();
+        setSeconds(30);
     };
 
     return (
@@ -96,7 +89,7 @@ export default function OtpVerifyScreen() {
             />
 
             <Pressable
-                onPress={() => setSeconds(30)}
+                onPress={resend}
                 disabled={seconds > 0}
                 style={{ alignItems: 'center', marginTop: 8 }}
             >

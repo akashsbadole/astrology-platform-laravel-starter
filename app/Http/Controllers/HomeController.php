@@ -3,60 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Services\Astrology\PanchangCalculator;
 use App\Services\Astrology\PanchangReference;
 use App\Services\Astrology\VedicReference;
-use App\Services\GeocodingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class HomeController extends Controller
 {
-    public function index(Request $request, PanchangCalculator $calculator, GeocodingService $geocoder): Response
+    public function index(Request $request): Response
     {
         $today = Carbon::today();
-        $place = 'New Delhi, India';
         $utcOffset = 5.5;
-        $latitude = null;
-        $longitude = null;
 
-        if ($latitude === null || $longitude === null) {
-            $geocoded = $geocoder->geocode($place);
+        $resolvedPlaceName = 'New Delhi, India';
 
-            if (! $geocoded) {
-                throw ValidationException::withMessages([
-                    'place' => 'Could not resolve location.',
-                ]);
-            }
+        $demoPayload = $this->demoPayload($today);
 
-            $latitude = $geocoded['latitude'];
-            $longitude = $geocoded['longitude'];
-            $resolvedPlaceName = $geocoded['display_name'];
-        }
-
-        $result = $calculator->calculate(
-            year: (int) $today->format('Y'),
-            month: (int) $today->format('m'),
-            day: (int) $today->format('d'),
-            utcOffsetHours: $utcOffset,
-            latitude: $latitude,
-            longitude: $longitude,
-        );
-
-        $sunrise = Carbon::parse($result['sunrise'])->addHours($utcOffset);
-        $sunset = Carbon::parse($result['sunset'])->addHours($utcOffset);
+        $sunrise = Carbon::parse($demoPayload['sunrise'])->addHours($utcOffset);
+        $sunset = Carbon::parse($demoPayload['sunset'])->addHours($utcOffset);
         $daylightSeconds = $sunset->diffInSeconds($sunrise);
 
-        $tithi = PanchangReference::tithi($result['sun']['tropical'], $result['moon']['tropical']);
-        $nakshatraName = VedicReference::nakshatraName($result['moon']['sidereal']);
-        $nakshatraPada = VedicReference::nakshatraPada($result['moon']['sidereal']);
-        $yoga = PanchangReference::yoga($result['sun']['sidereal'], $result['moon']['sidereal']);
-        $karana = PanchangReference::karana($result['sun']['tropical'], $result['moon']['tropical']);
+        $tithi = PanchangReference::tithi($demoPayload['sun']['tropical'], $demoPayload['moon']['tropical']);
+        $nakshatraName = VedicReference::nakshatraName($demoPayload['moon']['sidereal']);
+        $nakshatraPada = VedicReference::nakshatraPada($demoPayload['moon']['sidereal']);
+        $yoga = PanchangReference::yoga($demoPayload['sun']['sidereal'], $demoPayload['moon']['sidereal']);
+        $karana = PanchangReference::karana($demoPayload['sun']['tropical'], $demoPayload['moon']['tropical']);
 
-        $weekdayIndex = (int) $result['weekday'];
+        $weekdayIndex = (int) $demoPayload['weekday'];
         $weekdayName = PanchangReference::WEEKDAYS[$weekdayIndex];
 
         $periods = PanchangReference::inauspiciousPeriods($weekdayIndex);
@@ -67,11 +42,11 @@ class HomeController extends Controller
             ];
         };
 
-        $moonSiderealLongitude = $result['moon']['sidereal'];
+        $moonSiderealLongitude = $demoPayload['moon']['sidereal'];
         $moonRashi = VedicReference::rashiName($moonSiderealLongitude);
 
-        $moonTropical = $result['moon']['tropical'];
-        $sunTropical = $result['sun']['tropical'];
+        $moonTropical = $demoPayload['moon']['tropical'];
+        $sunTropical = $demoPayload['sun']['tropical'];
         $moonPhaseFraction = (self::normalize($moonTropical - $sunTropical) % 360) / 360;
         $lunarPhase = match (true) {
             $moonPhaseFraction < 0.03 || $moonPhaseFraction > 0.97 => 'New Moon',
@@ -99,7 +74,7 @@ class HomeController extends Controller
             ->latest('published_at')
             ->take(3)
             ->get()
-            ->map(fn (Post $p) => [
+            ->map(fn(Post $p) => [
                 'id' => $p->id,
                 'slug' => $p->slug,
                 'title' => $p->title,
@@ -112,7 +87,7 @@ class HomeController extends Controller
         return Inertia::render('welcome', [
             'today' => $today->toDateString(),
             'todayFormatted' => $today->format('l, d F Y'),
-            'place' => $resolvedPlaceName ?? $place,
+            'place' => $resolvedPlaceName,
             'weekday' => $weekdayName,
             'sunrise' => $sunrise->format('H:i'),
             'sunset' => $sunset->format('H:i'),
@@ -143,6 +118,7 @@ class HomeController extends Controller
             'festivals' => $festivals,
             'regionalHolidays' => $regionalHolidays,
             'blogs' => $blogs,
+            'panchangNote' => 'Full Panchang is available on the Panchang page.',
         ]);
     }
 
@@ -151,6 +127,25 @@ class HomeController extends Controller
         $result = fmod($degrees, 360);
 
         return $result < 0 ? $result + 360 : $result;
+    }
+
+    private function demoPayload(Carbon $today): array
+    {
+        $dayOfYear = (int) $today->diffInDays(Carbon::create($today->year, 1, 1)) + 1;
+
+        return [
+            'weekday' => (int) $today->dayOfWeek,
+            'sunrise' => $today->copy()->setTime(6, 12)->toIso8601String(),
+            'sunset' => $today->copy()->setTime(18, 24)->toIso8601String(),
+            'sun' => [
+                'tropical' => (($dayOfYear / 365.25) * 360 + 280) % 360,
+                'sidereal' => (($dayOfYear / 365.25) * 360 + 260) % 360,
+            ],
+            'moon' => [
+                'tropical' => fmod((($dayOfYear / 29.530588853) * 360) + 120, 360),
+                'sidereal' => fmod((($dayOfYear / 27.321661) * 360) + 95, 360),
+            ],
+        ];
     }
 
     /** @return array<int, array{name: string, date: string, description: string}> */
@@ -193,7 +188,7 @@ class HomeController extends Controller
             ];
         }
 
-        usort($upcoming, fn ($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+        usort($upcoming, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
 
         return array_slice($upcoming, 0, 8);
     }

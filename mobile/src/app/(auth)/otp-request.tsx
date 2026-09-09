@@ -23,34 +23,37 @@ export default function OtpRequestScreen() {
     const valid = identifier.trim().length >= 6;
 
     const sendOtp = async () => {
+        if (!valid) return;
         setLoading(true);
         try {
-            // Tracker §3.1: POST /auth/otp/request (JSON branch pending — §8.2).
-            await api.post('/auth/otp/request', {
+            const { data } = await api.post('/auth/otp/request', {
                 identifier: identifier.trim(),
             });
-            router.push({
-                pathname: '/otp-verify',
-                params: { identifier: identifier.trim() },
-            });
+
+            // In local mode the backend returns a debug_code for testing.
+            if (data?.debug_code) {
+                Alert.alert(
+                    'OTP code (dev only)',
+                    `Your code is ${data.debug_code} (expires in 5 min).\n\nIn production this arrives via SMS/email.`,
+                    [{ text: 'OK', onPress: () => navigateToVerify() }],
+                );
+            } else {
+                navigateToVerify();
+            }
         } catch (e) {
-            Alert.alert(
-                'Demo mode',
-                `${apiErrorMessage(e)}\n\nContinuing to verify screen anyway — backend token flow is tracked in §8.2.`,
-                [
-                    {
-                        text: 'Continue',
-                        onPress: () =>
-                            router.push({
-                                pathname: '/otp-verify',
-                                params: { identifier: identifier.trim() },
-                            }),
-                    },
-                ],
-            );
+            Alert.alert('Could not send code', apiErrorMessage(e), [
+                { text: 'Retry' },
+            ]);
         } finally {
             setLoading(false);
         }
+    };
+
+    const navigateToVerify = () => {
+        router.push({
+            pathname: '/otp-verify',
+            params: { identifier: identifier.trim() },
+        });
     };
 
     return (

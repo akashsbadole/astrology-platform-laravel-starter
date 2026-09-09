@@ -1,48 +1,52 @@
 import { Link } from '@inertiajs/react';
 import type { InertiaLinkProps } from '@inertiajs/react';
 import { cn } from '@/lib/utils';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-type Variant = 'primary' | 'secondary' | 'outline';
-type Size = 'sm' | 'md' | 'lg';
+const buttonVariants = cva(
+    'inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all duration-300 focus:ring-2 focus:ring-yellow-500/40 focus:ring-offset-2 focus:ring-offset-[#0a0a1a] focus:outline-none',
+    {
+        variants: {
+            variant: {
+                primary:
+                    'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 hover:shadow-orange-500/40',
+                secondary:
+                    'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/25 hover:from-purple-700 hover:to-indigo-700 hover:shadow-purple-500/40',
+                outline:
+                    'border border-white/20 bg-white/5 text-white hover:border-white/40 hover:bg-white/10',
+            },
+            size: {
+                sm: 'px-4 py-2 text-sm',
+                md: 'px-6 py-3 text-base',
+                lg: 'px-8 py-4 text-lg',
+            },
+        },
+        defaultVariants: {
+            variant: 'primary',
+            size: 'md',
+        },
+    },
+);
 
 interface CtaButtonProps {
     href: NonNullable<InertiaLinkProps['href']>;
     children: React.ReactNode;
-    variant?: Variant;
-    size?: Size;
+    variant?: VariantProps<typeof buttonVariants>['variant'];
+    size?: VariantProps<typeof buttonVariants>['size'];
     className?: string;
 }
-
-const variantClasses: Record<Variant, string> = {
-    primary:
-        'bg-vedic-primary text-white shadow-lg shadow-orange-500/20 hover:bg-vedic-primary/90',
-    secondary:
-        'bg-vedic-secondary text-white shadow-lg shadow-purple-500/20 hover:bg-vedic-secondary/90',
-    outline: 'border border-vedic-border text-vedic-fg hover:bg-vedic-muted',
-};
-
-const sizeClasses: Record<Size, string> = {
-    sm: 'rounded-full px-4 py-2 text-sm',
-    md: 'rounded-full px-6 py-3 text-base font-semibold',
-    lg: 'rounded-full px-8 py-4 text-lg font-bold',
-};
 
 export default function CtaButton({
     href,
     children,
-    variant = 'primary',
-    size = 'md',
+    variant,
+    size,
     className,
 }: CtaButtonProps) {
     return (
         <Link
             href={href}
-            className={cn(
-                'inline-flex items-center justify-center transition-all duration-300',
-                variantClasses[variant],
-                sizeClasses[size],
-                className,
-            )}
+            className={cn(buttonVariants({ variant, size, className }))}
         >
             {children}
         </Link>

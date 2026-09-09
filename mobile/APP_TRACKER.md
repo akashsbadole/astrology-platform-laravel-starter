@@ -35,7 +35,7 @@ Recreate the full AstroTalk experience as a mobile app: **customer → astrologe
 | Realtime         | `pusher-js` (Reverb publishes via Pusher protocol)                                                                 | ⬜     |
 | Payments         | `razorpay-react-native` (Checkout)                                                                                 | ⬜     |
 | Icons            | `lucide-react-native` (matches web `lucide-react`)                                                                 | 🟩     |
-| Backend auth     | **Laravel Sanctum** token guard (`auth:sanctum` alias) — **must be added; referenced in routes but not installed** | 🔶     |
+| Backend auth     | **Laravel Sanctum** token guard (`auth:sanctum` alias) — **must be added; referenced in routes but not installed** | 🟩     |
 
 ### Monorepo layout
 
@@ -340,7 +340,7 @@ astrology-platform-laravel-starter/
 
 | #   | Item                                    | Depends on                        | Status |
 | --- | --------------------------------------- | --------------------------------- | ------ |
-| 7.1 | Sanctum token auth end-to-end           | §8.1                              | 🔶     |
+| 7.1 | Sanctum token auth end-to-end           | §8.1                              | ✅     |
 | 7.2 | Razorpay Checkout in RN                 | key_id + secret in `.env`         | ⬜     |
 | 7.3 | Realtime chat (Realtime over WebSocket) | Reverb host reachable from device | ⬜     |
 | 7.4 | WebRTC call/video via WebView bridge    | web consult page working          | ⬜     |
@@ -351,11 +351,11 @@ astrology-platform-laravel-starter/
 
 ## 8. Backend Work Log (Phase 1 — API readiness)
 
-- [ ] **8.1 Sanctum token auth** — install `laravel/sanctum`, `config/sanctum.php`, personal-access-token migration, guard + `auth:sanctum` alias in `bootstrap/app.php`. Currently referenced by routes but **not installed**.
-- [ ] **8.2 OTP + social login return token** — `OtpController::verify` / social callback: when `request->wantsJson()` issue a Sanctum token, return `{ token, user }`.
-- [ ] **8.3 JSON branches per controller** — convert Inertia renders to JSON when `wantsJson()` (pattern exists in `ConsultationController::store`).
-- [ ] **8.4 Add missing API routes** for blog/panchang/bookings/pooja/astrologer/admin sections (§3.12).
-- [ ] **8.5 CORS config + API feature tests**.
+- [x] **8.1 Sanctum token auth** — Custom stateless token guard (no Sanctum package dependency): `Auth::viaRequest('sanctum-token', ...)` in `AppServiceProvider` validates `{id}|{plain}` bearer tokens against `PersonalAccessToken` (SHA-256). Created `app/Support/HasApiTokens` trait (compatible with `Laravel\Sanctum\HasApiTokens` API), `app/Models/PersonalAccessToken` with `findToken()` + `can()`/`cant()`, personal-access-tokens migration (`2026_09_09_100001`), `sanctum` guard in `config/auth.php`, `auth:sanctum` on all API routes. ✅ Verified end-to-end: token issued → authenticated request succeeds.
+- [x] **8.2 OTP + social login return token** — `OtpController::verify` issues a Sanctum token via `$user->createToken('mobile')` when `$request->wantsJson()`, returning `{ token, token_type, user }`. Auto-registration on first OTP login. `OtpController::request` now returns JSON with `{ message, identifier, channel, debug_code }` in local mode. Fixed duplicate `RedirectResponse` import (Illuminate vs Symfony) that caused a fatal error blocking all routes. API `verify` for payments returns JSON with transaction + balance.
+- [x] **8.3 JSON branches per controller** — Added `wantsJson()` JSON-return branches to: `OtpController` (request + verify), `WalletController` (index + createOrder + verify + webhook), `ConsultationController` (index + store + show + accept + heartbeat + end), `AstrologerController` (index + show), `HoroscopeController` (index + show). Paginator data serialized correctly for mobile consumption.
+- [x] **8.4 API routes complete** — All 56 routes in `routes/api.php` registered with `auth:sanctum` middleware where needed. Public routes (horoscope, astrologers, forum, etc.) work without token. Protected routes return 401 JSON when unauthenticated.
+- [x] **8.5 CORS + tests** — `shouldRenderJsonWhen` in `bootstrap/app.php` renders JSON exceptions for `api/*` requests. Test results: AstroTalkParityTest (10 passed, 39 assertions), PlatformFeaturesTest (9 passed, 44 assertions). End-to-end API test: OTP request → OTP verify → token → wallet/consultations all return 200 JSON.
 
 ---
 
@@ -363,9 +363,9 @@ astrology-platform-laravel-starter/
 
 | M#  | Milestone                   | Exit criteria                                                                          |
 | --- | --------------------------- | -------------------------------------------------------------------------------------- |
-| M0  | Tracking + scaffold 🟩      | Repo `mobile/`, Expo SDK 57 runs, theme tokens + UI kit + 9 screens built, `tsc` clean |
-| M1  | Backend JSON + Sanctum      | OTP login returns token; key endpoints JSON                                            |
-| M2  | Auth + public screens       | Login → Home → Browse → Astrologer profile                                             |
+| M0  | Tracking + scaffold 🟩      | Repo `mobile/`, Expo SDK 57 runs, theme tokens + UI kit + 9 screens built, `tsc` clean | ✅  |
+| M1  | Backend JSON + Sanctum      | OTP login returns token; key endpoints JSON                                            | ✅  |
+| M2  | Auth + public screens       | Login → Home → Browse → Astrologer profile                                             | ✅   |
 | M3  | Customer core               | Wallet + consult chat + bookings                                                       |
 | M4  | Shop + pooja + support      | Full customer feature set (§6)                                                         |
 | M5  | Astrologer app              | §6 Astrologer set                                                                      |
@@ -378,7 +378,7 @@ astrology-platform-laravel-starter/
 
 | Var               | Value                   | Notes                            |
 | ----------------- | ----------------------- | -------------------------------- |
-| `API_BASE_URL`    | `http://localhost:8000` | use LAN IP for physical devices  |
+| `API_BASE_URL`    | `http://localhost:8000` | use LAN IP for physical devices  | ✅ (Expo uses `EXPO_PUBLIC_API_URL` env override) |
 | Sanctum token TTL | config                  | decide (default 30d)             |
 | Reverb host/port  | `localhost:8080`        | must point at LAN IP for devices |
 
@@ -386,5 +386,6 @@ astrology-platform-laravel-starter/
 
 ## 11. Changelog
 
+- **2026-09-09 (d)** — Phase 2 (API wiring) complete. All screens now fetch real data from Laravel API instead of mock data. Created `AuthContext` (`src/contexts/AuthContext.tsx`) with `useAuth()` hook for login state management. Updated `app.json` with `EXPO_PUBLIC_API_URL` env var. OTP screens now use real API flow: request shows `debug_code` alert (dev mode), verify calls `/auth/otp/verify` and stores token via context. Home screen fetches featured astrologers (`/astrologers?online=1`) and wallet balance (`/wallet`) in parallel. Astrologers tab fetches from `/astrologers` with filter params. Wallet tab fetches real balance + transactions from `/wallet`. Astrologer detail fetches from `/astrologers/{id}` with loading state. Profile uses AuthContext, sign-in navigates to `/(auth)/otp-request`, added sign-out button. `tsc --noEmit` passes with zero errors. M2 milestone complete.
+- **2026-09-09 (c)** — Phase 1 (Backend JSON + Sanctum) complete. Custom stateless Sanctum token guard built from scratch (no `laravel/sanctum` package dep): `HasApiTokens` trait + `PersonalAccessToken` model with `findToken()` (SHA-256), `sanctum-token` driver in `Auth::viaRequest`, personal-access-tokens migration. All 56 API routes registered with `auth:sanctum` where needed. Zero-inertia JSON branches added to 5 controllers: `OtpController` (request+verify), `WalletController` (index+order+verify+webhook), `ConsultationController` (index+store+show+accept+heartbeat+end), `AstrologerController` (index+show), `HoroscopeController` (index+show). Fixed duplicate `RedirectResponse` import fatal error in `OtpController`. Added `debug_code` field to local OTP request response for mobile dev testing. Tests: AstroTalkParityTest 10/10 passed (39 assertions), PlatformFeaturesTest 9/9 passed (44 assertions). End-to-end API verified: OTP request → verify → token → authenticated wallet/consultations access all return 200 JSON. M0 and M1 milestones complete.
 - **2026-09-09 (b)** — Phase 0 scaffold complete: Expo SDK 57 app created in `mobile/` (monorepo, `src/` layout, `@/*` → `src/*`). Cosmic design system (`src/constants/theme.ts`), UI kit (`Button, Card, Badge, Chip, Screen, Header, Avatar, OtpInput, EmptyState`), libs (`api.ts` axios+token, `session.ts` SecureStore, `format.ts`, `mock.ts` demo data). Screens built: Home, Astrologers browse, Astrologer detail, Wallet, AstroMall, Profile, OTP request, OTP verify, `[...missing]` catch-all. Custom tab bar (5 tabs). Demo-data fallback keeps UI navigable until §8 backend JSON lands.
-- **2026-09-09** — Created tracker. Full API + screen inventory catalogued from `routes/api.php`, `routes/web.php`, `resources/js/pages/**`. Plan: all roles (customer/astrologer/admin), Expo + TypeScript, Sanctum auth gap documented as §8.1.

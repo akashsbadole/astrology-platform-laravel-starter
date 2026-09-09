@@ -7,7 +7,7 @@ import {
     Video,
 } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
     Alert,
     Pressable,
@@ -27,9 +27,9 @@ import {
     shadowCard,
     typography,
 } from '@/constants/theme';
-import api from '@/lib/api';
+import api, { apiErrorMessage } from '@/lib/api';
 import { inr } from '@/lib/format';
-import { mockAstrologers } from '@/lib/mock';
+import type { Astrologer } from '@/lib/mock';
 
 type Mode = 'chat' | 'call' | 'video';
 
@@ -49,40 +49,67 @@ const REVIEWS = [
 export default function AstrologerDetailScreen() {
     const router = useRouter();
     const { id } = useLocalSearchParams<{ id: string }>();
-    const astrologer = useMemo(
-        () =>
-            mockAstrologers.find((a) => String(a.id) === String(id)) ??
-            mockAstrologers[0],
-        [id],
-    );
+    const [astrologer, setAstrologer] = useState<Astrologer | null>(null);
+    const [loading, setLoading] = useState(true);
     const [mode, setMode] = useState<Mode>('chat');
     const [starting, setStarting] = useState(false);
 
+    useEffect(() => {
+        loadAstrologer();
+    }, [id]);
+
+    const loadAstrologer = async () => {
+        setLoading(true);
+        try {
+            const { data } = await api.get(`/astrologers/${id}`);
+            setAstrologer(data?.data ?? data ?? null);
+        } catch (e) {
+            console.warn('Astrologer detail:', apiErrorMessage(e));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const displayAstrologer = astrologer;
+
     const rates: Record<Mode, number | null> = {
-        chat: astrologer.rate_chat_per_min,
-        call: astrologer.rate_call_per_min,
-        video: astrologer.rate_video_per_min,
+        chat: displayAstrologer?.rate_chat_per_min ?? null,
+        call: displayAstrologer?.rate_call_per_min ?? null,
+        video: displayAstrologer?.rate_video_per_min ?? null,
     };
     const rate = rates[mode];
 
     const startConsult = async () => {
+        if (!displayAstrologer) return;
         setStarting(true);
         try {
-            // Tracker §3.3: POST /consultations { astrologer_id, type } → { id, status }
             const { data } = await api.post('/consultations', {
-                astrologer_id: astrologer.user_id,
+                astrologer_id: displayAstrologer.user_id,
                 type: mode,
             });
             router.push(`/consults/${data.id}`);
-        } catch {
-            Alert.alert(
-                'Consult (demo)',
-                `Would start a ${mode} session with ${astrologer.name} at ${rate ? `${inr(rate)}/min` : 'no charge'}.\nChat screen arrives with tracker §M3.`,
-            );
+        } catch (e) {
+            Alert.alert('Consultation', apiErrorMessage(e));
         } finally {
             setStarting(false);
         }
     };
+
+    if (loading || !displayAstrologer) {
+        return (
+            <Screen>
+                <View style={styles.loadingWrap}>
+                    <Text style={[typography.body, { color: colors.textDim }]}>
+                        {loading
+                            ? 'Loading astrologer…'
+                            : 'Astrologer not found.'}
+                    </Text>
+                </View>
+            </Screen>
+        );
+    }
+
+    const a = displayAstrologer;
 
     return (
         <Screen padded={false}>
@@ -222,7 +249,7 @@ function Part2({
     setMode,
     rates,
 }: {
-    astrologer: (typeof mockAstrologers)[number];
+    astrologer: Astrologer;
     mode: Mode;
     setMode: (m: Mode) => void;
     rates: Record<Mode, number | null>;
@@ -395,6 +422,12 @@ function Part4({
 }
 
 const styles = StyleSheet.create({
+    loadingWrap: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 32,
+    },
     hero: {
         paddingTop: 54,
         paddingBottom: 24,

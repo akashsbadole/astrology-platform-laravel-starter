@@ -44,6 +44,7 @@ type Props = {
     festivals: Array<{ name: string; date: string; description: string }>;
     regionalHolidays: Array<{ state: string; holidays: string[] }>;
     blogs: Blog[];
+    panchangNote?: string;
 };
 
 export default function Welcome() {
@@ -63,7 +64,7 @@ export default function Welcome() {
         regionalHolidays,
         blogs,
         inauspiciousPeriods,
-    } = usePage<Props>().props;
+    } = usePage().props as unknown as Props;
 
     const panchangItems = [
         {
@@ -83,47 +84,47 @@ export default function Welcome() {
     return (
         <>
             <Head title="AstroClone — Vedic Astrology, Kundli & Panchang" />
-            <div className="bg-vedic-bg text-vedic-fg min-h-screen">
+            <div className="min-h-screen bg-[#0a0a1a] text-white">
                 {/* Header */}
                 <header className="mx-auto flex max-w-7xl items-center justify-between p-4 sm:p-6">
-                    <p className="text-vedic-fg text-xl font-bold">
+                    <p className="text-2xl font-bold text-white">
                         🔮 AstroClone
                     </p>
                     <nav className="flex flex-wrap gap-2 text-sm">
                         <Link
                             href="/astrologers"
-                            className="text-vedic-fg hover:text-vedic-accent transition-colors"
+                            className="text-white/80 transition-colors hover:text-yellow-400"
                         >
                             Astrologers
                         </Link>
                         <Link
                             href="/horoscope"
-                            className="text-vedic-fg hover:text-vedic-accent transition-colors"
+                            className="text-white/80 transition-colors hover:text-yellow-400"
                         >
                             Horoscope
                         </Link>
                         <Link
                             href="/shop"
-                            className="text-vedic-fg hover:text-vedic-accent transition-colors"
+                            className="text-white/80 transition-colors hover:text-yellow-400"
                         >
                             AstroMall
                         </Link>
                         <Link
                             href="/live"
-                            className="text-vedic-fg hover:text-vedic-accent transition-colors"
+                            className="text-white/80 transition-colors hover:text-yellow-400"
                         >
                             Live
                         </Link>
                         <Link
                             href="/blog"
-                            className="text-vedic-fg hover:text-vedic-accent transition-colors"
+                            className="text-white/80 transition-colors hover:text-yellow-400"
                         >
                             Blog
                         </Link>
                         {auth.user ? (
                             <Link
                                 href={dashboard()}
-                                className="text-vedic-accent font-semibold hover:underline"
+                                className="font-semibold text-yellow-400 hover:underline"
                             >
                                 Dashboard
                             </Link>
@@ -131,13 +132,13 @@ export default function Welcome() {
                             <>
                                 <Link
                                     href={login()}
-                                    className="text-vedic-fg hover:text-vedic-accent transition-colors"
+                                    className="text-white/80 transition-colors hover:text-yellow-400"
                                 >
                                     Log in
                                 </Link>
                                 <Link
                                     href={register()}
-                                    className="text-vedic-accent font-semibold hover:underline"
+                                    className="font-semibold text-yellow-400 hover:underline"
                                 >
                                     Register
                                 </Link>
@@ -159,7 +160,7 @@ export default function Welcome() {
                                         Cosmic Destiny
                                     </span>
                                 </h1>
-                                <p className="text-muted-foreground mx-auto max-w-2xl">
+                                <p className="mx-auto max-w-2xl text-white/80">
                                     Explore ancient Vedic wisdom with accurate
                                     Panchang, personalized Kundli, daily
                                     horoscopes, and live consultations with
@@ -190,6 +191,14 @@ export default function Welcome() {
 
                     {/* Today's Calendar Widget */}
                     <section className="space-y-4">
+                        {(usePage().props as unknown as Props).panchangNote ? (
+                            <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm text-white/80">
+                                {
+                                    (usePage().props as unknown as Props)
+                                        .panchangNote
+                                }
+                            </div>
+                        ) : null}
                         <CalendarWidget
                             todayFormatted={todayFormatted}
                             weekday={weekday}
@@ -221,12 +230,12 @@ export default function Welcome() {
                     </section>
 
                     {/* Full Hindu Calendar Section */}
-                    <section className="border-vedic-border bg-vedic-card space-y-8 rounded-3xl border p-6 sm:p-8">
+                    <section className="space-y-8 rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8">
                         <div className="space-y-2 text-center">
-                            <h2 className="text-vedic-fg text-2xl font-bold sm:text-3xl">
+                            <h2 className="text-2xl font-bold text-white sm:text-3xl">
                                 Hindu (Vedic) Calendar
                             </h2>
-                            <p className="text-muted-foreground">
+                            <p className="text-white/70">
                                 Tithi, Nakshatra, Yoga, Karana, and auspicious
                                 timings for {todayFormatted}
                             </p>
@@ -236,7 +245,7 @@ export default function Welcome() {
 
                         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                             <div className="space-y-4">
-                                <h3 className="text-vedic-fg text-lg font-semibold">
+                                <h3 className="text-lg font-semibold text-white">
                                     Upcoming Festivals
                                 </h3>
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -250,16 +259,16 @@ export default function Welcome() {
                             </div>
 
                             <div className="space-y-4">
-                                <h3 className="text-vedic-fg text-lg font-semibold">
+                                <h3 className="text-lg font-semibold text-white">
                                     Regional Holiday Markers
                                 </h3>
                                 <div className="space-y-3">
                                     {regionalHolidays.map((region) => (
                                         <div
                                             key={region.state}
-                                            className="border-vedic-border bg-vedic-muted/40 rounded-lg border p-3"
+                                            className="rounded-lg border border-white/10 bg-white/5 p-3"
                                         >
-                                            <p className="text-vedic-fg text-sm font-semibold">
+                                            <p className="text-sm font-semibold text-white">
                                                 {region.state}
                                             </p>
                                             <div className="mt-1 flex flex-wrap gap-1">
@@ -267,7 +276,7 @@ export default function Welcome() {
                                                     (holiday) => (
                                                         <span
                                                             key={holiday}
-                                                            className="bg-vedic-primary/10 text-vedic-primary rounded-full px-2 py-0.5 text-xs"
+                                                            className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs text-yellow-400"
                                                         >
                                                             {holiday}
                                                         </span>
@@ -307,12 +316,12 @@ export default function Welcome() {
                     </section>
 
                     {/* About Us Section */}
-                    <section className="bg-vedic-card space-y-8 rounded-3xl p-6 sm:p-8">
+                    <section className="space-y-8 rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8">
                         <div className="space-y-2 text-center">
-                            <h2 className="text-vedic-fg text-2xl font-bold sm:text-3xl">
+                            <h2 className="text-2xl font-bold text-white sm:text-3xl">
                                 About AstroClone
                             </h2>
-                            <p className="text-muted-foreground mx-auto max-w-2xl">
+                            <p className="mx-auto max-w-2xl text-white/70">
                                 Bridging ancient Vedic astrology with modern
                                 technology to deliver accurate predictions,
                                 personalized remedies, and meaningful spiritual
@@ -349,15 +358,15 @@ export default function Welcome() {
                             ].map((item) => (
                                 <div
                                     key={item.title}
-                                    className="border-vedic-border bg-vedic-muted/40 rounded-xl border p-5 text-center transition-transform hover:-translate-y-1 hover:shadow-xl"
+                                    className="rounded-xl border border-white/10 bg-white/5 p-5 text-center transition-all hover:border-yellow-500/30 hover:bg-white/10"
                                 >
                                     <span className="text-4xl">
                                         {item.icon}
                                     </span>
-                                    <h3 className="text-vedic-fg mt-3 text-base font-bold">
+                                    <h3 className="mt-3 text-base font-bold text-white">
                                         {item.title}
                                     </h3>
-                                    <p className="text-muted-foreground mt-2 text-sm">
+                                    <p className="mt-2 text-sm text-white/70">
                                         {item.description}
                                     </p>
                                 </div>
@@ -373,12 +382,12 @@ export default function Welcome() {
                             ].map((stat) => (
                                 <div
                                     key={stat.label}
-                                    className="border-vedic-border bg-vedic-muted/40 rounded-xl border p-4 text-center"
+                                    className="rounded-xl border border-white/10 bg-white/5 p-4 text-center"
                                 >
-                                    <p className="text-vedic-accent text-2xl font-bold">
+                                    <p className="text-2xl font-bold text-yellow-400">
                                         {stat.value}
                                     </p>
-                                    <p className="text-muted-foreground text-xs">
+                                    <p className="text-xs text-white/70">
                                         {stat.label}
                                     </p>
                                 </div>
@@ -399,10 +408,10 @@ export default function Welcome() {
                     {/* Blogs Section */}
                     <section className="space-y-6">
                         <div className="space-y-2 text-center">
-                            <h2 className="text-vedic-fg text-2xl font-bold sm:text-3xl">
+                            <h2 className="text-2xl font-bold text-white sm:text-3xl">
                                 Latest from Our Blog
                             </h2>
-                            <p className="text-muted-foreground">
+                            <p className="text-white/70">
                                 Rashi insights, festival guides, astrology tips,
                                 and spiritual wellness.
                             </p>
@@ -426,7 +435,7 @@ export default function Welcome() {
                     </section>
 
                     {/* Bottom CTA Strip */}
-                    <section className="from-vedic-primary to-vedic-secondary rounded-3xl bg-gradient-to-r p-8 text-center sm:p-12">
+                    <section className="rounded-3xl bg-gradient-to-r from-orange-600 to-purple-700 p-8 text-center sm:p-12">
                         <h2 className="text-2xl font-bold text-white sm:text-3xl">
                             Join AstroClone Today
                         </h2>
@@ -439,7 +448,7 @@ export default function Welcome() {
                                 href={register()}
                                 variant="primary"
                                 size="lg"
-                                className="text-vedic-primary bg-white hover:bg-white/90"
+                                className="bg-white text-orange-600 hover:bg-white/90"
                             >
                                 Create Free Account
                             </CtaButton>
@@ -448,32 +457,32 @@ export default function Welcome() {
                 </main>
 
                 {/* Footer */}
-                <footer className="border-vedic-border bg-vedic-card mt-12 border-t">
+                <footer className="mt-12 border-t border-white/10 bg-[#0a0a1a]">
                     <div className="mx-auto max-w-7xl p-6 sm:p-8">
                         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                            <p className="text-vedic-fg font-bold">
+                            <p className="font-bold text-white">
                                 🔮 AstroClone
                             </p>
-                            <p className="text-muted-foreground text-sm">
+                            <p className="text-sm text-white/60">
                                 © {new Date().getFullYear()} AstroClone. All
                                 rights reserved.
                             </p>
-                            <div className="text-muted-foreground flex gap-4 text-sm">
+                            <div className="flex gap-4 text-sm text-white/60">
                                 <Link
                                     href="/blog"
-                                    className="hover:text-vedic-accent transition-colors"
+                                    className="transition-colors hover:text-yellow-400"
                                 >
                                     Blog
                                 </Link>
                                 <Link
                                     href="/horoscope"
-                                    className="hover:text-vedic-accent transition-colors"
+                                    className="transition-colors hover:text-yellow-400"
                                 >
                                     Horoscope
                                 </Link>
                                 <Link
                                     href="/panchang"
-                                    className="hover:text-vedic-accent transition-colors"
+                                    className="transition-colors hover:text-yellow-400"
                                 >
                                     Panchang
                                 </Link>

@@ -16,20 +16,18 @@ export default function PanchangGrid({ items }: PanchangGridProps) {
             {items.map((item) => (
                 <Card
                     key={item.label}
-                    className="border-vedic-border bg-vedic-card transition-transform hover:-translate-y-1 hover:shadow-xl"
+                    className="border-white/10 bg-white/5 text-white shadow-lg backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-yellow-500/30 hover:bg-white/10"
                 >
                     <CardHeader>
-                        <CardTitle className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
+                        <CardTitle className="text-xs font-medium tracking-wider text-white/50 uppercase">
                             {item.label}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-vedic-fg text-lg font-bold">
+                        <p className="text-lg font-bold text-white">
                             {item.name}
                         </p>
-                        <p className="text-muted-foreground text-sm">
-                            {item.extra}
-                        </p>
+                        <p className="text-sm text-white/70">{item.extra}</p>
                     </CardContent>
                 </Card>
             ))}

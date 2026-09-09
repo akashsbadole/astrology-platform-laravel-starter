@@ -28,6 +28,7 @@ import {
     typography,
 } from '@/constants/theme';
 import { getUser, type SessionUser } from '@/lib/session';
+import { useAuth } from '@/contexts/AuthContext';
 
 const MENU = [
     { icon: MessageCircle, label: 'My Consults', to: '/consults' },
@@ -43,11 +44,7 @@ const MENU = [
 
 export default function ProfileScreen() {
     const router = useRouter();
-    const [user, setUser] = useState<SessionUser | null>(null);
-
-    useEffect(() => {
-        getUser().then(setUser);
-    }, []);
+    const { user, logout } = useAuth();
 
     return (
         <Screen>
@@ -76,6 +73,16 @@ export default function ProfileScreen() {
                                 {user.email ?? user.phone}
                             </Text>
                         </View>
+                        <Pressable
+                            style={({ pressed }) => [
+                                styles.signinBtn,
+                                { opacity: pressed ? 0.8 : 1 },
+                            ]}
+                            onPress={logout}
+                        >
+                            <LogIn color="#1A1408" size={16} />
+                            <Text style={styles.signinBtnText}>Sign out</Text>
+                        </Pressable>
                     </View>
                 ) : (
                     <LinearGradient
@@ -96,7 +103,7 @@ export default function ProfileScreen() {
                                 styles.signinBtn,
                                 { opacity: pressed ? 0.8 : 1 },
                             ]}
-                            onPress={() => router.push('/otp-request')}
+                            onPress={() => router.push('/(auth)/otp-request')}
                         >
                             <LogIn color="#1A1408" size={16} />
                             <Text style={styles.signinBtnText}>

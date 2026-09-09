@@ -37,12 +37,12 @@ export default function MuhuratTimings({
     const map = { rahuKalam, yamaganda, gulikaKalam };
 
     return (
-        <Card className="border-vedic-border bg-vedic-card">
+        <Card className="border-white/10 bg-white/5 text-white shadow-xl backdrop-blur-sm">
             <CardHeader>
-                <CardTitle className="text-vedic-fg text-base font-semibold">
+                <CardTitle className="text-base font-semibold text-white">
                     Inauspicious Muhurat Timings
                 </CardTitle>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-white/70">
                     Avoid important activities during these periods
                 </p>
             </CardHeader>
@@ -52,18 +52,18 @@ export default function MuhuratTimings({
                     return (
                         <div
                             key={period.data}
-                            className="border-vedic-border bg-vedic-muted/40 flex items-center justify-between rounded-lg border p-3"
+                            className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-3"
                         >
                             <div>
-                                <p className="text-vedic-fg text-sm font-semibold">
+                                <p className="text-sm font-semibold text-white">
                                     {period.label}
                                 </p>
-                                <p className="text-muted-foreground text-xs">
+                                <p className="text-xs text-white/60">
                                     {period.description}
                                 </p>
                             </div>
                             <div className="text-right">
-                                <p className="text-vedic-fg text-sm font-medium">
+                                <p className="text-sm font-medium text-yellow-400">
                                     {timing.starts_at} – {timing.ends_at}
                                 </p>
                             </div>
