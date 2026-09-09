@@ -42,6 +42,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // Stateless Bearer-token guard used by routes/api.php ("auth:sanctum").
+        'sanctum' => [
+            'driver' => 'sanctum-token',
+        ],
     ],
 
     /*

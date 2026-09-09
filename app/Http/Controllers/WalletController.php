@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class WalletController extends Controller
 {
-    public function index(Request $request, WalletService $wallets): Response
+    public function index(Request $request, WalletService $wallets): Response|JsonResponse
     {
         $user = $request->user();
         $wallet = $wallets->walletFor($user);
@@ -24,6 +24,14 @@ class WalletController extends Controller
             'balance_after' => $t->balance_after_paise / 100, 'created_at' => $t->created_at->toIso8601String(),
             'meta' => $t->meta,
         ]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'balance' => $wallet->balance_paise / 100,
+                'transactions' => $txns,
+                'razorpayKeyId' => config('services.razorpay.key_id'),
+            ]);
+        }
 
         return Inertia::render('wallet/index', [
             'balance' => $wallet->balance_paise / 100,

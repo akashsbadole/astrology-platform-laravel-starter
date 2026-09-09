@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ConsultationController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|JsonResponse
     {
         $user = $request->user();
         $q = Consultation::where('customer_id', $user->id)->orWhere('astrologer_id', $user->id);
@@ -37,11 +37,17 @@ class ConsultationController extends Controller
             'created_at' => $c->created_at->toIso8601String(),
         ]);
 
-        return Inertia::render('consult/index', [
+        $props = [
             'consultations' => $list,
             'balance' => (new WalletService)->balancePaise($user) / 100,
             'missedCount' => $missed,
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($props);
+        }
+
+        return Inertia::render('consult/index', $props);
     }
 
     public function store(Request $request, ConsultationService $svc): RedirectResponse|JsonResponse
@@ -59,7 +65,7 @@ class ConsultationController extends Controller
         return redirect()->route('consult.show', $c);
     }
 
-    public function show(Request $request, Consultation $consultation): Response
+    public function show(Request $request, Consultation $consultation): Response|JsonResponse
     {
         abort_unless(in_array($request->user()->id, [$consultation->customer_id, $consultation->astrologer_id], true), 403);
         $consultation->load(['customer:id,name', 'astrologer:id,name']);
@@ -79,7 +85,7 @@ class ConsultationController extends Controller
             ];
         }
 
-        return Inertia::render('consult/show', [
+        $props = [
             'consultation' => [
                 'id' => $consultation->id,
                 'type' => $consultation->type,
@@ -108,7 +114,13 @@ class ConsultationController extends Controller
             ])->values(),
             'missedBy' => $consultation->missed_by,
             'connectedAt' => $consultation->connected_at?->toIso8601String(),
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($props);
+        }
+
+        return Inertia::render('consult/show', $props);
     }
 
     public function accept(Request $request, Consultation $consultation, ConsultationService $svc): RedirectResponse|JsonResponse

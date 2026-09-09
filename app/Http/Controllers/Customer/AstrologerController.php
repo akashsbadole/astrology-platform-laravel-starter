@@ -11,10 +11,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AstrologerController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|JsonResponse
     {
         $specialization = $request->string('specialization')->toString() ?: null;
         $language = $request->string('language')->toString() ?: null;
@@ -52,24 +53,38 @@ class AstrologerController extends Controller
                 'is_first_free' => (bool) ($profile->is_first_free ?? false),
             ]);
 
+        $filters = [
+            'specialization' => $specialization,
+            'language' => $language,
+            'max_rate' => $maxRate,
+            'sort' => $sort,
+            'q' => $search,
+            'online_only' => $online,
+        ];
+
+        $specializationOptions = Taxonomy::activeNames('specialization');
+        $languageOptions = Taxonomy::activeNames('language');
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'astrologers' => $astrologers,
+                'filters' => $filters,
+                'specializationOptions' => $specializationOptions,
+                'languageOptions' => $languageOptions,
+            ]);
+        }
+
         $view = $request->route()->getName() === 'astrologers.public' ? 'astrologers/index' : 'customer/astrologers/index';
 
         return Inertia::render($view, [
             'astrologers' => $astrologers,
-            'filters' => [
-                'specialization' => $specialization,
-                'language' => $language,
-                'max_rate' => $maxRate,
-                'sort' => $sort,
-                'q' => $search,
-                'online_only' => $online,
-            ],
-            'specializationOptions' => Taxonomy::activeNames('specialization'),
-            'languageOptions' => Taxonomy::activeNames('language'),
+            'filters' => $filters,
+            'specializationOptions' => $specializationOptions,
+            'languageOptions' => $languageOptions,
         ]);
     }
 
-    public function show(Request $request, AstrologerProfile $astrologer): Response
+    public function show(Request $request, AstrologerProfile $astrologer): Response|JsonResponse
     {
         abort_unless($astrologer->isApproved(), 404);
 
@@ -110,7 +125,7 @@ class AstrologerController extends Controller
                 'created_at' => $review->created_at->diffForHumans(),
             ]);
 
-        return Inertia::render('customer/astrologers/show', [
+        $props = [
             'astrologer' => [
                 'id' => $astrologer->id,
                 'user_id' => $astrologer->user_id,
@@ -130,6 +145,12 @@ class AstrologerController extends Controller
             'reviews' => $reviews,
             'timezone' => config('app.timezone'),
             'now' => Carbon::now()->toIso8601String(),
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($props);
+        }
+
+        return Inertia::render('customer/astrologers/show', $props);
     }
 }

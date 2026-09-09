@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class OtpController extends Controller
 {
@@ -65,7 +67,7 @@ class OtpController extends Controller
         ]);
     }
 
-    public function verify(Request $request, ReferralService $referrals): RedirectResponse
+    public function verify(Request $request, ReferralService $referrals): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'identifier' => ['required', 'string', 'max:100'],
@@ -98,6 +100,24 @@ class OtpController extends Controller
             $referrals->attach($user, $request->session()->get('referral_code'));
         } elseif ($isPhone && ! $user->phone_verified_at) {
             $user->forceFill(['phone_verified_at' => now()])->saveQuietly();
+        }
+
+        // Mobile/API flow: return a personal access token instead of a session.
+        if ($request->wantsJson()) {
+            $token = $user->createToken('mobile');
+
+            return response()->json([
+                'token' => $token->plainTextToken,
+                'token_type' => 'Bearer',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'role' => $user->role->value,
+                    'referral_code' => $user->referral_code,
+                ],
+            ]);
         }
 
         Auth::login($user, remember: true);

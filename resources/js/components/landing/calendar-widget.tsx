@@ -1,0 +1,82 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+interface CalendarWidgetProps {
+    todayFormatted: string;
+    weekday: string;
+    moonRashi: string;
+    lunarPhase: string;
+    tithi: { name: string; paksha: string; number: number };
+    nakshatra: { name: string; pada: number };
+    sunrise: string;
+    sunset: string;
+}
+
+export default function CalendarWidget({
+    todayFormatted,
+    weekday,
+    moonRashi,
+    lunarPhase,
+    tithi,
+    nakshatra,
+    sunrise,
+    sunset,
+}: CalendarWidgetProps) {
+    const items = [
+        { label: 'Moon Rashi', value: moonRashi, icon: '🌙' },
+        { label: 'Lunar Phase', value: lunarPhase, icon: '🌕' },
+        {
+            label: 'Tithi',
+            value: `${tithi.name} (${tithi.paksha} #${tithi.number})`,
+            icon: '📅',
+        },
+        {
+            label: 'Nakshatra',
+            value: `${nakshatra.name} Pada ${nakshatra.pada}`,
+            icon: '⭐',
+        },
+        { label: 'Sunrise', value: sunrise, icon: '🌅' },
+        { label: 'Sunset', value: sunset, icon: '🌇' },
+    ];
+
+    return (
+        <Card className="border-vedic-border bg-vedic-card shadow-xl">
+            <CardHeader className="space-y-1">
+                <div className="flex items-center justify-between">
+                    <CardTitle className="text-vedic-fg text-xl font-bold">
+                        Today&apos;s Calendar
+                    </CardTitle>
+                    <Badge
+                        variant="outline"
+                        className="border-vedic-border text-vedic-fg"
+                    >
+                        {weekday}
+                    </Badge>
+                </div>
+                <p className="text-muted-foreground text-sm">
+                    {todayFormatted}
+                </p>
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {items.map((item) => (
+                        <div
+                            key={item.label}
+                            className="border-vedic-border bg-vedic-muted/50 flex items-center gap-3 rounded-lg border p-3"
+                        >
+                            <span className="text-xl">{item.icon}</span>
+                            <div className="min-w-0">
+                                <p className="text-muted-foreground text-xs tracking-wider uppercase">
+                                    {item.label}
+                                </p>
+                                <p className="text-vedic-fg truncate text-sm font-semibold">
+                                    {item.value}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
+}

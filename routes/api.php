@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 | Authentication (OTP + Social) – guest only
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'api', 'middleware' => ['guest']], function () {
+Route::group(['middleware' => ['guest']], function () {
     Route::post('auth/otp/request', [\App\Http\Controllers\Auth\OtpController::class, 'request'])->name('api.otp.request');
     Route::post('auth/otp/verify', [\App\Http\Controllers\Auth\OtpController::class, 'verify'])->name('api.otp.verify');
 
@@ -31,7 +31,7 @@ Route::group(['prefix' => 'api', 'middleware' => ['guest']], function () {
 | Wallet / Payments (authenticated)
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('api.wallet');
     Route::post('wallet/order', [\App\Http\Controllers\WalletController::class, 'createOrder'])->name('api.wallet.order');
     Route::post('wallet/verify', [\App\Http\Controllers\WalletController::class, 'verify'])->name('api.wallet.verify');
@@ -45,7 +45,7 @@ Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () 
 | Instant Consultations (chat / call / video) (authenticated)
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('consultations', [\App\Http\Controllers\ConsultationController::class, 'index'])->name('api.consult.index');
     Route::post('consultations', [\App\Http\Controllers\ConsultationController::class, 'store'])->name('api.consult.store');
     Route::get('consult/{consultation}', [\App\Http\Controllers\ConsultationController::class, 'show'])->name('api.consult.show');
@@ -68,6 +68,14 @@ Route::get('horoscope/{rashi}', [\App\Http\Controllers\HoroscopeController::clas
 
 /*
 |--------------------------------------------------------------------------
+| Astrologers (public – browse & profiles for the mobile app)
+|--------------------------------------------------------------------------
+*/
+Route::get('astrologers', [\App\Http\Controllers\Customer\AstrologerController::class, 'index'])->name('api.astrologers.index');
+Route::get('astrologers/{astrologer}', [\App\Http\Controllers\Customer\AstrologerController::class, 'show'])->name('api.astrologers.show');
+
+/*
+|--------------------------------------------------------------------------
 | Kundli & Milan (public, some actions need auth)
 |--------------------------------------------------------------------------
 */
@@ -83,7 +91,7 @@ Route::post('milan', [\App\Http\Controllers\Customer\MilanController::class, 'ma
 | Live sessions (join, gift, Q&A) (authenticated)
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('live/{liveSession}', [\App\Http\Controllers\LiveController::class, 'show'])->name('api.live.show');
     Route::post('live/{liveSession}/join', [\App\Http\Controllers\LiveController::class, 'join'])->name('api.live.join');
     Route::post('live/{liveSession}/gift', [\App\Http\Controllers\LiveController::class, 'gift'])->name('api.live.gift');
@@ -95,7 +103,7 @@ Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () 
 | Shop / AstroMall (cart, orders, shipment) (authenticated)
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('shop/cart', [\App\Http\Controllers\ShopController::class, 'cart'])->name('api.shop.cart');
     Route::post('shop/cart', [\App\Http\Controllers\ShopController::class, 'addToCart'])->name('api.shop.cart.add');
     Route::post('shop/checkout', [\App\Http\Controllers\ShopController::class, 'checkout'])->name('api.shop.checkout');
@@ -110,7 +118,7 @@ Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () 
 | Referral / Loyalty (authenticated)
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('referrals', [\App\Http\Controllers\ReferralController::class, 'index'])->name('api.referrals.index');
     Route::post('referrals/redeem', [\App\Http\Controllers\ReferralController::class, 'redeem'])->name('api.referrals.redeem');
 });
@@ -120,7 +128,7 @@ Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () 
 | Notifications / Device tokens (authenticated)
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('api.notifications.index');
     Route::post('notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'read'])->name('api.notifications.read');
     Route::post('notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'readAll'])->name('api.notifications.read-all');
@@ -133,7 +141,7 @@ Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () 
 | Support / Tickets / Disputes / Refunds (authenticated)
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'api', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('support', [\App\Http\Controllers\SupportController::class, 'index'])->name('api.support.index');
     Route::post('support/tickets', [\App\Http\Controllers\SupportController::class, 'storeTicket'])->name('api.support.ticket');
     Route::post('support/disputes', [\App\Http\Controllers\SupportController::class, 'storeDispute'])->name('api.support.dispute');

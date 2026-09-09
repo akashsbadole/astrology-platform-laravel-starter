@@ -30,11 +30,11 @@ npm run web        # Browser
 
 Base URL defaults to `http://10.0.2.2:8000/api` (Android emulator → host loopback).
 
-| Environment | `EXPO_PUBLIC_API_URL` |
-|---|---|
-| Android emulator | nothing (default works) |
-| iOS simulator / web | `http://localhost:8000/api` |
-| Physical device | `http://<your-LAN-IP>:8000/api` |
+| Environment         | `EXPO_PUBLIC_API_URL`           |
+| ------------------- | ------------------------------- |
+| Android emulator    | nothing (default works)         |
+| iOS simulator / web | `http://localhost:8000/api`     |
+| Physical device     | `http://<your-LAN-IP>:8000/api` |
 
 > Until the backend Sanctum/JSON work lands (tracker §8), screens gracefully fall back to
 > bundled demo data so the full UI is navigable. API calls surface a friendly "demo mode" note.
