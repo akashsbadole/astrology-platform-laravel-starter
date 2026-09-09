@@ -121,6 +121,57 @@ Route::middleware(['auth:sanctum', 'role:astrologer'])->prefix('astrologer')->na
 
 /*
 |--------------------------------------------------------------------------
+| Admin app (authenticated, role:admin)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->name('api.admin.')->group(function () {
+    Route::get('dashboard', [\App\Http\Controllers\Admin\DashboardController::class, '__invoke'])->name('dashboard');
+    Route::get('astrologers', [\App\Http\Controllers\Admin\AstrologerController::class, 'index'])->name('astrologers');
+    Route::patch('astrologers/{astrologer}/approve', [\App\Http\Controllers\Admin\AstrologerController::class, 'approve'])->name('astrologers.approve');
+    Route::patch('astrologers/{astrologer}/reject', [\App\Http\Controllers\Admin\AstrologerController::class, 'reject'])->name('astrologers.reject');
+
+    Route::get('taxonomies', [\App\Http\Controllers\Admin\TaxonomyController::class, 'index'])->name('taxonomies');
+    Route::post('taxonomies', [\App\Http\Controllers\Admin\TaxonomyController::class, 'store'])->name('taxonomies.store');
+    Route::patch('taxonomies/{taxonomy}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'update'])->name('taxonomies.update');
+    Route::delete('taxonomies/{taxonomy}', [\App\Http\Controllers\Admin\TaxonomyController::class, 'destroy'])->name('taxonomies.destroy');
+
+    Route::get('poojas', [\App\Http\Controllers\Admin\PoojaController::class, 'index'])->name('poojas');
+    Route::post('poojas', [\App\Http\Controllers\Admin\PoojaController::class, 'store'])->name('poojas.store');
+    Route::get('poojas/{pooja}', [\App\Http\Controllers\Admin\PoojaController::class, 'show'])->name('poojas.show');
+    Route::put('poojas/{pooja}', [\App\Http\Controllers\Admin\PoojaController::class, 'update'])->name('poojas.update');
+    Route::delete('poojas/{pooja}', [\App\Http\Controllers\Admin\PoojaController::class, 'destroy'])->name('poojas.destroy');
+
+    Route::get('posts', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('posts');
+    Route::post('posts', [\App\Http\Controllers\Admin\PostController::class, 'store'])->name('posts.store');
+    Route::get('posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'show'])->name('posts.show');
+    Route::put('posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('posts.update');
+    Route::delete('posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('posts.destroy');
+
+    Route::get('ops', [\App\Http\Controllers\Admin\OpsController::class, 'dashboard'])->name('ops.dashboard');
+    Route::get('ops/coupons', [\App\Http\Controllers\Admin\OpsController::class, 'coupons'])->name('ops.coupons');
+    Route::post('ops/coupons', [\App\Http\Controllers\Admin\OpsController::class, 'storeCoupon'])->name('ops.coupons.store');
+    Route::get('ops/payouts', [\App\Http\Controllers\Admin\OpsController::class, 'payouts'])->name('ops.payouts');
+    Route::post('ops/payouts/{payout}/approve', [\App\Http\Controllers\Admin\OpsController::class, 'approvePayout'])->name('ops.payouts.approve');
+    Route::get('ops/refunds', [\App\Http\Controllers\Admin\OpsController::class, 'refunds'])->name('ops.refunds');
+    Route::post('ops/refunds/{refund}/process', [\App\Http\Controllers\Admin\OpsController::class, 'processRefund'])->name('ops.refunds.process');
+    Route::get('ops/disputes', [\App\Http\Controllers\Admin\OpsController::class, 'disputes'])->name('ops.disputes');
+    Route::post('ops/disputes/{dispute}/resolve', [\App\Http\Controllers\Admin\OpsController::class, 'resolveDispute'])->name('ops.disputes.resolve');
+    Route::get('ops/horoscopes', [\App\Http\Controllers\Admin\OpsController::class, 'horoscopes'])->name('ops.horoscopes');
+    Route::post('ops/horoscopes', [\App\Http\Controllers\Admin\OpsController::class, 'storeHoroscope'])->name('ops.horoscopes.store');
+    Route::get('ops/products', [\App\Http\Controllers\Admin\OpsController::class, 'products'])->name('ops.products');
+    Route::post('ops/products', [\App\Http\Controllers\Admin\OpsController::class, 'storeProduct'])->name('ops.products.store');
+    Route::get('ops/live', [\App\Http\Controllers\Admin\OpsController::class, 'live'])->name('ops.live');
+    Route::post('ops/live', [\App\Http\Controllers\Admin\OpsController::class, 'storeLive'])->name('ops.live.store');
+    Route::post('ops/live/{liveSession}/toggle', [\App\Http\Controllers\Admin\OpsController::class, 'goLive'])->name('ops.live.toggle');
+    Route::get('ops/banners', [\App\Http\Controllers\Admin\OpsController::class, 'banners'])->name('ops.banners');
+    Route::post('ops/banners', [\App\Http\Controllers\Admin\OpsController::class, 'storeBanner'])->name('ops.banners.store');
+    Route::get('ops/support', [\App\Http\Controllers\Admin\OpsController::class, 'support'])->name('ops.support');
+    Route::get('ops/shipments', [\App\Http\Controllers\Admin\OpsController::class, 'shipments'])->name('ops.shipments');
+    Route::post('ops/shipments/{order}', [\App\Http\Controllers\Admin\OpsController::class, 'updateShipment'])->name('ops.shipments.update');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Shop / AstroMall (cart, orders, shipment) (authenticated)
 |--------------------------------------------------------------------------
 */

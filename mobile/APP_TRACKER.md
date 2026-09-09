@@ -189,12 +189,56 @@ astrology-platform-laravel-starter/
 | PATCH  | `/api/astrologer/bookings/{id}/complete` | `api.astrologer.bookings.complete` | 🟩    |
 | PATCH  | `/api/astrologer/bookings/{id}/cancel`   | `api.astrologer.bookings.cancel`   | 🟩    |
 
+### 3.14 Admin (auth + role:admin)
+
+| Method | Path                                  | Name                           | State |
+| ------ | ------------------------------------- | ------------------------------ | ----- |
+| GET    | `/api/admin/dashboard`                | `api.admin.dashboard`          | 🟩    |
+| GET    | `/api/admin/astrologers`              | `api.admin.astrologers`        | 🟩    |
+| PATCH  | `/api/admin/astrologers/{id}/approve` | `api.admin.astrologers.approve`| 🟩    |
+| PATCH  | `/api/admin/astrologers/{id}/reject`  | `api.admin.astrologers.reject` | 🟩    |
+| GET    | `/api/admin/taxonomies`               | `api.admin.taxonomies`         | 🟩    |
+| POST   | `/api/admin/taxonomies`               | `api.admin.taxonomies.store`   | 🟩    |
+| PATCH  | `/api/admin/taxonomies/{id}`          | `api.admin.taxonomies.update`  | 🟩    |
+| DELETE | `/api/admin/taxonomies/{id}`          | `api.admin.taxonomies.destroy` | 🟩    |
+| GET    | `/api/admin/poojas`                   | `api.admin.poojas`             | 🟩    |
+| POST   | `/api/admin/poojas`                   | `api.admin.poojas.store`       | 🟩    |
+| GET    | `/api/admin/poojas/{id}`              | `api.admin.poojas.show`        | 🟩    |
+| PUT    | `/api/admin/poojas/{id}`              | `api.admin.poojas.update`      | 🟩    |
+| DELETE | `/api/admin/poojas/{id}`              | `api.admin.poojas.destroy`     | 🟩    |
+| GET    | `/api/admin/posts`                    | `api.admin.posts`              | 🟩    |
+| POST   | `/api/admin/posts`                    | `api.admin.posts.store`        | 🟩    |
+| GET    | `/api/admin/posts/{id}`               | `api.admin.posts.show`         | 🟩    |
+| PUT    | `/api/admin/posts/{id}`               | `api.admin.posts.update`       | 🟩    |
+| DELETE | `/api/admin/posts/{id}`               | `api.admin.posts.destroy`      | 🟩    |
+| GET    | `/api/admin/ops`                      | `api.admin.ops.dashboard`      | 🟩    |
+| GET    | `/api/admin/ops/coupons`              | `api.admin.ops.coupons`        | 🟩    |
+| POST   | `/api/admin/ops/coupons`              | `api.admin.ops.coupons.store`  | 🟩    |
+| GET    | `/api/admin/ops/payouts`              | `api.admin.ops.payouts`        | 🟩    |
+| POST   | `/api/admin/ops/payouts/{id}/approve` | `api.admin.ops.payouts.approve`| 🟩    |
+| GET    | `/api/admin/ops/refunds`              | `api.admin.ops.refunds`        | 🟩    |
+| POST   | `/api/admin/ops/refunds/{id}/process` | `api.admin.ops.refunds.process`| 🟩    |
+| GET    | `/api/admin/ops/disputes`             | `api.admin.ops.disputes`       | 🟩    |
+| POST   | `/api/admin/ops/disputes/{id}/resolve`| `api.admin.ops.disputes.resolve`| 🟩   |
+| GET    | `/api/admin/ops/horoscopes`           | `api.admin.ops.horoscopes`     | 🟩    |
+| POST   | `/api/admin/ops/horoscopes`           | `api.admin.ops.horoscopes.store`| 🟩   |
+| GET    | `/api/admin/ops/products`             | `api.admin.ops.products`       | 🟩    |
+| POST   | `/api/admin/ops/products`             | `api.admin.ops.products.store` | 🟩    |
+| GET    | `/api/admin/ops/live`                 | `api.admin.ops.live`           | 🟩    |
+| POST   | `/api/admin/ops/live`                 | `api.admin.ops.live.store`     | 🟩    |
+| POST   | `/api/admin/ops/live/{id}/toggle`     | `api.admin.ops.live.toggle`    | 🟩    |
+| GET    | `/api/admin/ops/banners`              | `api.admin.ops.banners`        | 🟩    |
+| POST   | `/api/admin/ops/banners`              | `api.admin.ops.banners.store`  | 🟩    |
+| GET    | `/api/admin/ops/support`              | `api.admin.ops.support`        | 🟩    |
+| GET    | `/api/admin/ops/shipments`            | `api.admin.ops.shipments`      | 🟩    |
+| POST   | `/api/admin/ops/shipments/{id}`       | `api.admin.ops.shipments.update`| 🟩  |
+
 > **⚠️ Missing API routes needed for screen parity** (exist in `web.php` only) — Phase 1 must add JSON API versions:
 >
 > - Public: `blog/index` + `blog/show`, `panchang`
 > - Customer: `bookings` list + checkout · `poojas` catalog/show · `pooja-bookings` list + checkout · reviews
 > - ~~Astrologer: dashboard, profile, status, availability CRUD, bookings + complete/cancel~~ ✅ M5
-> - Admin: dashboard, astrologers approve/reject, taxonomy CRUD, pooja CRUD, post CRUD, ops hub (coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments)
+> - ~~Admin: dashboard, astrologers approve/reject, taxonomy CRUD, pooja CRUD, post CRUD, ops hub (coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments)~~ ✅ M6
 > - Chats: `bookings/{booking}/chat` · `pooja-bookings/{poojaBooking}/chat`
 
 ---
@@ -262,22 +306,22 @@ astrology-platform-laravel-starter/
 
 | Web page                           | Mobile route                   | Backend JSON | Mobile build |
 | ---------------------------------- | ------------------------------ | ------------ | ------------ |
-| `admin/dashboard`                  | `/(admin)/` — Metrics          | 🟨           | ⬜           |
-| `admin/astrologers/index`          | `/(admin)/astrologers`         | 🟨           | ⬜           |
-| `admin/taxonomies/index`           | `/(admin)/taxonomies`          | 🟨           | ⬜           |
-| `admin/poojas/index` + create/edit | `/(admin)/poojas` (+ new/edit) | 🟨           | ⬜           |
-| `admin/posts/index` + create/edit  | `/(admin)/posts` (+ new/edit)  | 🟨           | ⬜           |
-| `admin/ops/dashboard`              | `/(admin)/ops`                 | 🟨           | ⬜           |
-| `admin/ops/coupons`                | `/(admin)/ops/coupons`         | 🟨           | ⬜           |
-| `admin/ops/payouts`                | `/(admin)/ops/payouts`         | 🟨           | ⬜           |
-| `admin/ops/refunds`                | `/(admin)/ops/refunds`         | 🟨           | ⬜           |
-| `admin/ops/disputes`               | `/(admin)/ops/disputes`        | 🟨           | ⬜           |
-| `admin/ops/horoscopes`             | `/(admin)/ops/horoscopes`      | 🟨           | ⬜           |
-| `admin/ops/products`               | `/(admin)/ops/products`        | 🟨           | ⬜           |
-| `admin/ops/live`                   | `/(admin)/ops/live`            | 🟨           | ⬜           |
-| `admin/ops/banners`                | `/(admin)/ops/banners`         | 🟨           | ⬜           |
-| `admin/ops/support`                | `/(admin)/ops/support`         | 🟨           | ⬜           |
-| `admin/ops/shipments`              | `/(admin)/ops/shipments`       | 🟨           | ⬜           |
+| `admin/dashboard`                  | `/(admin)/` — Metrics          | 🟩           | 🟩           |
+| `admin/astrologers/index`          | `/(admin)/astrologers`         | 🟩           | 🟩           |
+| `admin/taxonomies/index`           | `/(admin)/taxonomies`          | 🟩           | 🟩           |
+| `admin/poojas/index` + create/edit | `/(admin)/poojas` (+ new/edit) | 🟩           | 🟩           |
+| `admin/posts/index` + create/edit  | `/(admin)/posts` (+ new/edit)  | 🟩           | 🟩           |
+| `admin/ops/dashboard`              | `/(admin)/ops`                 | 🟩           | 🟩           |
+| `admin/ops/coupons`                | `/(admin)/ops/coupons`         | 🟩           | 🟩           |
+| `admin/ops/payouts`                | `/(admin)/ops/payouts`         | 🟩           | 🟩           |
+| `admin/ops/refunds`                | `/(admin)/ops/refunds`         | 🟩           | 🟩           |
+| `admin/ops/disputes`               | `/(admin)/ops/disputes`        | 🟩           | 🟩           |
+| `admin/ops/horoscopes`             | `/(admin)/ops/horoscopes`      | 🟩           | 🟩           |
+| `admin/ops/products`               | `/(admin)/ops/products`        | 🟩           | 🟩           |
+| `admin/ops/live`                   | `/(admin)/ops/live`            | 🟩           | 🟩           |
+| `admin/ops/banners`                | `/(admin)/ops/banners`         | 🟩           | 🟩           |
+| `admin/ops/support`                | `/(admin)/ops/support`         | 🟩           | 🟩           |
+| `admin/ops/shipments`              | `/(admin)/ops/shipments`       | 🟩           | 🟩           |
 
 ---
 
@@ -384,7 +428,7 @@ astrology-platform-laravel-starter/
 | M3  | Customer core               | Wallet + consult chat + bookings                                                       | ✅  |
 | M4  | Shop + pooja + support      | Full customer feature set (§6)                                                         | ✅  |
 | M5  | Astrologer app              | §6 Astrologer set                                                                      | ✅  |
-| M6  | Admin app                   | §6 Admin set                                                                           |
+| M6  | Admin app                   | §6 Admin set                                                                           | ✅  |
 | M7  | Realtime + payments + calls | §7.2–7.6                                                                               |
 
 ---
@@ -402,6 +446,7 @@ astrology-platform-laravel-starter/
 ## 11. Changelog
 
 - **2026-09-09 (f)** — Phase 4 (Shop + Pooja + Support — M4) complete. Added JSON branches to 3 controllers: `NotificationController` (index+read+readAll+preferences+token), `ReferralController` (index+redeem), `SupportController` (index+storeTicket+storeDispute+requestRefund). Built 4 new customer screens: Notifications (list with read/unread states, mark read/all read, bell icon with gold accent, empty state), Referrals (gold hero card with code, stats row: referred/rewarded/points, loyalty balance with redeem button), Support (tickets list, new ticket via Alert.prompt), Settings (user card, notification preferences with switches, menu items, sign out with confirmation). `tsc --noEmit` passes with zero errors. M4 milestone complete.
+- **2026-09-09 (h)** — Phase 6 (Admin app — M6) complete. Backend: registered 32 admin API routes under `auth:sanctum + role:admin` in `routes/api.php`. Added JSON branches to 5 controllers: `Admin\DashboardController` (stats), `Admin\AstrologerController` (index + approve + reject), `Admin\TaxonomyController` (index + store + update + destroy), `Admin\PoojaController` (index + store + show + update + destroy), `Admin\PostController` (paginated index + store + show + update + destroy), `Admin\OpsController` (all 14 methods JSON-returning: dashboard, coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments). Mobile: created admin tab layout (`app/(admin)/_layout.tsx`) with 3 tabs: Dashboard, Astrologers, Ops. Built admin dashboard with metrics cards + quick action buttons. Built astrologers management screen with status filter (pending/approved/rejected), approve/reject actions with confirmation alerts. Built ops hub with stat cards + 10 section grid (coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments). Built all 10 ops sub-screens with list views and basic actions (add, approve, process, resolve, toggle, update status). Added comprehensive TypeScript types for all admin entities. `tsc --noEmit` passes for all admin files. Laravel tests pass (58/58, 220 assertions). M6 milestone complete.
 - **2026-09-09 (g)** — Phase 5 (Astrologer app — M5) complete. Backend: registered 9 astrologer API routes under `auth:sanctum + role:astrologer` middleware in `routes/api.php`. Added JSON branches to `DashboardController` (profile + earnings summary with total/pending/this-month paise + consultation count), `StatusController` (returns all toggles: is_online, accepts_chat/call/video), `ProfileController` (edit + update JSON with taxonomy options), `BookingController` (paginated index + complete/cancel JSON responses). Mobile: role-based redirect from OTP verify (admin → /(admin)/, astrologer → /(astrologer)/, customer → /(tabs)/). Added `(astrologer)` route group to root layout. Built astrologer tab layout (4 tabs: Dashboard, Availability, Bookings, Profile). Updated astrologer dashboard with earnings cards (total/pending/month/consultations), online toggle, chat/call/video acceptance toggles. Built bookings list with complete/cancel actions and confirmation alerts. Built profile edit screen with bio, experience counter, rate display, specialization/language chip multi-select, rejection reason display. Added TypeScript types for `AstrologerEarnings`, `AstrologerProfileData`, `AstrologerBooking`. `tsc --noEmit` passes for all astrologer files. M5 milestone complete.
 - **2026-09-09 (e)** — Phase 3 (Customer core — M3) complete. Built consultations list (`src/app/consults/index.tsx`) and chat screen (`src/app/consults/[id].tsx`). Consultations list fetches from `GET /consultations`, shows type icons (chat/call/video), status badges (active/pending/ended/cancelled), billed minutes + amount, pull-to-refresh. Chat screen fetches messages from `GET /consult/{id}`, sends via `POST /consult/{id}/message`, shows gold/white bubbles for mine/theirs messages, auto-scrolls to bottom, keyboard-avoiding input bar, loading and empty states. Created `src/types/index.ts` with shared TypeScript types (Consultation, ConsultationMessage, ConsultationDetail, PaginatedResponse). Fixed Badge tone mapping to use available tones (success/gold/neutral/danger). `tsc --noEmit` passes with zero errors. M3 milestone complete.
 - **2026-09-09 (d)** — Phase 2 (API wiring) complete. All screens now fetch real data from Laravel API instead of mock data. Created `AuthContext` (`src/contexts/AuthContext.tsx`) with `useAuth()` hook for login state management. Updated `app.json` with `EXPO_PUBLIC_API_URL` env var. OTP screens now use real API flow: request shows `debug_code` alert (dev mode), verify calls `/auth/otp/verify` and stores token via context. Home screen fetches featured astrologers (`/astrologers?online=1`) and wallet balance (`/wallet`) in parallel. Astrologers tab fetches from `/astrologers` with filter params. Wallet tab fetches real balance + transactions from `/wallet`. Astrologer detail fetches from `/astrologers/{id}` with loading state. Profile uses AuthContext, sign-in navigates to `/(auth)/otp-request`, added sign-out button. `tsc --noEmit` passes with zero errors. M2 milestone complete.

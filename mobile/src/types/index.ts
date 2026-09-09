@@ -68,3 +68,112 @@ export type AstrologerBooking = {
     is_session_active: boolean;
     customer_notes: string | null;
 };
+
+export type AdminStats = {
+    total_users: number;
+    total_customers: number;
+    total_astrologers: number;
+    pending_astrologers: number;
+    approved_astrologers: number;
+};
+
+export type AdminAstrologer = {
+    id: number;
+    name: string;
+    email: string;
+    status: string;
+    experience_years: number;
+    specializations: string[];
+    created_at: string;
+};
+
+export type AdminOpsStats = {
+    gross: number;
+    commission: number;
+    orders: number;
+    payouts_pending: number;
+    refunds_open: number;
+    disputes_open: number;
+    tickets_open: number;
+};
+
+export type AdminCoupon = {
+    id: number;
+    code: string;
+    type: string;
+    value_paise: number;
+    created_at: string;
+};
+
+export type AdminPayout = {
+    id: number;
+    amount_paise: number;
+    status: string;
+};
+
+export type AdminEarning = {
+    id: number;
+    gross_paise: number;
+    net_paise: number;
+    status: string;
+};
+
+export type AdminRefund = {
+    id: number;
+    amount_paise: number;
+    status: string;
+    user_id: number;
+};
+
+export type AdminDispute = {
+    id: number;
+    status: string;
+    resolution: string | null;
+};
+
+export type AdminHoroscope = {
+    id: number;
+    rashi: string;
+    period: string;
+    title: string | null;
+    date: string | null;
+};
+
+export type AdminProduct = {
+    id: number;
+    name: string;
+    price_paise: number;
+    stock: number;
+};
+
+export type AdminLiveSession = {
+    id: number;
+    title: string;
+    status: string;
+    astrologer_id: number;
+};
+
+export type AdminBanner = {
+    id: number;
+    title: string | null;
+    link: string | null;
+    slot: string;
+    is_active: boolean;
+};
+
+export type AdminSupportTicket = {
+    id: number;
+    subject: string;
+    status: string;
+    created_at: string;
+};
+
+export type AdminShipmentOrder = {
+    id: number;
+    customer: string;
+    status: string;
+    shipping_status: string;
+    tracking_number: string | null;
+    carrier: string | null;
+    total: number;
+};
