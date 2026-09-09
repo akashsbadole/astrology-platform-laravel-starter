@@ -251,18 +251,18 @@ astrology-platform-laravel-starter/
 
 | Web page                                                                  | Mobile route                                                                | Backend JSON | Mobile build |
 | ------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------ | ------------ |
-| `welcome`                                                                 | `/` — Home                                                                  | 🟨           | ⬜           |
+| `welcome`                                                                 | `/` — Home (tabs index)                                                      | 🟩           | 🟩           |
 | `auth/login`, `auth/register`                                             | `/(auth)/login`, `/(auth)/register`                                         | 🟨           | ⬜           |
 | `auth/forgot-password`, `auth/reset-password`                             | `/(auth)/forgot`, `/(auth)/reset`                                           | 🟨           | ⬜           |
 | `auth/verify-email`, `auth/two-factor-challenge`, `auth/confirm-password` | `/(auth)/verify-email`, `/(auth)/two-factor`, `/(auth)/confirm-password`    | 🟨           | ⬜           |
-| `auth/otp-request`, `auth/otp-verify`                                     | `/(auth)/otp-request`, `/(auth)/otp-verify`                                 | 🟨           | ⬜           |
+| `auth/otp-request`, `auth/otp-verify`                                     | `/(auth)/otp-request`, `/(auth)/otp-verify`                                 | 🟩           | 🟩           |
 | `blog/index`, `blog/show`                                                 | `/(public)/blog`, `/(public)/blog/[slug]`                                   | 🟩           | 🟩           |
-| `astrologers/index`                                                       | `/(public)/astrologers`                                                     | 🟨           | ⬜           |
-| `astrologers/show`                                                        | `/(public)/astrologers/[id]`                                                | 🟨           | ⬜           |
+| `astrologers/index`                                                       | `/(public)/astrologers` or `/(tabs)/astrologers`                            | 🟩           | 🟩           |
+| `astrologers/show`                                                        | `/(public)/astrologers/[id]` or `astrologer/[id]`                          | 🟩           | 🟩           |
 | `horoscope/index`, `horoscope/show`                                       | `/(public)/horoscope`, `/(public)/horoscope/[rashi]`                        | 🟩           | 🟩           |
 | `panchang/show`                                                           | `/(public)/panchang`                                                        | 🟩           | 🟩           |
 | `forum/index`, `forum/category`, `forum/thread`                           | `/(public)/forum`, `/(public)/forum/[slug]`, `/(public)/forum/threads/[id]` | 🟩           | 🟩           |
-| `shop/index`, `shop/show`                                                 | `/(public)/shop`, `/(public)/shop/[slug]`                                   | 🟨           | ⬜           |
+| `shop/index`, `shop/show`                                                 | `/(tabs)/shop`, `/(public)/shop/[slug]`                                     | 🟩           | 🟩           |
 | `live/index`, `live/show`                                                 | `/(public)/live`, `/(public)/live/[id]`                                     | 🟩           | 🟩           |
 | `milan/index`, `milan/result`                                             | `/(public)/milan`, `/(public)/milan/result`                                 | 🟩           | 🟩           |
 
@@ -270,10 +270,10 @@ astrology-platform-laravel-starter/
 
 | Web page                                         | Mobile route                                        | Backend JSON | Mobile build |
 | ------------------------------------------------ | --------------------------------------------------- | ------------ | ------------ |
-| `customer/dashboard`                             | `/(customer)/` — Dashboard                          | 🟨           | ⬜           |
-| `wallet/index`                                   | `/(customer)/wallet`                                | 🟨           | ⬜           |
-| `consult/index`                                  | `/(customer)/consults`                              | 🟨           | ⬜           |
-| `consult/show` (chat/call/video)                 | `/(customer)/consults/[id]`                         | 🟨           | ⬜           |
+| `customer/dashboard`                             | `/(tabs)/` — Home dashboard                          | 🟩           | 🟩           |
+| `wallet/index`                                   | `/(tabs)/wallet`                                    | 🟩           | 🟩           |
+| `consult/index`                                  | `/(tabs)/` — Consultations tab or `/(customer)/consults` | 🟩           | 🟩           |
+| `consult/show` (chat/call/video)                 | `/(customer)/consults/[id]`                         | 🟩           | 🟩           |
 | `customer/bookings/index`                        | `/(customer)/bookings`                              | 🟨           | ⬜           |
 | `customer/bookings/checkout`                     | `/(customer)/bookings/[id]/checkout`                | 🟨           | ⬜           |
 | `customer/kundli/index`                          | `/(customer)/kundli`                                | 🟩           | 🟩           |
@@ -286,9 +286,9 @@ astrology-platform-laravel-starter/
 | `shop/cart`                                      | `/(customer)/cart`                                  | 🟩           | 🟩           |
 | `shop/checkout`                                  | `/(customer)/checkout`                              | 🟩           | 🟩           |
 | `shop/orders`, `shop/order-show`                 | `/(customer)/orders`, `/(customer)/orders/[id]`     | 🟩           | 🟩           |
-| `notifications/index`                            | `/(customer)/notifications`                         | 🟨           | ⬜           |
-| `referrals/index`                                | `/(customer)/referrals`                             | 🟨           | ⬜           |
-| `support/index`                                  | `/(customer)/support`                               | 🟨           | ⬜           |
+| `notifications/index`                            | `/(customer)/notifications`                         | 🟩           | 🟩           |
+| `referrals/index`                                | `/(customer)/referrals`                             | 🟩           | 🟩           |
+| `support/index`                                  | `/(customer)/support`                               | 🟩           | 🟩           |
 | `settings/profile`                               | `/(customer)/settings/profile`                      | 🟩           | 🟩           |
 | `settings/security`                              | `/(customer)/settings/security`                     | 🟩           | 🟩           |
 | `settings/appearance`                            | `/(customer)/settings/appearance`                   | 🟩           | 🟩           |

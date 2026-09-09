@@ -28,7 +28,7 @@ export default function AdminProductsScreen() {
             { text: 'Cancel', style: 'cancel' },
             {
                 text: 'Add',
-                onPress: async (text) => {
+                onPress: async (text: string | undefined) => {
                     if (!text) return;
                     const [name, price, stock] = text.split(',');
                     try {

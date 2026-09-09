@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import RazorpayCheckout from '@/components/RazorpayCheckout';
+import { RazorpayCheckout } from '@/components/RazorpayCheckout';
 import Screen from '@/components/ui/Screen';
 import {
     colors,

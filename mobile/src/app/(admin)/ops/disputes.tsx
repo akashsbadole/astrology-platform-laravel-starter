@@ -25,7 +25,7 @@ export default function AdminDisputesScreen() {
             { text: 'Cancel', style: 'cancel' },
             {
                 text: 'Resolve',
-                onPress: async (resolution) => {
+                onPress: async (resolution: string | undefined) => {
                     if (!resolution) return;
                     try {
                         await api.post(`/admin/ops/disputes/${id}/resolve`, { resolution });

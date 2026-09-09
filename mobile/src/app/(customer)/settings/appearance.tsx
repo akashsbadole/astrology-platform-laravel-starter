@@ -3,10 +3,9 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
-import { useTheme } from '@/contexts/ThemeContext';
 
 export default function SettingsAppearanceScreen() {
-    const { theme, setTheme } = useTheme();
+    const [theme, setTheme] = useState('dark');
     const [language, setLanguage] = useState('en');
 
     return (

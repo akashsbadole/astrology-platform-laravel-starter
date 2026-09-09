@@ -35,7 +35,7 @@ class PoojaPaymentController extends Controller
         ]);
     }
 
-    public function verify(Request $request, PoojaBooking $poojaBooking): RedirectResponse
+    public function verify(Request $request, PoojaBooking $poojaBooking): RedirectResponse|JsonResponse
     {
         abort_unless($poojaBooking->customer_id === $request->user()->id, 403);
 
@@ -56,6 +56,10 @@ class PoojaPaymentController extends Controller
         );
 
         if (! $verified) {
+            if ($request->wantsJson()) {
+                return response()->json(['ok' => false, 'error' => 'Payment verification failed.'], 422);
+            }
+
             return redirect()
                 ->route('customer.pooja-bookings.checkout', $poojaBooking)
                 ->with('error', 'Payment verification failed. Please try again.');
@@ -72,6 +76,10 @@ class PoojaPaymentController extends Controller
         app(ReferralService::class)->awardForPaidBooking(
             $poojaBooking->customer, (string) $poojaBooking->amount, $poojaBooking, 'pooja booking'
         );
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'status' => 'confirmed']);
+        }
 
         return redirect()
             ->route('customer.pooja-bookings.index')

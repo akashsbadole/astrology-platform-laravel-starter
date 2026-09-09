@@ -33,10 +33,10 @@ const TYPE_ICON: Record<string, typeof MessageCircle> = {
     video: Video,
 };
 
-const STATUS_TONE: Record<string, 'success' | 'gold' | 'neutral' | 'danger'> = {
+const STATUS_TONE: Record<string, 'success' | 'gold' | 'textFaint' | 'danger'> = {
     confirmed: 'success',
     completed: 'gold',
-    pending: 'neutral',
+    pending: 'textFaint',
     cancelled: 'danger',
 };
 
@@ -146,13 +146,13 @@ export default function AstrologerBookingsScreen() {
                             <View
                                 style={[
                                     styles.badge,
-                                    { backgroundColor: colors[STATUS_TONE[item.status] ?? 'neutral'] + '22' },
+                                    { backgroundColor: colors[STATUS_TONE[item.status] ?? 'textFaint'] + '22' },
                                 ]}
                             >
                                 <Text
                                     style={[
                                         styles.badgeText,
-                                        { color: colors[STATUS_TONE[item.status] ?? 'neutral'] },
+                                        { color: colors[STATUS_TONE[item.status] ?? 'textFaint'] },
                                     ]}
                                 >
                                     {item.status.toUpperCase()}

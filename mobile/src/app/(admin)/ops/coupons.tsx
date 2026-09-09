@@ -39,7 +39,7 @@ export default function AdminCouponsScreen() {
             { text: 'Cancel', style: 'cancel' },
             {
                 text: 'Create',
-                onPress: async (code) => {
+                onPress: async (code: string | undefined) => {
                     if (!code) return;
                     try {
                         await api.post('/admin/ops/coupons', {

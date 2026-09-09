@@ -15,7 +15,7 @@ use Inertia\Response;
 
 class PoojaChatController extends Controller
 {
-    public function show(Request $request, PoojaBooking $poojaBooking): Response
+    public function show(Request $request, PoojaBooking $poojaBooking): Response|JsonResponse
     {
         $this->authorizeParty($request, $poojaBooking);
 
@@ -27,7 +27,7 @@ class PoojaChatController extends Controller
             ->get()
             ->map(fn (PoojaMessage $m) => $this->present($m));
 
-        return Inertia::render('pooja-chat/show', [
+        $payload = [
             'booking' => [
                 'id' => $poojaBooking->id,
                 'pooja_name' => $poojaBooking->pooja->name,
@@ -40,7 +40,13 @@ class PoojaChatController extends Controller
                 : "/customer/pooja-bookings/{$poojaBooking->id}/chat",
             'messages' => $messages,
             'currentUserId' => $request->user()->id,
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('pooja-chat/show', $payload);
     }
 
     public function store(Request $request, PoojaBooking $poojaBooking): RedirectResponse|JsonResponse

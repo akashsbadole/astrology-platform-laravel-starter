@@ -21,7 +21,7 @@ export function CallWebView({ consultationId, visible, onClose, onEnded }: CallW
         (async () => {
             try {
                 const { data } = await api.get(`/consult/${consultationId}`);
-                const token = globalThis.__AUTH_TOKEN__;
+                const token = (globalThis as any).__AUTH_TOKEN__;
                 const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/api$/, '') ?? 'http://10.0.2.2:8000';
                 const url = `${baseUrl}/consult/${consultationId}?token=${token}`;
                 setWebUrl(url);
@@ -81,6 +81,6 @@ export function CallWebView({ consultationId, visible, onClose, onEnded }: CallW
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.bg },
-    loading: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg },
+    loading: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg },
     errorWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
 });

@@ -28,7 +28,7 @@ export default function AdminSupportScreen() {
 
     useEffect(() => { void load(); }, []);
 
-    const statusTone: Record<string, 'success' | 'gold' | 'danger' | 'neutral'> = {
+    const statusTone: Record<string, 'success' | 'gold' | 'danger' | 'textFaint'> = {
         open: 'danger',
         closed: 'success',
     };
@@ -51,8 +51,8 @@ export default function AdminSupportScreen() {
                                     #{item.id} · {item.created_at}
                                 </Text>
                             </View>
-                            <View style={[styles.badge, { backgroundColor: colors[statusTone[item.status] ?? 'neutral'] + '22' }]}>
-                                <Text style={[styles.badgeText, { color: colors[statusTone[item.status] ?? 'neutral'] }]}>
+                            <View style={[styles.badge, { backgroundColor: colors[statusTone[item.status] ?? 'textFaint'] + '22' }]}>
+                                <Text style={[styles.badgeText, { color: colors[statusTone[item.status] ?? 'textFaint'] }]}>
                                     {item.status.toUpperCase()}
                                 </Text>
                             </View>

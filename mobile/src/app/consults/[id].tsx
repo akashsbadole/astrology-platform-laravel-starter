@@ -15,7 +15,7 @@ import {
     View,
 } from 'react-native';
 import Avatar from '@/components/ui/Avatar';
-import CallWebView from '@/components/CallWebView';
+import { CallWebView } from '@/components/CallWebView';
 import Screen from '@/components/ui/Screen';
 import { colors, radius, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';

@@ -2,13 +2,14 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import api from './api';
 
+// @ts-ignore
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: true,
     }),
-});
+} as any);
 
 export async function registerForPushNotificationsAsync(): Promise<string | null> {
     let token: string | null = null;

@@ -1,5 +1,4 @@
 import { Play, Square } from 'lucide-react-native';
-import { Play, Square } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import Card from '@/components/ui/Card';
@@ -41,10 +40,10 @@ export default function AdminLiveScreen() {
 
     useEffect(() => { void load(); }, []);
 
-    const statusTone: Record<string, 'success' | 'gold' | 'neutral'> = {
+    const statusTone: Record<string, 'success' | 'gold' | 'danger'> = {
         live: 'success',
         scheduled: 'gold',
-        ended: 'neutral',
+        ended: 'danger',
     };
 
     return (
@@ -64,8 +63,8 @@ export default function AdminLiveScreen() {
                                 <Text style={[typography.small, { color: colors.textDim }]}>
                                     Astrologer #{item.astrologer_id}
                                 </Text>
-                                <View style={[styles.badge, { backgroundColor: colors[statusTone[item.status] ?? 'neutral'] + '22' }]}>
-                                    <Text style={[styles.badgeText, { color: colors[statusTone[item.status] ?? 'neutral'] }]}>
+                                <View style={[styles.badge, { backgroundColor: colors[statusTone[item.status] ?? 'danger'] + '22' }]}>
+                                    <Text style={[styles.badgeText, { color: colors[statusTone[item.status] ?? 'danger'] }]}>
                                         {item.status.toUpperCase()}
                                     </Text>
                                 </View>

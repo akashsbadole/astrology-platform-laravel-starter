@@ -27,7 +27,7 @@ export default function AdminBannersScreen() {
             { text: 'Cancel', style: 'cancel' },
             {
                 text: 'Add',
-                onPress: async (text) => {
+                onPress: async (text: string | undefined) => {
                     if (!text) return;
                     const [title, link, slot] = text.split(',');
                     try {

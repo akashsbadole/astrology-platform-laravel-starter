@@ -1,10 +1,9 @@
-import { Check, Clock, X } from 'lucide-react-native';
+import { Check, X } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import {
     Alert,
     FlatList,
     RefreshControl,
-    SegmentedControl,
     StyleSheet,
     Text,
     View,
@@ -24,7 +23,7 @@ type AdminAstrologer = {
     created_at: string;
 };
 
-type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected';
+type StatusFilter = 'pending' | 'approved' | 'rejected';
 
 export default function AdminAstrologersScreen() {
     const [astrologers, setAstrologers] = useState<AdminAstrologer[]>([]);
@@ -38,8 +37,7 @@ export default function AdminAstrologersScreen() {
 
     const loadAstrologers = async () => {
         try {
-            const params = filter === 'all' ? {} : { status: filter };
-            const { data } = await api.get('/admin/astrologers', { params });
+            const { data } = await api.get('/admin/astrologers', { params: { status: filter } });
             setAstrologers(data?.astrologers ?? []);
         } catch (e) {
             console.warn('Astrologers load:', apiErrorMessage(e));
@@ -87,61 +85,80 @@ export default function AdminAstrologersScreen() {
         ]);
     };
 
-    const statusTone: Record<string, 'gold' | 'success' | 'danger' | 'neutral'> = {
+    const statusTone: Record<string, 'gold' | 'success' | 'danger'> = {
         approved: 'success',
         pending: 'gold',
         rejected: 'danger',
     };
 
-    const renderItem = ({ item }: { item: AdminAstrologer }) => (
-        <Card>
-            <View style={styles.row}>
-                <View style={styles.info}>
-                    <Text style={[typography.subtitle, { color: colors.text }]}>
-                        {item.name}
-                    </Text>
-                    <Text style={[typography.small, { color: colors.textDim }]}>
-                        {item.email}
-                    </Text>
-                    <Text style={[typography.small, { color: colors.textFaint }]}>
-                        {item.experience_years} yrs · {item.specializations.slice(0, 2).join(', ')}
-                    </Text>
-                    <View style={[styles.badge, { backgroundColor: colors[statusTone[item.status] ?? 'neutral'] + '22' }]}>
-                        <Text style={[styles.badgeText, { color: colors[statusTone[item.status] ?? 'neutral'] }]}>
-                            {item.status.toUpperCase()}
+    const renderItem = ({ item }: { item: AdminAstrologer }) => {
+        const tone = statusTone[item.status] ?? 'gold';
+        return (
+            <Card>
+                <View style={styles.row}>
+                    <View style={styles.info}>
+                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                            {item.name}
                         </Text>
+                        <Text style={[typography.small, { color: colors.textDim }]}>
+                            {item.email}
+                        </Text>
+                        <Text style={[typography.small, { color: colors.textFaint }]}>
+                            {item.experience_years} yrs · {item.specializations.slice(0, 2).join(', ')}
+                        </Text>
+                        <View style={[styles.badge, { backgroundColor: colors[tone] + '22' }]}>
+                            <Text style={[styles.badgeText, { color: colors[tone] }]}>
+                                {item.status.toUpperCase()}
+                            </Text>
+                        </View>
                     </View>
+                    {item.status === 'pending' && (
+                        <View style={styles.actions}>
+                            <View style={[styles.iconBtn, { backgroundColor: colors.success + '22' }]}>
+                                <Check color={colors.success} size={18} onPress={() => approve(item.id)} />
+                            </View>
+                            <View style={[styles.iconBtn, { backgroundColor: colors.danger + '22' }]}>
+                                <X color={colors.danger} size={18} onPress={() => reject(item.id)} />
+                            </View>
+                        </View>
+                    )}
                 </View>
-                {item.status === 'pending' && (
-                    <View style={styles.actions}>
-                        <View style={[styles.iconBtn, { backgroundColor: colors.success + '22' }]}>
-                            <Check color={colors.success} size={18} onPress={() => approve(item.id)} />
-                        </View>
-                        <View style={[styles.iconBtn, { backgroundColor: colors.danger + '22' }]}>
-                            <X color={colors.danger} size={18} onPress={() => reject(item.id)} />
-                        </View>
-                    </View>
-                )}
-            </View>
-        </Card>
-    );
+            </Card>
+        );
+    };
+
+    const filters: { label: string; value: StatusFilter }[] = [
+        { label: 'Pending', value: 'pending' },
+        { label: 'Approved', value: 'approved' },
+        { label: 'Rejected', value: 'rejected' },
+    ];
 
     return (
         <Screen>
             <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
                 Astrologers
             </Text>
-            <SegmentedControl
-                values={['Pending', 'Approved', 'Rejected']}
-                selectedIndex={filter === 'all' ? 0 : filter === 'pending' ? 0 : filter === 'approved' ? 1 : 2}
-                onChange={(e) => {
-                    const val = e.nativeEvent.value;
-                    setFilter(val === 'Pending' ? 'pending' : val === 'Approved' ? 'approved' : 'rejected');
-                }}
-                style={{ marginBottom: 12 }}
-                tintColor={colors.gold}
-                textStyle={{ color: colors.text, fontSize: 12, fontWeight: '600' }}
-            />
+            <View style={styles.filterRow}>
+                {filters.map((f) => (
+                    <Card
+                        key={f.value}
+                        style={[
+                            styles.filterChip,
+                            filter === f.value && { backgroundColor: colors.gold + '22', borderColor: colors.gold },
+                        ]}
+                        onPress={() => setFilter(f.value)}
+                    >
+                        <Text
+                            style={[
+                                styles.filterText,
+                                { color: filter === f.value ? colors.gold : colors.textDim },
+                            ]}
+                        >
+                            {f.label}
+                        </Text>
+                    </Card>
+                ))}
+            </View>
             <FlatList
                 data={astrologers}
                 keyExtractor={(a) => String(a.id)}
@@ -163,6 +180,17 @@ export default function AdminAstrologersScreen() {
 }
 
 const styles = StyleSheet.create({
+    filterRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
+    filterChip: {
+        flex: 1,
+        alignItems: 'center',
+        paddingVertical: 8,
+        borderRadius: radius.pill,
+        borderWidth: 1,
+        borderColor: colors.border,
+        backgroundColor: colors.surface,
+    },
+    filterText: { fontSize: 12, fontWeight: '700', textTransform: 'capitalize' },
     row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     info: { flex: 1 },
     badge: {

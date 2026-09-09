@@ -14,7 +14,7 @@ use Inertia\Response;
 
 class ChatController extends Controller
 {
-    public function show(Request $request, Booking $booking): Response
+    public function show(Request $request, Booking $booking): Response|JsonResponse
     {
         $this->authorizeParty($request, $booking);
 
@@ -30,7 +30,7 @@ class ChatController extends Controller
             ? $booking->astrologer
             : $booking->customer;
 
-        return Inertia::render('chat/show', [
+        $payload = [
             'booking' => [
                 'id' => $booking->id,
                 'status' => $booking->status->value,
@@ -42,7 +42,13 @@ class ChatController extends Controller
             ],
             'messages' => $messages,
             'currentUserId' => $request->user()->id,
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('chat/show', $payload);
     }
 
     public function store(Request $request, Booking $booking): RedirectResponse|JsonResponse

@@ -7,31 +7,49 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Services\RazorpayService;
 use App\Services\WalletService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ShopController extends Controller
 {
-    public function index(): Response
+    public function index(): Response|JsonResponse
     {
+        $products = Product::where('is_active', true)->latest()->paginate(12)->through(fn (Product $p) => [
+            'id' => $p->id, 'slug' => $p->slug, 'name' => $p->name, 'price' => $p->price_paise / 100, 'mrp' => $p->mrp_paise ? $p->mrp_paise / 100 : null, 'stock' => $p->stock, 'images' => $p->images,
+        ]);
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'data' => $products->items(),
+                'total' => $products->total(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+            ]);
+        }
+
         return Inertia::render('shop/index', [
-            'products' => Product::where('is_active', true)->latest()->paginate(12)->through(fn (Product $p) => [
-                'id' => $p->id, 'slug' => $p->slug, 'name' => $p->name, 'price' => $p->price_paise / 100, 'mrp' => $p->mrp_paise ? $p->mrp_paise / 100 : null, 'stock' => $p->stock, 'images' => $p->images,
-            ]),
+            'products' => $products,
         ]);
     }
 
-    public function show(string $slug): Response
+    public function show(string $slug): Response|JsonResponse
     {
         $p = Product::where('slug', $slug)->where('is_active', true)->firstOrFail();
 
-        return Inertia::render('shop/show', ['product' => [
+        $payload = ['product' => [
             'id' => $p->id, 'slug' => $p->slug, 'name' => $p->name, 'description' => $p->description,
             'price' => $p->price_paise / 100, 'mrp' => $p->mrp_paise ? $p->mrp_paise / 100 : null, 'stock' => $p->stock,
-        ]]);
+        ]];
+
+        if (request()->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('shop/show', $payload);
     }
 
     public function cart(Request $request): Response

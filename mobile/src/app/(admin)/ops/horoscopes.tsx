@@ -26,7 +26,7 @@ export default function AdminHoroscopesScreen() {
             { text: 'Cancel', style: 'cancel' },
             {
                 text: 'Add',
-                onPress: async (text) => {
+                onPress: async (text: string | undefined) => {
                     if (!text) return;
                     const [rashi, period, body] = text.split(',');
                     try {

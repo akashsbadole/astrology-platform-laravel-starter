@@ -37,7 +37,7 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function verify(Request $request, Booking $booking): RedirectResponse
+    public function verify(Request $request, Booking $booking): RedirectResponse|JsonResponse
     {
         abort_unless($booking->customer_id === $request->user()->id, 403);
 
@@ -58,6 +58,10 @@ class PaymentController extends Controller
         );
 
         if (! $verified) {
+            if ($request->wantsJson()) {
+                return response()->json(['ok' => false, 'error' => 'Payment verification failed.'], 422);
+            }
+
             return redirect()
                 ->route('customer.bookings.checkout', $booking)
                 ->with('error', 'Payment verification failed. Please try again.');
@@ -76,6 +80,10 @@ class PaymentController extends Controller
         app(ReferralService::class)->awardForPaidBooking(
             $booking->customer, (string) $booking->amount, $booking, 'booking'
         );
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'status' => 'confirmed']);
+        }
 
         return redirect()
             ->route('customer.bookings.index')

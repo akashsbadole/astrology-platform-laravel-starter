@@ -176,6 +176,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->name('api.ad
 |--------------------------------------------------------------------------
 */
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('shop', [\App\Http\Controllers\ShopController::class, 'index'])->name('api.shop.index');
+    Route::get('shop/{slug}', [\App\Http\Controllers\ShopController::class, 'show'])->name('api.shop.show');
     Route::get('shop/cart', [\App\Http\Controllers\ShopController::class, 'cart'])->name('api.shop.cart');
     Route::post('shop/cart', [\App\Http\Controllers\ShopController::class, 'addToCart'])->name('api.shop.cart.add');
     Route::post('shop/checkout', [\App\Http\Controllers\ShopController::class, 'checkout'])->name('api.shop.checkout');
@@ -183,6 +185,31 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('shop/orders/{order}', [\App\Http\Controllers\ShopController::class, 'showOrder'])->name('api.shop.order.show');
     Route::get('shop-orders', [\App\Http\Controllers\ShopController::class, 'orders'])->name('api.shop.orders');
     Route::post('shop/orders/{order}/shipment', [\App\Http\Controllers\ShopController::class, 'updateShipment'])->name('api.shop.shipment.update');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Customer Bookings (authenticated)
+|--------------------------------------------------------------------------
+*/
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('bookings', [\App\Http\Controllers\Customer\BookingController::class, 'index'])->name('api.bookings.index');
+    Route::post('bookings', [\App\Http\Controllers\Customer\BookingController::class, 'store'])->name('api.bookings.store');
+    Route::get('bookings/{booking}/checkout', [\App\Http\Controllers\Customer\BookingController::class, 'checkout'])->name('api.bookings.checkout');
+    Route::post('bookings/{booking}/payment/order', [\App\Http\Controllers\Customer\PaymentController::class, 'createOrder'])->name('api.bookings.payment.order');
+    Route::post('bookings/{booking}/payment/verify', [\App\Http\Controllers\Customer\PaymentController::class, 'verify'])->name('api.bookings.payment.verify');
+
+    Route::get('bookings/{booking}/chat', [\App\Http\Controllers\ChatController::class, 'show'])->name('api.chat.show');
+    Route::post('bookings/{booking}/chat', [\App\Http\Controllers\ChatController::class, 'store'])->name('api.chat.store');
+
+    Route::post('poojas/{pooja}/bookings', [\App\Http\Controllers\Customer\PoojaBookingController::class, 'store'])->name('api.poojas.bookings.store');
+    Route::get('pooja-bookings', [\App\Http\Controllers\Customer\PoojaBookingController::class, 'index'])->name('api.pooja-bookings.index');
+    Route::get('pooja-bookings/{poojaBooking}/checkout', [\App\Http\Controllers\Customer\PoojaBookingController::class, 'checkout'])->name('api.pooja-bookings.checkout');
+    Route::post('pooja-bookings/{poojaBooking}/payment/order', [\App\Http\Controllers\Customer\PoojaPaymentController::class, 'createOrder'])->name('api.pooja-bookings.payment.order');
+    Route::post('pooja-bookings/{poojaBooking}/payment/verify', [\App\Http\Controllers\Customer\PoojaPaymentController::class, 'verify'])->name('api.pooja-bookings.payment.verify');
+
+    Route::get('pooja-bookings/{poojaBooking}/chat', [\App\Http\Controllers\PoojaChatController::class, 'show'])->name('api.pooja-chat.show');
+    Route::post('pooja-bookings/{poojaBooking}/chat', [\App\Http\Controllers\PoojaChatController::class, 'store'])->name('api.pooja-chat.store');
 });
 
 /*

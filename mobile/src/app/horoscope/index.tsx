@@ -79,3 +79,40 @@ export default function HoroscopeScreen() {
                     Your daily cosmic guidance
                 </Text>
             </View>
+            <ScrollView
+                contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
+                showsVerticalScrollIndicator={false}
+            >
+                {rashis.map((r) => (
+                    <Card key={r.id} onPress={() => {}}>
+                        <View style={styles.rashiRow}>
+                            <Text style={styles.emoji}>{r.emoji}</Text>
+                            <View style={{ flex: 1 }}>
+                                <Text style={[typography.subtitle, { color: colors.text }]}>
+                                    {r.rashi}
+                                </Text>
+                                <Text style={[typography.small, { color: colors.textDim }]} numberOfLines={1}>
+                                    {r.daily}
+                                </Text>
+                            </View>
+                        </View>
+                    </Card>
+                ))}
+            </ScrollView>
+        </Screen>
+    );
+}
+
+const styles = StyleSheet.create({
+    hero: {
+        padding: 20,
+        paddingTop: 48,
+        backgroundColor: colors.bg2,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: colors.border,
+        gap: 4,
+    },
+    heroTitle: { fontSize: 28, fontWeight: '900' },
+    rashiRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    emoji: { fontSize: 28 },
+});
