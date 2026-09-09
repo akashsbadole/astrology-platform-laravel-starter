@@ -20,6 +20,8 @@ class AstrologerController extends Controller
         $language = $request->string('language')->toString() ?: null;
         $maxRate = $request->input('max_rate');
         $sort = $request->string('sort')->toString() ?: 'rating';
+        $online = $request->boolean('online_only');
+        $search = $request->string('q')->toString() ?: null;
 
         $astrologers = AstrologerProfile::query()
             ->approved()
@@ -27,6 +29,8 @@ class AstrologerController extends Controller
             ->when($specialization, fn ($query) => $query->whereJsonContains('specializations', $specialization))
             ->when($language, fn ($query) => $query->whereJsonContains('languages', $language))
             ->when($maxRate, fn ($query) => $query->where('rate_chat_per_min', '<=', $maxRate))
+            ->when($online, fn ($query) => $query->where('is_online', true))
+            ->when($search, fn ($query) => $query->whereHas('user', fn ($u) => $u->where('name', 'like', '%'.$search.'%')))
             ->when($sort === 'rating', fn ($query) => $query->orderByDesc('rating_avg'))
             ->when($sort === 'price', fn ($query) => $query->orderBy('rate_chat_per_min'))
             ->when($sort === 'experience', fn ($query) => $query->orderByDesc('experience_years'))
@@ -42,15 +46,23 @@ class AstrologerController extends Controller
                 'rating_avg' => (float) $profile->rating_avg,
                 'rating_count' => $profile->rating_count,
                 'rate_chat_per_min' => $profile->rate_chat_per_min,
+                'rate_call_per_min' => $profile->rate_call_per_min,
+                'rate_video_per_min' => $profile->rate_video_per_min,
+                'is_online' => (bool) ($profile->is_online ?? false),
+                'is_first_free' => (bool) ($profile->is_first_free ?? false),
             ]);
 
-        return Inertia::render('customer/astrologers/index', [
+        $view = $request->route()->getName() === 'astrologers.public' ? 'astrologers/index' : 'customer/astrologers/index';
+
+        return Inertia::render($view, [
             'astrologers' => $astrologers,
             'filters' => [
                 'specialization' => $specialization,
                 'language' => $language,
                 'max_rate' => $maxRate,
                 'sort' => $sort,
+                'q' => $search,
+                'online_only' => $online,
             ],
             'specializationOptions' => Taxonomy::activeNames('specialization'),
             'languageOptions' => Taxonomy::activeNames('language'),
@@ -101,6 +113,7 @@ class AstrologerController extends Controller
         return Inertia::render('customer/astrologers/show', [
             'astrologer' => [
                 'id' => $astrologer->id,
+                'user_id' => $astrologer->user_id,
                 'name' => $astrologer->user->name,
                 'bio' => $astrologer->bio,
                 'specializations' => $astrologer->specializations ?? [],

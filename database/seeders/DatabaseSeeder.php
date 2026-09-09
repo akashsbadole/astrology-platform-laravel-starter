@@ -5,7 +5,11 @@ namespace Database\Seeders;
 use App\Enums\UserRole;
 use App\Models\AstrologerAvailability;
 use App\Models\AstrologerProfile;
+use App\Models\Banner;
+use App\Models\Coupon;
 use App\Models\ForumCategory;
+use App\Models\Horoscope;
+use App\Models\Product;
 use App\Models\Taxonomy;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -53,6 +57,11 @@ class DatabaseSeeder extends Seeder
             'approved_at' => now(),
             'rating_avg' => 4.8,
             'rating_count' => 120,
+            'is_online' => true,
+            'accepts_chat' => true,
+            'accepts_call' => true,
+            'accepts_video' => true,
+            'is_first_free' => true,
         ]);
 
         foreach (range(1, 5) as $weekday) {
@@ -77,5 +86,21 @@ class DatabaseSeeder extends Seeder
         ] as $category) {
             ForumCategory::firstOrCreate(['slug' => $category['slug']], $category);
         }
+
+        foreach (['Mesha', 'Vrishabha', 'Mithuna', 'Karka', 'Simha', 'Kanya', 'Tula', 'Vrishchika', 'Dhanu', 'Makara', 'Kumbha', 'Meena'] as $rashi) {
+            Horoscope::firstOrCreate(['rashi' => $rashi, 'period' => 'daily', 'date' => now()->toDateString()], [
+                'title' => $rashi.' daily guidance',
+                'body' => 'Favourable day for planning, prayer and key talks. Avoid haste after sunset.',
+                'lucky_color' => 'Yellow', 'lucky_number' => '9', 'lucky_time' => '10am-12pm',
+            ]);
+        }
+
+        Coupon::firstOrCreate(['code' => 'FIRSTFREE'], ['type' => 'first_free', 'value_paise' => 0, 'is_active' => true, 'meta' => ['minutes' => 5]]);
+        Coupon::firstOrCreate(['code' => 'RECHARGE10'], ['type' => 'recharge_bonus', 'value_paise' => 10000, 'min_order_paise' => 50000, 'is_active' => true]);
+
+        Product::firstOrCreate(['slug' => 'yellow-sapphire'], ['name' => 'Yellow Sapphire (Pukhraj)', 'price_paise' => 510000, 'mrp_paise' => 710000, 'stock' => 20, 'description' => 'Energised pukhraj with lab report.', 'is_active' => true]);
+        Product::firstOrCreate(['slug' => 'shri-yantra'], ['name' => 'Shri Yantra', 'price_paise' => 110000, 'stock' => 50, 'description' => 'Brass Shri Yantra for home temple.', 'is_active' => true]);
+
+        Banner::firstOrCreate(['slot' => 'home', 'title' => 'First 5 min free'], ['link' => '/astrologers', 'is_active' => true, 'sort' => 0]);
     }
 }

@@ -9,10 +9,13 @@ import {
     LayoutGrid,
     MessagesSquare,
     Newspaper,
+    Radio,
     ShieldCheck,
+    ShoppingBag,
     Sparkles,
     Star,
     UserCog,
+    Wallet,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -53,6 +56,31 @@ export function AppSidebar() {
             icon: LayoutGrid,
         },
         {
+            title: 'Wallet',
+            href: '/wallet',
+            icon: Wallet,
+        },
+        {
+            title: 'Consult now',
+            href: '/consultations',
+            icon: MessagesSquare,
+        },
+        {
+            title: 'Horoscope',
+            href: '/horoscope',
+            icon: Star,
+        },
+        {
+            title: 'Live',
+            href: '/live',
+            icon: Radio,
+        },
+        {
+            title: 'AstroMall',
+            href: '/shop',
+            icon: ShoppingBag,
+        },
+        {
             title: 'Panchang',
             href: '/panchang',
             icon: CalendarClock,
@@ -73,6 +101,11 @@ export function AppSidebar() {
             icon: Gift,
         },
         {
+            title: 'Support',
+            href: '/support',
+            icon: Bell,
+        },
+        {
             title: 'Notifications',
             href: '/notifications',
             icon: Bell,
@@ -90,6 +123,11 @@ export function AppSidebar() {
                 title: 'My bookings',
                 href: '/customer/bookings',
                 icon: CalendarDays,
+            },
+            {
+                title: 'Milan',
+                href: '/customer/milan',
+                icon: Star,
             },
             {
                 title: 'Pooja bookings',
@@ -134,6 +172,11 @@ export function AppSidebar() {
             {
                 title: 'Astrologers',
                 href: '/admin/astrologers',
+                icon: ShieldCheck,
+            },
+            {
+                title: 'Ops',
+                href: '/admin/ops',
                 icon: ShieldCheck,
             },
             {

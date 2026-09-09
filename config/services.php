@@ -38,6 +38,13 @@ return [
     'razorpay' => [
         'key_id' => env('RAZORPAY_KEY_ID'),
         'key_secret' => env('RAZORPAY_KEY_SECRET'),
+        'webhook_secret' => env('RAZORPAY_WEBHOOK_SECRET'),
+    ],
+
+    'call' => [
+        'provider' => env('CALL_PROVIDER', 'reverb'),
+        'agora_app_id' => env('AGORA_APP_ID'),
+        'agora_cert' => env('AGORA_CERT'),
     ],
 
     'sms' => [

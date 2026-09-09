@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, router } from '@inertiajs/react';
 import { Star } from 'lucide-react';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
@@ -105,6 +105,59 @@ export default function AstrologerShow({
                             {astrologer.bio}
                         </p>
                     )}
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-base">
+                                Start instant session (wallet per-minute)
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex flex-wrap gap-2">
+                            {(['chat', 'call', 'video'] as const).map((t) => (
+                                <Button
+                                    key={t}
+                                    size="sm"
+                                    onClick={() =>
+                                        router.post(
+                                            '/consultations',
+                                            {
+                                                astrologer_id:
+                                                    (
+                                                        astrologer as unknown as {
+                                                            user_id?: number;
+                                                        }
+                                                    ).user_id ??
+                                                    (
+                                                        astrologer as unknown as {
+                                                            userId?: number;
+                                                        }
+                                                    ).userId ??
+                                                    0,
+                                                type: t,
+                                            },
+                                            {
+                                                onError: () =>
+                                                    alert(
+                                                        'Need wallet balance for 5 min or astrologer busy. Recharge first.',
+                                                    ),
+                                            },
+                                        )
+                                    }
+                                >
+                                    {t === 'chat'
+                                        ? 'Chat Now'
+                                        : t === 'call'
+                                          ? 'Call Now'
+                                          : 'Video Now'}
+                                </Button>
+                            ))}
+                            <span className="text-muted-foreground w-full text-xs">
+                                Requires wallet ≥ 5 min. Timer bills per-second;
+                                auto-ends at ₹0. Keep scheduled booking below
+                                for fixed slots.
+                            </span>
+                        </CardContent>
+                    </Card>
 
                     <Card>
                         <CardHeader>

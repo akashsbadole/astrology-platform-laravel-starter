@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
             'supportedLocales' => SetLocale::SUPPORTED,
             'translations' => $this->translations(),
             'unreadNotifications' => $user ? $user->unreadNotifications()->count() : 0,
+            'walletBalance' => $user ? ($user->wallet?->balance_paise / 100 ?? 0) : 0,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

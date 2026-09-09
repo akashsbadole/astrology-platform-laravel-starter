@@ -91,6 +91,31 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(DeviceToken::class);
     }
 
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function walletTransactions(): HasMany
+    {
+        return $this->hasMany(WalletTransaction::class);
+    }
+
+    public function consultationsAsCustomer(): HasMany
+    {
+        return $this->hasMany(Consultation::class, 'customer_id');
+    }
+
+    public function consultationsAsAstrologer(): HasMany
+    {
+        return $this->hasMany(Consultation::class, 'astrologer_id');
+    }
+
+    public function walletBalancePaise(): int
+    {
+        return $this->wallet?->balance_paise ?? 0;
+    }
+
     public function notificationPreference(): HasOne
     {
         return $this->hasOne(NotificationPreference::class);
