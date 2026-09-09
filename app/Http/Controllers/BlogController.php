@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class BlogController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|JsonResponse
     {
         $posts = Post::published()
             ->with('author:id,name')
@@ -24,14 +25,23 @@ class BlogController extends Controller
                 'author_name' => $p->author->name,
             ]);
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'data' => $posts->items(),
+                'total' => $posts->total(),
+                'current_page' => $posts->currentPage(),
+                'last_page' => $posts->lastPage(),
+            ]);
+        }
+
         return Inertia::render('blog/index', ['posts' => $posts]);
     }
 
-    public function show(string $slug): Response
+    public function show(string $slug): Response|JsonResponse
     {
         $post = Post::published()->where('slug', $slug)->with('author:id,name')->firstOrFail();
 
-        return Inertia::render('blog/show', [
+        $payload = [
             'post' => [
                 'id' => $post->id,
                 'slug' => $post->slug,
@@ -41,6 +51,12 @@ class BlogController extends Controller
                 'published_at' => $post->published_at?->toDateString(),
                 'author_name' => $post->author->name,
             ],
-        ]);
+        ];
+
+        if (request()->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('blog/show', $payload);
     }
 }

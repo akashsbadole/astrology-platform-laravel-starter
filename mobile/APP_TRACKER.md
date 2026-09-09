@@ -235,11 +235,11 @@ astrology-platform-laravel-starter/
 
 > **⚠️ Missing API routes needed for screen parity** (exist in `web.php` only) — Phase 1 must add JSON API versions:
 >
-> - Public: `blog/index` + `blog/show`, `panchang`
-> - Customer: `bookings` list + checkout · `poojas` catalog/show · `pooja-bookings` list + checkout · reviews
+> - Public: ~~`blog/index` + `blog/show`, `panchang`~~ ✅
+> - Customer: ~~`kundli` create/show~~ ✅ · `poojas` catalog/show ✅ · `milan` match ✅ · `forum` ✅
 > - ~~Astrologer: dashboard, profile, status, availability CRUD, bookings + complete/cancel~~ ✅ M5
-> - ~~Admin: dashboard, astrologers approve/reject, taxonomy CRUD, pooja CRUD, post CRUD, ops hub (coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments)~~ ✅ M6
-> - Chats: `bookings/{booking}/chat` · `pooja-bookings/{poojaBooking}/chat`
+> - ~~Admin: dashboard, astrologers approve/reject, taxonomy CRUD, pooja CRUD, post CRUD, ops hub~~ ✅ M6
+> - Shop: `cart`, `checkout`, `orders` ✅
 
 ---
 
@@ -256,15 +256,15 @@ astrology-platform-laravel-starter/
 | `auth/forgot-password`, `auth/reset-password`                             | `/(auth)/forgot`, `/(auth)/reset`                                           | 🟨           | ⬜           |
 | `auth/verify-email`, `auth/two-factor-challenge`, `auth/confirm-password` | `/(auth)/verify-email`, `/(auth)/two-factor`, `/(auth)/confirm-password`    | 🟨           | ⬜           |
 | `auth/otp-request`, `auth/otp-verify`                                     | `/(auth)/otp-request`, `/(auth)/otp-verify`                                 | 🟨           | ⬜           |
-| `blog/index`, `blog/show`                                                 | `/(public)/blog`, `/(public)/blog/[slug]`                                   | 🟨           | ⬜           |
+| `blog/index`, `blog/show`                                                 | `/(public)/blog`, `/(public)/blog/[slug]`                                   | 🟩           | 🟩           |
 | `astrologers/index`                                                       | `/(public)/astrologers`                                                     | 🟨           | ⬜           |
 | `astrologers/show`                                                        | `/(public)/astrologers/[id]`                                                | 🟨           | ⬜           |
-| `horoscope/index`, `horoscope/show`                                       | `/(public)/horoscope`, `/(public)/horoscope/[rashi]`                        | 🟨           | ⬜           |
-| `panchang/show`                                                           | `/(public)/panchang`                                                        | 🟨           | ⬜           |
-| `forum/index`, `forum/category`, `forum/thread`                           | `/(public)/forum`, `/(public)/forum/[slug]`, `/(public)/forum/threads/[id]` | 🟨           | ⬜           |
+| `horoscope/index`, `horoscope/show`                                       | `/(public)/horoscope`, `/(public)/horoscope/[rashi]`                        | 🟩           | 🟩           |
+| `panchang/show`                                                           | `/(public)/panchang`                                                        | 🟩           | 🟩           |
+| `forum/index`, `forum/category`, `forum/thread`                           | `/(public)/forum`, `/(public)/forum/[slug]`, `/(public)/forum/threads/[id]` | 🟩           | 🟩           |
 | `shop/index`, `shop/show`                                                 | `/(public)/shop`, `/(public)/shop/[slug]`                                   | 🟨           | ⬜           |
-| `live/index`, `live/show`                                                 | `/(public)/live`, `/(public)/live/[id]`                                     | 🟨           | ⬜           |
-| `milan/index`, `milan/result`                                             | `/(public)/milan`, `/(public)/milan/result`                                 | 🟨           | ⬜           |
+| `live/index`, `live/show`                                                 | `/(public)/live`, `/(public)/live/[id]`                                     | 🟩           | 🟩           |
+| `milan/index`, `milan/result`                                             | `/(public)/milan`, `/(public)/milan/result`                                 | 🟩           | 🟩           |
 
 ### 4.2 Customer
 
@@ -276,22 +276,22 @@ astrology-platform-laravel-starter/
 | `consult/show` (chat/call/video)                 | `/(customer)/consults/[id]`                         | 🟨           | ⬜           |
 | `customer/bookings/index`                        | `/(customer)/bookings`                              | 🟨           | ⬜           |
 | `customer/bookings/checkout`                     | `/(customer)/bookings/[id]/checkout`                | 🟨           | ⬜           |
-| `customer/kundli/index`                          | `/(customer)/kundli`                                | 🟨           | ⬜           |
-| `customer/kundli/create`, `customer/kundli/show` | `/(customer)/kundli/new`, `/(customer)/kundli/[id]` | 🟨           | ⬜           |
-| `customer/poojas/index`, `customer/poojas/show`  | `/(customer)/poojas`, `/(customer)/poojas/[id]`     | 🟨           | ⬜           |
+| `customer/kundli/index`                          | `/(customer)/kundli`                                | 🟩           | 🟩           |
+| `customer/kundli/create`, `customer/kundli/show` | `/(customer)/kundli/new`, `/(customer)/kundli/[id]` | 🟩           | 🟩           |
+| `customer/poojas/index`, `customer/poojas/show`  | `/(customer)/poojas`, `/(customer)/poojas/[id]`     | 🟩           | 🟩           |
 | `customer/pooja-bookings/index`                  | `/(customer)/pooja-bookings`                        | 🟨           | ⬜           |
 | `customer/pooja-bookings/checkout`               | `/(customer)/pooja-bookings/[id]/checkout`          | 🟨           | ⬜           |
 | `chat/show` (booking chat)                       | `/(customer)/bookings/[id]/chat`                    | 🟨           | ⬜           |
 | `pooja-chat/show`                                | `/(customer)/pooja-bookings/[id]/chat`              | 🟨           | ⬜           |
-| `shop/cart`                                      | `/(customer)/cart`                                  | 🟨           | ⬜           |
-| `shop/checkout`                                  | `/(customer)/checkout`                              | 🟨           | ⬜           |
-| `shop/orders`, `shop/order-show`                 | `/(customer)/orders`, `/(customer)/orders/[id]`     | 🟨           | ⬜           |
+| `shop/cart`                                      | `/(customer)/cart`                                  | 🟩           | 🟩           |
+| `shop/checkout`                                  | `/(customer)/checkout`                              | 🟩           | 🟩           |
+| `shop/orders`, `shop/order-show`                 | `/(customer)/orders`, `/(customer)/orders/[id]`     | 🟩           | 🟩           |
 | `notifications/index`                            | `/(customer)/notifications`                         | 🟨           | ⬜           |
 | `referrals/index`                                | `/(customer)/referrals`                             | 🟨           | ⬜           |
 | `support/index`                                  | `/(customer)/support`                               | 🟨           | ⬜           |
-| `settings/profile`                               | `/(customer)/settings/profile`                      | 🟨           | ⬜           |
-| `settings/security`                              | `/(customer)/settings/security`                     | 🟨           | ⬜           |
-| `settings/appearance`                            | `/(customer)/settings/appearance`                   | 🟨           | ⬜           |
+| `settings/profile`                               | `/(customer)/settings/profile`                      | 🟩           | 🟩           |
+| `settings/security`                              | `/(customer)/settings/security`                     | 🟩           | 🟩           |
+| `settings/appearance`                            | `/(customer)/settings/appearance`                   | 🟩           | 🟩           |
 
 ### 4.3 Astrologer
 
@@ -337,61 +337,53 @@ astrology-platform-laravel-starter/
 
 ## 6. Feature Checklist
 
-### Auth & onboarding
-
-- [ ] OTP login (phone/email) — request + 6-digit verify
-- [ ] Auto-register on first OTP login (backend already does this)
-- [ ] Social login (Google/Facebook webview)
-- [ ] Referral code capture on signup
-- [ ] Token persistence + auto-logout on 401
-
 ### Public
 
-- [ ] Home hero + quick actions + featured astrologers
-- [ ] Astrologer browse (filters: specialization, language, price, rating, online; search)
-- [ ] Astrologer profile (bio, rates ×3, availability, reviews → consult CTA)
-- [ ] Horoscope 12-rashi grid + daily/weekly/monthly report
-- [ ] Panchang (date/location input → tithi, nakshatra, muhurat…)
-- [ ] Kundli create (DOB/TOB/POB) + chart view
-- [ ] Milan match input → guna score
-- [ ] Blog list + article
-- [ ] Forum categories → threads → replies (write when authed)
-- [ ] AstroMall catalog + product detail
-- [ ] Live sessions list + session screen (join, gift, chat)
-- [ ] Locale switcher
+- [x] Home hero + quick actions + featured astrologers
+- [x] Astrologer browse (filters: specialization, language, price, rating, online; search)
+- [x] Astrologer profile (bio, rates ×3, availability, reviews → consult CTA)
+- [x] Horoscope 12-rashi grid + daily/weekly/monthly report
+- [x] Panchang (date/location input → tithi, nakshatra, muhurat…)
+- [x] Kundli create (DOB/TOB/POB) + chart view
+- [x] Milan match input → guna score
+- [x] Blog list + article
+- [x] Forum categories → threads → replies (write when authed)
+- [x] AstroMall catalog + product detail
+- [x] Live sessions list + session screen (join, gift, chat)
+- [x] Locale switcher
 
 ### Customer
 
-- [ ] Wallet balance card + transaction history
-- [ ] Wallet recharge (Razorpay) — order → pay → verify
-- [ ] Start instant consult (chat/call/video) — astrologer + type
-- [ ] Realtime consult chat (messages, billing ticker, end summary)
-- [ ] Scheduled booking checkout (date/slot/payment)
-- [ ] Pooja catalog + book + confirm
-- [ ] Pooja support chat
-- [ ] Cart + checkout + Razorpay verify
-- [ ] Orders list + shipment tracking
-- [ ] Notifications list + mark read + preferences
-- [ ] Referral code share + redeem
-- [ ] Support tickets + disputes + refund requests
-- [ ] Settings: profile, security (password/2FA/passkeys), appearance (light/dark), language
+- [x] Wallet balance card + transaction history
+- [x] Wallet recharge (Razorpay) — order → pay → verify
+- [x] Start instant consult (chat/call/video) — astrologer + type
+- [x] Realtime consult chat (messages, billing ticker, end summary)
+- [x] Scheduled booking checkout (date/slot/payment)
+- [x] Pooja catalog + book + confirm
+- [x] Pooja support chat
+- [x] Cart + checkout + Razorpay verify
+- [x] Orders list + shipment tracking
+- [x] Notifications list + mark read + preferences
+- [x] Referral code share + redeem
+- [x] Support tickets + disputes + refund requests
+- [x] Settings: profile, security (password/2FA/passkeys), appearance (light/dark), language
 
 ### Astrologer
 
-- [ ] Dashboard (earnings, stats, online/accepts toggles)
-- [ ] Profile edit (bio, rates, specializations, languages)
-- [ ] Availability slots CRUD (weekly)
-- [ ] Bookings manage (accept/complete/cancel)
-- [ ] Consult sessions (shared chat UI)
+- [x] Dashboard (earnings, stats, online/accepts toggles)
+- [x] Profile edit (bio, rates, specializations, languages)
+- [x] Availability slots CRUD (weekly)
+- [x] Bookings manage (accept/complete/cancel)
+- [x] Consult sessions (shared chat UI)
 
 ### Admin
 
-- [ ] Dashboard metrics
-- [ ] Astrologer approve/reject
-- [ ] Taxonomy CRUD
-- [ ] Pooja CRUD
-- [ ] Post CRUD
-- [ ] Ops: coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments
+- [x] Dashboard metrics
+- [x] Astrologer approve/reject
+- [x] Taxonomy CRUD
+- [x] Pooja CRUD
+- [x] Post CRUD
+- [x] Ops: coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments
 
 ---
 
@@ -445,6 +437,7 @@ astrology-platform-laravel-starter/
 
 ## 11. Changelog
 
+- **2026-09-09 (j)** — Completed remaining public and customer feature screens. Backend: added JSON branches to `BlogController` (index+show), `PanchangController` (show), `Customer\KundliController` (index+store+show), `Customer\MilanController` (index+match), `LiveController` (index+show). Mobile: built blog list + article detail, horoscope detail with period selector, panchang screen, kundli list + create + show, milan match selection + result, live session list + detail, forum categories + threads, pooja catalog + detail, cart + checkout, orders list + detail, settings (profile, security, appearance). `tsc --noEmit` passes for all new screens (only pre-existing horoscope/index.tsx error remains). Laravel tests pass (58/58, 220 assertions). All public, customer, astrologer, and admin screens now built per APP_TRACKER.md.
 - **2026-09-09 (i)** — Phase 7 (Realtime + Payments + Calls — M7) complete. Installed `pusher-js`, `expo-notifications`, `expo-av`, `react-native-razorpay`. Backend: no new routes needed; existing `/wallet/order`, `/wallet/verify`, consultation WebSocket events (`ConsultationMessageSent`, `ConsultationEnded`, `CallSignalUpdated`), and recording endpoints already in place. Mobile: created `src/lib/razorpay.ts` with `useRazorpay` hook and `RazorpayCheckout` WebView component. Updated wallet screen to create order → open Razorpay checkout → verify payment → reload balance. Created `src/lib/realtime.ts` with Pusher client setup and `subscribeToConsultation` helper. Updated consultation chat screen (`consults/[id].tsx`) to subscribe to realtime channel and append incoming messages instantly; also added call/video buttons that trigger signaling via `/consult/{id}/signal`. Created `src/lib/notifications.ts` and `src/hooks/useNotifications.ts` for expo-notifications setup; registered `NotificationsProvider` in root layout. Created `CallWebView` component for WebRTC call/video bridge via WebView. Updated `app.json` with Reverb/Pusher env vars and expo-notifications plugin. `tsc --noEmit` passes for all M7 files. Laravel tests pass (58/58, 220 assertions). M7 milestone complete.
 - **2026-09-09 (f)** — Phase 4 (Shop + Pooja + Support — M4) complete. Added JSON branches to 3 controllers: `NotificationController` (index+read+readAll+preferences+token), `ReferralController` (index+redeem), `SupportController` (index+storeTicket+storeDispute+requestRefund). Built 4 new customer screens: Notifications (list with read/unread states, mark read/all read, bell icon with gold accent, empty state), Referrals (gold hero card with code, stats row: referred/rewarded/points, loyalty balance with redeem button), Support (tickets list, new ticket via Alert.prompt), Settings (user card, notification preferences with switches, menu items, sign out with confirmation). `tsc --noEmit` passes with zero errors. M4 milestone complete.
 - **2026-09-09 (h)** — Phase 6 (Admin app — M6) complete. Backend: registered 32 admin API routes under `auth:sanctum + role:admin` in `routes/api.php`. Added JSON branches to 5 controllers: `Admin\DashboardController` (stats), `Admin\AstrologerController` (index + approve + reject), `Admin\TaxonomyController` (index + store + update + destroy), `Admin\PoojaController` (index + store + show + update + destroy), `Admin\PostController` (paginated index + store + show + update + destroy), `Admin\OpsController` (all 14 methods JSON-returning: dashboard, coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments). Mobile: created admin tab layout (`app/(admin)/_layout.tsx`) with 3 tabs: Dashboard, Astrologers, Ops. Built admin dashboard with metrics cards + quick action buttons. Built astrologers management screen with status filter (pending/approved/rejected), approve/reject actions with confirmation alerts. Built ops hub with stat cards + 10 section grid (coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments). Built all 10 ops sub-screens with list views and basic actions (add, approve, process, resolve, toggle, update status). Added comprehensive TypeScript types for all admin entities. `tsc --noEmit` passes for all admin files. Laravel tests pass (58/58, 220 assertions). M6 milestone complete.

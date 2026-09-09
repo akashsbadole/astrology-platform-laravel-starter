@@ -9,29 +9,36 @@ use App\Models\LiveGift;
 use App\Models\LiveMessage;
 use App\Models\LiveSession;
 use App\Services\WalletService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class LiveController extends Controller
 {
-    public function index(): Response
+    public function index(): Response|JsonResponse
     {
+        $live = LiveSession::where('status', 'live')->with('astrologer:id,name')->latest()->get();
+        $upcoming = LiveSession::where('status', 'scheduled')->orderBy('starts_at')->limit(10)->with('astrologer:id,name')->get();
+
+        if (request()->wantsJson()) {
+            return response()->json(['live' => $live, 'upcoming' => $upcoming]);
+        }
+
         return Inertia::render('live/index', [
-            'live' => LiveSession::where('status', 'live')->with('astrologer:id,name')->latest()->get(),
-            'upcoming' => LiveSession::where('status', 'scheduled')->orderBy('starts_at')->limit(10)->with('astrologer:id,name')->get(),
+            'live' => $live,
+            'upcoming' => $upcoming,
         ]);
     }
 
-    public function show(LiveSession $liveSession): Response
+    public function show(LiveSession $liveSession): Response|JsonResponse
     {
         $messages = LiveMessage::where('live_session_id', $liveSession->id)->with('sender:id,name')->latest()->limit(50)->get()->reverse()->values()->map(fn (LiveMessage $m) => [
             'id' => $m->id, 'sender_name' => $m->sender->name, 'body' => $m->body,
         ]);
 
-        return Inertia::render('live/show', [
+        $payload = [
             'session' => [
                 'id' => $liveSession->id, 'title' => $liveSession->title, 'description' => $liveSession->description,
                 'status' => $liveSession->status, 'entry_fee' => $liveSession->entry_fee_paise / 100,
@@ -39,7 +46,13 @@ class LiveController extends Controller
             ],
             'isParticipant' => $liveSession->participants()->where('user_id', request()->user()?->id)->exists(),
             'messages' => $messages,
-        ]);
+        ];
+
+        if (request()->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('live/show', $payload);
     }
 
     public function join(Request $request, LiveSession $liveSession, WalletService $wallets): RedirectResponse|JsonResponse

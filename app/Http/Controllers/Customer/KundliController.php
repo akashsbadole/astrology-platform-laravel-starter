@@ -8,6 +8,7 @@ use App\Services\Astrology\KundliCalculator;
 use App\Services\Astrology\VedicReference;
 use App\Services\Astrology\VimshottariDasha;
 use App\Services\GeocodingService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -17,7 +18,7 @@ use Inertia\Response;
 
 class KundliController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|JsonResponse
     {
         $kundlis = $request->user()
             ->kundlis()
@@ -32,6 +33,10 @@ class KundliController extends Controller
                 'moon_nakshatra' => VedicReference::nakshatraName($kundli->moonSiderealLongitude()),
             ]);
 
+        if ($request->wantsJson()) {
+            return response()->json(['kundlis' => $kundlis]);
+        }
+
         return Inertia::render('customer/kundli/index', [
             'kundlis' => $kundlis,
         ]);
@@ -42,7 +47,7 @@ class KundliController extends Controller
         return Inertia::render('customer/kundli/create');
     }
 
-    public function store(Request $request, GeocodingService $geocoder, KundliCalculator $calculator): RedirectResponse
+    public function store(Request $request, GeocodingService $geocoder, KundliCalculator $calculator): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'profile_name' => ['required', 'string', 'max:100'],
@@ -100,10 +105,23 @@ class KundliController extends Controller
             'planets' => $result['planets'],
         ]);
 
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'kundli' => [
+                'id' => $kundli->id,
+                'profile_name' => $kundli->profile_name,
+                'date_of_birth' => $kundli->date_of_birth->toDateString(),
+                'time_of_birth' => substr($kundli->time_of_birth, 0, 5),
+                'birth_place' => $kundli->birth_place,
+                'ascendant_rashi' => $kundli->ascendantRashi(),
+                'moon_rashi' => VedicReference::rashiName($kundli->moonSiderealLongitude()),
+                'moon_nakshatra' => VedicReference::nakshatraName($kundli->moonSiderealLongitude()),
+            ]]);
+        }
+
         return redirect()->route('customer.kundli.show', $kundli);
     }
 
-    public function show(Request $request, Kundli $kundli): Response
+    public function show(Request $request, Kundli $kundli): Response|JsonResponse
     {
         abort_unless($kundli->user_id === $request->user()->id, 403);
 
@@ -111,7 +129,7 @@ class KundliController extends Controller
 
         $dashaTimeline = VimshottariDasha::timeline($birthDateTime, $kundli->moonSiderealLongitude());
 
-        return Inertia::render('customer/kundli/show', [
+        $payload = [
             'kundli' => [
                 'id' => $kundli->id,
                 'profile_name' => $kundli->profile_name,
@@ -124,7 +142,13 @@ class KundliController extends Controller
             ],
             'placements' => $kundli->placements(),
             'dashaTimeline' => $dashaTimeline,
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('customer/kundli/show', $payload);
     }
 
     public function destroy(Request $request, Kundli $kundli): RedirectResponse

@@ -6,6 +6,7 @@ use App\Services\Astrology\PanchangCalculator;
 use App\Services\Astrology\PanchangReference;
 use App\Services\Astrology\VedicReference;
 use App\Services\GeocodingService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
@@ -14,7 +15,7 @@ use Inertia\Response;
 
 class PanchangController extends Controller
 {
-    public function show(Request $request, PanchangCalculator $calculator, GeocodingService $geocoder): Response
+    public function show(Request $request, PanchangCalculator $calculator, GeocodingService $geocoder): Response|JsonResponse
     {
         $validated = $request->validate([
             'date' => ['nullable', 'date'],
@@ -67,7 +68,7 @@ class PanchangController extends Controller
             ];
         };
 
-        return Inertia::render('panchang/show', [
+        $payload = [
             'date' => $date->toDateString(),
             'place' => $resolvedPlaceName,
             'latitude' => $latitude,
@@ -88,6 +89,12 @@ class PanchangController extends Controller
                 'yamaganda' => $formatPeriod($periods['yamaganda']),
                 'gulika_kalam' => $formatPeriod($periods['gulika_kalam']),
             ],
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('panchang/show', $payload);
     }
 }
