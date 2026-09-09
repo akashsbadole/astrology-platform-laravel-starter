@@ -11,7 +11,7 @@ import {
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
-import { colors, typography } from '@/constants/theme';
+import { colors, radius, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 
 type Slot = {
@@ -25,22 +25,18 @@ type Slot = {
 export default function AstrologerAvailabilityScreen() {
     const [slots, setSlots] = useState<Slot[]>([]);
     const [days, setDays] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadAvailability();
+        void loadAvailability();
     }, []);
 
     const loadAvailability = async () => {
-        setLoading(true);
         try {
             const { data } = await api.get('/astrologer/availability');
             setSlots(data?.slots ?? []);
             setDays(data?.days ?? []);
         } catch (e) {
             console.warn('Availability load:', apiErrorMessage(e));
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -52,7 +48,7 @@ export default function AstrologerAvailabilityScreen() {
                 start_time: '09:00',
                 end_time: '17:00',
             });
-            loadAvailability();
+            void loadAvailability();
         } catch (e) {
             Alert.alert('Error', apiErrorMessage(e));
         }

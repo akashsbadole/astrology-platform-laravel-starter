@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
-import { colors, gradient } from '@/constants/theme';
+import { gradient } from '@/constants/theme';
 
 type Props = {
     children: React.ReactNode;

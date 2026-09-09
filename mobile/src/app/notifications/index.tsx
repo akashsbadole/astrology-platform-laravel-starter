@@ -19,7 +19,7 @@ export default function NotificationsScreen() {
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        loadNotifications();
+        void loadNotifications();
     }, []);
     const loadNotifications = async () => {
         setLoading(true);

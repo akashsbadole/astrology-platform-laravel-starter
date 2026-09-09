@@ -1,6 +1,6 @@
 import { Search } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import AstrologerCard from '@/components/AstrologerCard';
 import Chip from '@/components/ui/Chip';
@@ -19,14 +19,12 @@ export default function AstrologersScreen() {
     const [filter, setFilter] = useState<(typeof FILTERS)[number]>('All');
     const [sort, setSort] = useState<(typeof SORTS)[number]>('Rating');
     const [astrologers, setAstrologers] = useState<Astrologer[]>([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadAstrologers();
+        void loadAstrologers();
     }, [filter]);
 
     const loadAstrologers = async () => {
-        setLoading(true);
         try {
             const params: Record<string, unknown> = { per_page: 50 };
             if (filter === 'Online') params.online = 1;
@@ -36,12 +34,10 @@ export default function AstrologersScreen() {
             setAstrologers(data?.data ?? []);
         } catch (e) {
             console.warn('Astrologers load:', apiErrorMessage(e));
-        } finally {
-            setLoading(false);
         }
     };
 
-    const results = useMemo(() => {
+    const results = (() => {
         let list = [...astrologers];
         if (query.trim())
             list = list.filter((a) =>
@@ -53,7 +49,7 @@ export default function AstrologersScreen() {
                 : (a.rate_chat_per_min ?? 0) - (b.rate_chat_per_min ?? 0),
         );
         return list;
-    }, [query, filter, sort, astrologers]);
+    })();
 
     return (
         <Screen>

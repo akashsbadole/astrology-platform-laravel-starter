@@ -31,7 +31,7 @@ export default function ChatScreen() {
     const listRef = useRef<FlatList>(null);
 
     useEffect(() => {
-        loadChat();
+        void loadChat();
     }, [id]);
 
     const loadChat = async () => {

@@ -105,7 +105,3 @@ export default function OtpVerifyScreen() {
         </Screen>
     );
 }
-
-const styles = StyleSheet.create({
-    resend: { alignItems: 'center', marginTop: 8 },
-});

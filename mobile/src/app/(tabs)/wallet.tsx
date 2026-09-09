@@ -25,7 +25,7 @@ export default function WalletScreen() {
     const [balance, setBalance] = useState<number>(0);
 
     useEffect(() => {
-        loadWallet();
+        void loadWallet();
     }, []);
 
     const loadWallet = async () => {
@@ -125,65 +125,74 @@ export default function WalletScreen() {
                 data={txns}
                 keyExtractor={(t) => String(t.id)}
                 contentContainerStyle={{ gap: 10, paddingBottom: 24 }}
-                renderItem={({ item }) => (
-                    <Card style={styles.txnCard}>
-                        <View
-                            style={[
-                                styles.txnIcon,
-                                item.type === 'credit'
-                                    ? styles.creditBg
-                                    : styles.debitBg,
-                            ]}
-                        >
-                            {item.type === 'credit' ? (
-                                <ArrowDownLeft
-                                    color={colors.success}
-                                    size={16}
-                                />
-                            ) : (
-                                <ArrowUpRight color={colors.danger} size={16} />
-                            )}
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <Text
+                renderItem={({ item }) => {
+                    const label =
+                        item.meta?.method === 'razorpay'
+                            ? 'Wallet recharge'
+                            : typeof item.meta?.consult === 'string'
+                              ? item.meta.consult
+                              : 'Consultation';
+                    return (
+                        <Card style={styles.txnCard}>
+                            <View
                                 style={[
-                                    typography.body,
-                                    { color: colors.text, fontWeight: '600' },
+                                    styles.txnIcon,
+                                    item.type === 'credit'
+                                        ? styles.creditBg
+                                        : styles.debitBg,
                                 ]}
-                                numberOfLines={1}
                             >
-                                {String(
-                                    item.meta?.method === 'razorpay'
-                                        ? 'Wallet recharge'
-                                        : (item.meta?.consult ??
-                                              'Consultation'),
+                                {item.type === 'credit' ? (
+                                    <ArrowDownLeft
+                                        color={colors.success}
+                                        size={16}
+                                    />
+                                ) : (
+                                    <ArrowUpRight
+                                        color={colors.danger}
+                                        size={16}
+                                    />
                                 )}
-                            </Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text
+                                    style={[
+                                        typography.body,
+                                        {
+                                            color: colors.text,
+                                            fontWeight: '600',
+                                        },
+                                    ]}
+                                    numberOfLines={1}
+                                >
+                                    {label}
+                                </Text>
+                                <Text
+                                    style={[
+                                        typography.tiny,
+                                        { color: colors.textFaint },
+                                    ]}
+                                >
+                                    {timeAgo(item.created_at)}
+                                </Text>
+                            </View>
                             <Text
                                 style={[
-                                    typography.tiny,
-                                    { color: colors.textFaint },
+                                    typography.subtitle,
+                                    {
+                                        color:
+                                            item.type === 'credit'
+                                                ? colors.success
+                                                : colors.danger,
+                                    },
                                 ]}
                             >
-                                {timeAgo(item.created_at)}
+                                {item.type === 'credit' ? '+' : '−'}
+                                {inr(item.amount)}
                             </Text>
-                        </View>
-                        <Text
-                            style={[
-                                typography.subtitle,
-                                {
-                                    color:
-                                        item.type === 'credit'
-                                            ? colors.success
-                                            : colors.danger,
-                                },
-                            ]}
-                        >
-                            {item.type === 'credit' ? '+' : '−'}
-                            {inr(item.amount)}
-                        </Text>
-                    </Card>
-                )}
+                        </Card>
+                    );
+                }}
             />
         </Screen>
     );

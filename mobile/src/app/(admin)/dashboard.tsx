@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
-import { colors, radius, typography } from '@/constants/theme';
+import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 
 type AdminStats = {
@@ -16,21 +16,17 @@ type AdminStats = {
 
 export default function AdminDashboardScreen() {
     const [stats, setStats] = useState<AdminStats | null>(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadDashboard();
+        void loadDashboard();
     }, []);
 
     const loadDashboard = async () => {
-        setLoading(true);
         try {
             const { data } = await api.get('/admin/dashboard');
             setStats(data?.stats ?? null);
         } catch (e) {
             console.warn('Admin dashboard:', apiErrorMessage(e));
-        } finally {
-            setLoading(false);
         }
     };
 

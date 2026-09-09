@@ -1,15 +1,10 @@
-import {
-    LifeBuoy,
-    MessageCircle,
-    AlertCircle,
-    RefreshCw,
-} from 'lucide-react-native';
+import { MessageCircle } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
-import { colors, radius, typography } from '@/constants/theme';
+import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 import { timeAgo } from '@/lib/format';
 
@@ -20,33 +15,20 @@ type Ticket = {
     status: string;
     created_at: string;
 };
-type Dispute = {
-    id: number;
-    subject: string;
-    description: string | null;
-    status: string;
-    created_at: string;
-};
 
 export default function SupportScreen() {
     const [tickets, setTickets] = useState<Ticket[]>([]);
-    const [disputes, setDisputes] = useState<Dispute[]>([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadSupport();
+        void loadSupport();
     }, []);
 
     const loadSupport = async () => {
-        setLoading(true);
         try {
             const { data } = await api.get('/support');
             setTickets(data?.tickets?.data ?? []);
-            setDisputes(data?.disputes?.data ?? []);
         } catch (e) {
             console.warn('Support load:', apiErrorMessage(e));
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -59,7 +41,7 @@ export default function SupportScreen() {
                 try {
                     await api.post('/support/tickets', { subject, body: '' });
                     Alert.alert('Success', 'Ticket raised successfully!');
-                    loadSupport();
+                    void loadSupport();
                 } catch (e) {
                     Alert.alert('Error', apiErrorMessage(e));
                 }

@@ -1,18 +1,12 @@
-import { Gift, Share2, Users } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
-import {
-    colors,
-    gradient,
-    radius,
-    shadowCard,
-    typography,
-} from '@/constants/theme';
+import { colors, radius, shadowCard, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 import { inr } from '@/lib/format';
+
 type ReferralStats = {
     code: string;
     link: string;
@@ -21,23 +15,23 @@ type ReferralStats = {
     total_referred: number;
     rewarded: number;
 };
+
 export default function ReferralsScreen() {
     const [stats, setStats] = useState<ReferralStats | null>(null);
-    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        loadReferrals();
+        void loadReferrals();
     }, []);
+
     const loadReferrals = async () => {
-        setLoading(true);
         try {
             const { data } = await api.get('/referrals');
             setStats(data?.stats ?? null);
         } catch (e) {
             console.warn('Referrals load:', apiErrorMessage(e));
-        } finally {
-            setLoading(false);
         }
     };
+
     const redeem = async () => {
         if (!stats || stats.points < 10) {
             Alert.alert(
@@ -49,11 +43,12 @@ export default function ReferralsScreen() {
         try {
             await api.post('/referrals/redeem', { points: stats.points });
             Alert.alert('Success', 'Points redeemed successfully!');
-            loadReferrals();
+            void loadReferrals();
         } catch (e) {
             Alert.alert('Redeem failed', apiErrorMessage(e));
         }
     };
+
     return (
         <Screen>
             <ScrollView
@@ -134,6 +129,7 @@ export default function ReferralsScreen() {
         </Screen>
     );
 }
+
 const styles = StyleSheet.create({
     heroCard: { backgroundColor: colors.gold, padding: 24, gap: 8 },
     heroLabel: {

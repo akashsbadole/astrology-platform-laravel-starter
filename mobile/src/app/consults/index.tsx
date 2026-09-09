@@ -30,7 +30,7 @@ export default function ConsultsScreen() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadConsults();
+        void loadConsults();
     }, []);
 
     const loadConsults = async () => {

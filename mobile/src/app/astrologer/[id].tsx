@@ -7,7 +7,7 @@ import {
     Video,
 } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Alert,
     Pressable,
@@ -55,7 +55,7 @@ export default function AstrologerDetailScreen() {
     const [starting, setStarting] = useState(false);
 
     useEffect(() => {
-        loadAstrologer();
+        void loadAstrologer();
     }, [id]);
 
     const loadAstrologer = async () => {
@@ -108,8 +108,6 @@ export default function AstrologerDetailScreen() {
             </Screen>
         );
     }
-
-    const a = displayAstrologer;
 
     return (
         <Screen padded={false}>

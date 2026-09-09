@@ -16,7 +16,6 @@ import {
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Avatar from '@/components/ui/Avatar';
 import Screen from '@/components/ui/Screen';
@@ -27,7 +26,6 @@ import {
     shadowCard,
     typography,
 } from '@/constants/theme';
-import { getUser, type SessionUser } from '@/lib/session';
 import { useAuth } from '@/contexts/AuthContext';
 
 const MENU = [

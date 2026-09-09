@@ -53,7 +53,7 @@ export default function HomeScreen() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadHome();
+        void loadHome();
     }, []);
 
     const loadHome = async () => {
