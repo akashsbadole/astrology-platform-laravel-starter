@@ -1,4 +1,9 @@
-import { ClipboardList, LayoutDashboard, Settings, Users } from 'lucide-react-native';
+import {
+    ClipboardList,
+    LayoutDashboard,
+    Settings,
+    Users,
+} from 'lucide-react-native';
 import { Tabs } from 'expo-router';
 import { colors } from '@/constants/theme';
 

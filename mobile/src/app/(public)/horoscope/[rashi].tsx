@@ -34,7 +34,9 @@ export default function HoroscopeDetailScreen() {
 
     const loadHoroscope = async () => {
         try {
-            const { data } = await api.get(`/horoscope/${rashi}`, { params: { period } });
+            const { data } = await api.get(`/horoscope/${rashi}`, {
+                params: { period },
+            });
             setData(data ?? null);
         } catch (e) {
             console.warn('Horoscope detail:', apiErrorMessage(e));
@@ -59,7 +61,12 @@ export default function HoroscopeDetailScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     {rashi}
                 </Text>
                 <View style={styles.periodRow}>
@@ -68,14 +75,22 @@ export default function HoroscopeDetailScreen() {
                             key={p}
                             style={[
                                 styles.periodChip,
-                                period === p && { backgroundColor: colors.gold + '22', borderColor: colors.gold },
+                                period === p && {
+                                    backgroundColor: colors.gold + '22',
+                                    borderColor: colors.gold,
+                                },
                             ]}
                             onPress={() => setPeriod(p)}
                         >
                             <Text
                                 style={[
                                     styles.periodText,
-                                    { color: period === p ? colors.gold : colors.textDim },
+                                    {
+                                        color:
+                                            period === p
+                                                ? colors.gold
+                                                : colors.textDim,
+                                    },
                                 ]}
                             >
                                 {p.charAt(0).toUpperCase() + p.slice(1)}
@@ -84,31 +99,77 @@ export default function HoroscopeDetailScreen() {
                     ))}
                 </View>
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 8 },
+                        ]}
+                    >
                         {h.title || 'Horoscope'}
                     </Text>
-                    <Text style={[typography.body, { color: colors.text, lineHeight: 22 }]}>
+                    <Text
+                        style={[
+                            typography.body,
+                            { color: colors.text, lineHeight: 22 },
+                        ]}
+                    >
                         {h.body}
                     </Text>
                     <View style={styles.luckyRow}>
                         {h.lucky_color && (
                             <View style={styles.luckyItem}>
-                                <Text style={[typography.small, { color: colors.textFaint }]}>Color</Text>
-                                <View style={[styles.colorDot, { backgroundColor: h.lucky_color }]} />
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textFaint },
+                                    ]}
+                                >
+                                    Color
+                                </Text>
+                                <View
+                                    style={[
+                                        styles.colorDot,
+                                        { backgroundColor: h.lucky_color },
+                                    ]}
+                                />
                             </View>
                         )}
                         {h.lucky_number && (
                             <View style={styles.luckyItem}>
-                                <Text style={[typography.small, { color: colors.textFaint }]}>Number</Text>
-                                <Text style={[typography.subtitle, { color: colors.gold }]}>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textFaint },
+                                    ]}
+                                >
+                                    Number
+                                </Text>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.gold },
+                                    ]}
+                                >
                                     {h.lucky_number}
                                 </Text>
                             </View>
                         )}
                         {h.lucky_time && (
                             <View style={styles.luckyItem}>
-                                <Text style={[typography.small, { color: colors.textFaint }]}>Time</Text>
-                                <Text style={[typography.subtitle, { color: colors.gold }]}>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textFaint },
+                                    ]}
+                                >
+                                    Time
+                                </Text>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.gold },
+                                    ]}
+                                >
                                     {h.lucky_time}
                                 </Text>
                             </View>
@@ -131,7 +192,11 @@ const styles = StyleSheet.create({
         borderColor: colors.border,
         backgroundColor: colors.surface,
     },
-    periodText: { fontSize: 12, fontWeight: '700', textTransform: 'capitalize' },
+    periodText: {
+        fontSize: 12,
+        fontWeight: '700',
+        textTransform: 'capitalize',
+    },
     luckyRow: { flexDirection: 'row', gap: 16, marginTop: 16 },
     luckyItem: { alignItems: 'center', gap: 4 },
     colorDot: { width: 24, height: 24, borderRadius: 12 },

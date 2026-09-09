@@ -28,7 +28,10 @@ export default function MilanResultScreen() {
 
     const loadResult = async () => {
         try {
-            const { data } = await api.post('/milan', { a_id: Number(a), b_id: Number(b) });
+            const { data } = await api.post('/milan', {
+                a_id: Number(a),
+                b_id: Number(b),
+            });
             setData(data ?? null);
         } catch (e) {
             console.warn('Milan result:', apiErrorMessage(e));
@@ -38,7 +41,9 @@ export default function MilanResultScreen() {
     if (!data) {
         return (
             <Screen>
-                <Text style={[typography.small, { color: colors.textDim }]}>Loading…</Text>
+                <Text style={[typography.small, { color: colors.textDim }]}>
+                    Loading…
+                </Text>
             </Screen>
         );
     }
@@ -49,39 +54,74 @@ export default function MilanResultScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     Milan Result
                 </Text>
                 <Text style={[typography.small, { color: colors.textFaint }]}>
                     {data.a.name} & {data.b.name}
                 </Text>
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 8 },
+                        ]}
+                    >
                         Compatibility
                     </Text>
-                    <Text style={[typography.hero, { color: colors.gold, fontSize: 48 }]}>
+                    <Text
+                        style={[
+                            typography.hero,
+                            { color: colors.gold, fontSize: 48 },
+                        ]}
+                    >
                         {data.result.percentage}%
                     </Text>
-                    <Text style={[typography.body, { color: colors.textDim, marginTop: 8 }]}>
+                    <Text
+                        style={[
+                            typography.body,
+                            { color: colors.textDim, marginTop: 8 },
+                        ]}
+                    >
                         {data.result.verdict}
                     </Text>
                     <View style={styles.scoreBar}>
                         <View
                             style={[
                                 styles.scoreFill,
-                                { width: `${data.result.percentage}%`, backgroundColor: colors.gold },
+                                {
+                                    width: `${data.result.percentage}%`,
+                                    backgroundColor: colors.gold,
+                                },
                             ]}
                         />
                     </View>
                 </Card>
-                <Text style={[typography.title, { color: colors.text }]}>Factors</Text>
+                <Text style={[typography.title, { color: colors.text }]}>
+                    Factors
+                </Text>
                 {data.result.factors.map((f, i) => (
                     <Card key={i}>
                         <View style={styles.factorRow}>
-                            <Text style={[typography.body, { color: colors.text }]}>
+                            <Text
+                                style={[
+                                    typography.body,
+                                    { color: colors.text },
+                                ]}
+                            >
                                 {f.name}
                             </Text>
-                            <Text style={[typography.subtitle, { color: colors.gold }]}>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.gold },
+                                ]}
+                            >
                                 {f.score}/{f.max}
                             </Text>
                         </View>

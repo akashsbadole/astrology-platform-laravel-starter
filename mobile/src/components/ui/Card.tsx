@@ -14,7 +14,12 @@ export default function Card({ children, style, onPress, disabled }: Props) {
         <Component
             onPress={onPress}
             disabled={disabled}
-            style={({ pressed }) => [styles.card, shadowCard, style, onPress ? { opacity: pressed ? 0.7 : 1 } : null]}
+            style={({ pressed }) => [
+                styles.card,
+                shadowCard,
+                style,
+                onPress ? { opacity: pressed ? 0.7 : 1 } : null,
+            ]}
         >
             {children}
         </Component>

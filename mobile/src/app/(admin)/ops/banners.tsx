@@ -1,13 +1,26 @@
 import { Plus } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import {
+    Alert,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 
-type Banner = { id: number; title: string | null; link: string | null; slot: string; is_active: boolean };
+type Banner = {
+    id: number;
+    title: string | null;
+    link: string | null;
+    slot: string;
+    is_active: boolean;
+};
 
 export default function AdminBannersScreen() {
     const [banners, setBanners] = useState<Banner[]>([]);
@@ -51,33 +64,67 @@ export default function AdminBannersScreen() {
         setRefreshing(false);
     };
 
-    useEffect(() => { void load(); }, []);
+    useEffect(() => {
+        void load();
+    }, []);
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>Banners</Text>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
+                Banners
+            </Text>
             <FlatList
                 data={banners}
                 keyExtractor={(b) => String(b.id)}
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.title || 'Untitled'}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
-                            {item.slot} · {item.is_active ? 'Active' : 'Inactive'}
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            {item.slot} ·{' '}
+                            {item.is_active ? 'Active' : 'Inactive'}
                         </Text>
                     </Card>
                 )}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
+                }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>No banners yet.</Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            No banners yet.
+                        </Text>
                     </Card>
                 }
             />
-            <Button title="Add Banner" icon={<Plus color="#1A1408" size={16} />} onPress={add} />
+            <Button
+                title="Add Banner"
+                icon={<Plus color="#1A1408" size={16} />}
+                onPress={add}
+            />
         </Screen>
     );
 }

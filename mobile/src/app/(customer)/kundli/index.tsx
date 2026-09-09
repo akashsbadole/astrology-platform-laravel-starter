@@ -34,7 +34,9 @@ export default function KundliListScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Kundli
             </Text>
             <FlatList
@@ -43,20 +45,40 @@ export default function KundliListScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card onPress={() => router.push(`/kundli/${item.id}`)}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.profile_name}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             {item.date_of_birth} · {item.birth_place}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textFaint }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textFaint },
+                            ]}
+                        >
                             {item.moon_rashi} · {item.moon_nakshatra}
                         </Text>
                     </Card>
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             No kundlis yet. Create your first one.
                         </Text>
                     </Card>

@@ -54,7 +54,9 @@ export default function PoojaDetailScreen() {
     if (!pooja) {
         return (
             <Screen>
-                <Text style={[typography.small, { color: colors.textDim }]}>Loading…</Text>
+                <Text style={[typography.small, { color: colors.textDim }]}>
+                    Loading…
+                </Text>
             </Screen>
         );
     }
@@ -65,22 +67,42 @@ export default function PoojaDetailScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     {pooja.name}
                 </Text>
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 8 },
+                        ]}
+                    >
                         About
                     </Text>
                     <Text style={[typography.body, { color: colors.textDim }]}>
                         {pooja.description}
                     </Text>
-                    <Text style={[typography.subtitle, { color: colors.text, marginTop: 12 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginTop: 12 },
+                        ]}
+                    >
                         {inr(pooja.price / 100)}
                     </Text>
                 </Card>
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 8 },
+                        ]}
+                    >
                         Benefits
                     </Text>
                     <Text style={[typography.body, { color: colors.textDim }]}>
@@ -88,17 +110,33 @@ export default function PoojaDetailScreen() {
                     </Text>
                 </Card>
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 8 },
+                        ]}
+                    >
                         Vidhi
                     </Text>
                     <Text style={[typography.body, { color: colors.textDim }]}>
                         {pooja.vidhi}
                     </Text>
-                    <Text style={[typography.subtitle, { color: colors.text, marginTop: 12 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginTop: 12 },
+                        ]}
+                    >
                         Samagri
                     </Text>
                     {pooja.samagri.map((s, i) => (
-                        <Text key={i} style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            key={i}
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             • {s}
                         </Text>
                     ))}

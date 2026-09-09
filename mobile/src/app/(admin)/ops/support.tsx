@@ -5,7 +5,12 @@ import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 
-type Ticket = { id: number; subject: string; status: string; created_at: string };
+type Ticket = {
+    id: number;
+    subject: string;
+    status: string;
+    created_at: string;
+};
 
 export default function AdminSupportScreen() {
     const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -26,16 +31,25 @@ export default function AdminSupportScreen() {
         setRefreshing(false);
     };
 
-    useEffect(() => { void load(); }, []);
+    useEffect(() => {
+        void load();
+    }, []);
 
-    const statusTone: Record<string, 'success' | 'gold' | 'danger' | 'textFaint'> = {
+    const statusTone: Record<
+        string,
+        'success' | 'gold' | 'danger' | 'textFaint'
+    > = {
         open: 'danger',
         closed: 'success',
     };
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>Support</Text>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
+                Support
+            </Text>
             <FlatList
                 data={tickets}
                 keyExtractor={(t) => String(t.id)}
@@ -44,25 +58,69 @@ export default function AdminSupportScreen() {
                     <Card>
                         <View style={styles.row}>
                             <View style={styles.info}>
-                                <Text style={[typography.subtitle, { color: colors.text }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.text },
+                                    ]}
+                                >
                                     {item.subject}
                                 </Text>
-                                <Text style={[typography.small, { color: colors.textDim }]}>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textDim },
+                                    ]}
+                                >
                                     #{item.id} · {item.created_at}
                                 </Text>
                             </View>
-                            <View style={[styles.badge, { backgroundColor: colors[statusTone[item.status] ?? 'textFaint'] + '22' }]}>
-                                <Text style={[styles.badgeText, { color: colors[statusTone[item.status] ?? 'textFaint'] }]}>
+                            <View
+                                style={[
+                                    styles.badge,
+                                    {
+                                        backgroundColor:
+                                            colors[
+                                                statusTone[item.status] ??
+                                                    'textFaint'
+                                            ] + '22',
+                                    },
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.badgeText,
+                                        {
+                                            color: colors[
+                                                statusTone[item.status] ??
+                                                    'textFaint'
+                                            ],
+                                        },
+                                    ]}
+                                >
                                     {item.status.toUpperCase()}
                                 </Text>
                             </View>
                         </View>
                     </Card>
                 )}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
+                }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>No support tickets.</Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            No support tickets.
+                        </Text>
                     </Card>
                 }
             />
@@ -71,7 +129,11 @@ export default function AdminSupportScreen() {
 }
 
 const styles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
     info: { flex: 1 },
     badge: {
         paddingHorizontal: 10,

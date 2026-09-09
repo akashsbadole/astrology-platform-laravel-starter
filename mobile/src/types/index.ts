@@ -177,3 +177,14 @@ export type AdminShipmentOrder = {
     carrier: string | null;
     total: number;
 };
+
+export type Product = {
+    id: number;
+    slug: string;
+    name: string;
+    description?: string;
+    price: number;
+    mrp: number | null;
+    stock: number;
+    images?: string[];
+};

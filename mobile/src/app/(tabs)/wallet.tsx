@@ -65,13 +65,23 @@ export default function WalletScreen() {
         }
     };
 
-    const handlePaymentSuccess = async (paymentId: string, signature: string) => {
+    const handlePaymentSuccess = async (
+        paymentId: string,
+        signature: string,
+    ) => {
         setCheckoutVisible(false);
         setLoading(true);
         try {
-            await api.post('/wallet/verify', { razorpay_payment_id: paymentId, razorpay_signature: signature, order_id: orderId });
+            await api.post('/wallet/verify', {
+                razorpay_payment_id: paymentId,
+                razorpay_signature: signature,
+                order_id: orderId,
+            });
             await loadWallet();
-            Alert.alert('Success', `₹${inr(amount / 100)} added to your wallet!`);
+            Alert.alert(
+                'Success',
+                `₹${inr(amount / 100)} added to your wallet!`,
+            );
         } catch (e) {
             Alert.alert('Verification failed', apiErrorMessage(e));
         } finally {

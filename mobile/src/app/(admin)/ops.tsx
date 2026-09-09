@@ -24,16 +24,66 @@ type OpsSection = {
 };
 
 const SECTIONS: OpsSection[] = [
-    { label: 'Coupons', route: '/(admin)/ops/coupons', icon: '🎟️', color: colors.violet },
-    { label: 'Payouts', route: '/(admin)/ops/payouts', icon: '💰', color: colors.success },
-    { label: 'Refunds', route: '/(admin)/ops/refunds', icon: '↩️', color: colors.gold },
-    { label: 'Disputes', route: '/(admin)/ops/disputes', icon: '⚡', color: colors.danger },
-    { label: 'Horoscopes', route: '/(admin)/ops/horoscopes', icon: '🔮', color: colors.violet },
-    { label: 'Products', route: '/(admin)/ops/products', icon: '📦', color: colors.success },
-    { label: 'Live', route: '/(admin)/ops/live', icon: '📡', color: colors.gold },
-    { label: 'Banners', route: '/(admin)/ops/banners', icon: '🖼️', color: colors.violet },
-    { label: 'Support', route: '/(admin)/ops/support', icon: '🎧', color: colors.gold },
-    { label: 'Shipments', route: '/(admin)/ops/shipments', icon: '🚚', color: colors.success },
+    {
+        label: 'Coupons',
+        route: '/(admin)/ops/coupons',
+        icon: '🎟️',
+        color: colors.violet,
+    },
+    {
+        label: 'Payouts',
+        route: '/(admin)/ops/payouts',
+        icon: '💰',
+        color: colors.success,
+    },
+    {
+        label: 'Refunds',
+        route: '/(admin)/ops/refunds',
+        icon: '↩️',
+        color: colors.gold,
+    },
+    {
+        label: 'Disputes',
+        route: '/(admin)/ops/disputes',
+        icon: '⚡',
+        color: colors.danger,
+    },
+    {
+        label: 'Horoscopes',
+        route: '/(admin)/ops/horoscopes',
+        icon: '🔮',
+        color: colors.violet,
+    },
+    {
+        label: 'Products',
+        route: '/(admin)/ops/products',
+        icon: '📦',
+        color: colors.success,
+    },
+    {
+        label: 'Live',
+        route: '/(admin)/ops/live',
+        icon: '📡',
+        color: colors.gold,
+    },
+    {
+        label: 'Banners',
+        route: '/(admin)/ops/banners',
+        icon: '🖼️',
+        color: colors.violet,
+    },
+    {
+        label: 'Support',
+        route: '/(admin)/ops/support',
+        icon: '🎧',
+        color: colors.gold,
+    },
+    {
+        label: 'Shipments',
+        route: '/(admin)/ops/shipments',
+        icon: '🚚',
+        color: colors.success,
+    },
 ];
 
 export default function AdminOpsScreen() {
@@ -59,7 +109,12 @@ export default function AdminOpsScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     Ops Hub
                 </Text>
 
@@ -67,13 +122,23 @@ export default function AdminOpsScreen() {
                     <View style={styles.statsRow}>
                         <Card style={styles.statCard}>
                             <Text style={styles.statLabel}>Gross</Text>
-                            <Text style={[styles.statValue, { color: colors.success }]}>
+                            <Text
+                                style={[
+                                    styles.statValue,
+                                    { color: colors.success },
+                                ]}
+                            >
                                 ₹{(stats.gross / 100).toFixed(2)}
                             </Text>
                         </Card>
                         <Card style={styles.statCard}>
                             <Text style={styles.statLabel}>Commission</Text>
-                            <Text style={[styles.statValue, { color: colors.gold }]}>
+                            <Text
+                                style={[
+                                    styles.statValue,
+                                    { color: colors.gold },
+                                ]}
+                            >
                                 ₹{(stats.commission / 100).toFixed(2)}
                             </Text>
                         </Card>
@@ -83,7 +148,12 @@ export default function AdminOpsScreen() {
                         </Card>
                         <Card style={styles.statCard}>
                             <Text style={styles.statLabel}>Payouts</Text>
-                            <Text style={[styles.statValue, { color: colors.danger }]}>
+                            <Text
+                                style={[
+                                    styles.statValue,
+                                    { color: colors.danger },
+                                ]}
+                            >
                                 {stats.payouts_pending}
                             </Text>
                         </Card>
@@ -97,8 +167,15 @@ export default function AdminOpsScreen() {
                             style={styles.sectionCard}
                             onPress={() => router.push(section.route as any)}
                         >
-                            <Text style={styles.sectionIcon}>{section.icon}</Text>
-                            <Text style={[styles.sectionLabel, { color: colors.text }]}>
+                            <Text style={styles.sectionIcon}>
+                                {section.icon}
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.sectionLabel,
+                                    { color: colors.text },
+                                ]}
+                            >
                                 {section.label}
                             </Text>
                         </Card>
@@ -112,7 +189,12 @@ export default function AdminOpsScreen() {
 const styles = StyleSheet.create({
     statsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
     statCard: { width: '48%', paddingVertical: 14, gap: 4 },
-    statLabel: { color: colors.textDim, fontSize: 10, fontWeight: '700', textTransform: 'uppercase' },
+    statLabel: {
+        color: colors.textDim,
+        fontSize: 10,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+    },
     statValue: { color: colors.text, fontSize: 18, fontWeight: '800' },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
     sectionCard: {

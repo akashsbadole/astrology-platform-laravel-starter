@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+} from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
@@ -37,38 +44,74 @@ export default function KundliCreateScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     Create Kundli
                 </Text>
                 <Card>
-                    <Text style={[typography.body, { color: colors.text }]}>Profile Name</Text>
+                    <Text style={[typography.body, { color: colors.text }]}>
+                        Profile Name
+                    </Text>
                     <TextInput
                         value={form.profile_name}
-                        onChangeText={(text) => setForm({ ...form, profile_name: text })}
+                        onChangeText={(text) =>
+                            setForm({ ...form, profile_name: text })
+                        }
                         placeholder="e.g. Self, Partner"
                         placeholderTextColor={colors.textFaint}
                         style={styles.input}
                     />
-                    <Text style={[typography.body, { color: colors.text, marginTop: 12 }]}>Date of Birth</Text>
+                    <Text
+                        style={[
+                            typography.body,
+                            { color: colors.text, marginTop: 12 },
+                        ]}
+                    >
+                        Date of Birth
+                    </Text>
                     <TextInput
                         value={form.date_of_birth}
-                        onChangeText={(text) => setForm({ ...form, date_of_birth: text })}
+                        onChangeText={(text) =>
+                            setForm({ ...form, date_of_birth: text })
+                        }
                         placeholder="YYYY-MM-DD"
                         placeholderTextColor={colors.textFaint}
                         style={styles.input}
                     />
-                    <Text style={[typography.body, { color: colors.text, marginTop: 12 }]}>Time of Birth</Text>
+                    <Text
+                        style={[
+                            typography.body,
+                            { color: colors.text, marginTop: 12 },
+                        ]}
+                    >
+                        Time of Birth
+                    </Text>
                     <TextInput
                         value={form.time_of_birth}
-                        onChangeText={(text) => setForm({ ...form, time_of_birth: text })}
+                        onChangeText={(text) =>
+                            setForm({ ...form, time_of_birth: text })
+                        }
                         placeholder="HH:MM"
                         placeholderTextColor={colors.textFaint}
                         style={styles.input}
                     />
-                    <Text style={[typography.body, { color: colors.text, marginTop: 12 }]}>Birth Place</Text>
+                    <Text
+                        style={[
+                            typography.body,
+                            { color: colors.text, marginTop: 12 },
+                        ]}
+                    >
+                        Birth Place
+                    </Text>
                     <TextInput
                         value={form.birth_place}
-                        onChangeText={(text) => setForm({ ...form, birth_place: text })}
+                        onChangeText={(text) =>
+                            setForm({ ...form, birth_place: text })
+                        }
                         placeholder="City, Country"
                         placeholderTextColor={colors.textFaint}
                         style={styles.input}

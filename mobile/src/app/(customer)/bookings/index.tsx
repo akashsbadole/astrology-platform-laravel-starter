@@ -36,7 +36,10 @@ export default function CustomerBookingsScreen() {
         }
     };
 
-    const statusTone: Record<string, 'gold' | 'success' | 'danger' | 'textFaint'> = {
+    const statusTone: Record<
+        string,
+        'gold' | 'success' | 'danger' | 'textFaint'
+    > = {
         confirmed: 'success',
         completed: 'gold',
         pending: 'textFaint',
@@ -45,7 +48,9 @@ export default function CustomerBookingsScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 My Bookings
             </Text>
             <FlatList
@@ -53,22 +58,68 @@ export default function CustomerBookingsScreen() {
                 keyExtractor={(b) => String(b.id)}
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
-                    <Card onPress={() => router.push(`/bookings/${item.id}/checkout`)}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                    <Card
+                        onPress={() =>
+                            router.push(`/bookings/${item.id}/checkout`)
+                        }
+                    >
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.astrologer_name}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
-                            {item.consultation_type.toUpperCase()} · {item.duration_minutes} min
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            {item.consultation_type.toUpperCase()} ·{' '}
+                            {item.duration_minutes} min
                         </Text>
-                        <Text style={[typography.small, { color: colors.textFaint }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textFaint },
+                            ]}
+                        >
                             {new Date(item.scheduled_at).toLocaleString()}
                         </Text>
                         <View style={styles.row}>
-                            <Text style={[typography.subtitle, { color: colors.gold }]}>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.gold },
+                                ]}
+                            >
                                 {inr(item.amount / 100)}
                             </Text>
-                            <View style={[styles.badge, { backgroundColor: colors[statusTone[item.status] ?? 'textFaint'] + '22' }]}>
-                                <Text style={[styles.badgeText, { color: colors[statusTone[item.status] ?? 'textFaint'] }]}>
+                            <View
+                                style={[
+                                    styles.badge,
+                                    {
+                                        backgroundColor:
+                                            colors[
+                                                statusTone[item.status] ??
+                                                    'textFaint'
+                                            ] + '22',
+                                    },
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.badgeText,
+                                        {
+                                            color: colors[
+                                                statusTone[item.status] ??
+                                                    'textFaint'
+                                            ],
+                                        },
+                                    ]}
+                                >
                                     {item.status.toUpperCase()}
                                 </Text>
                             </View>
@@ -77,7 +128,12 @@ export default function CustomerBookingsScreen() {
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             No bookings yet.
                         </Text>
                     </Card>
@@ -88,7 +144,12 @@ export default function CustomerBookingsScreen() {
 }
 
 const styles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 8,
+    },
     badge: {
         paddingHorizontal: 10,
         paddingVertical: 4,

@@ -60,7 +60,10 @@ export default function AstrologerProfileEditScreen() {
         }
     };
 
-    const toggleArrayItem = (key: 'specializations' | 'languages', value: string) => {
+    const toggleArrayItem = (
+        key: 'specializations' | 'languages',
+        value: string,
+    ) => {
         setProfile((prev) => {
             if (!prev) return prev;
             const current = prev[key];
@@ -85,8 +88,14 @@ export default function AstrologerProfileEditScreen() {
             style={[
                 styles.chip,
                 selected
-                    ? { backgroundColor: colors.gold + '22', borderColor: colors.gold }
-                    : { backgroundColor: colors.surface, borderColor: colors.border },
+                    ? {
+                          backgroundColor: colors.gold + '22',
+                          borderColor: colors.gold,
+                      }
+                    : {
+                          backgroundColor: colors.surface,
+                          borderColor: colors.border,
+                      },
             ]}
         >
             <Text
@@ -117,24 +126,42 @@ export default function AstrologerProfileEditScreen() {
                 showsVerticalScrollIndicator={false}
             >
                 <Text
-                    style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
                 >
                     Edit Profile
                 </Text>
 
                 {profile.status === 'rejected' && profile.rejection_reason && (
                     <Card>
-                        <Text style={[typography.subtitle, { color: colors.danger }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.danger },
+                            ]}
+                        >
                             Rejection Reason
                         </Text>
-                        <Text style={[typography.body, { color: colors.textDim, marginTop: 4 }]}>
+                        <Text
+                            style={[
+                                typography.body,
+                                { color: colors.textDim, marginTop: 4 },
+                            ]}
+                        >
                             {profile.rejection_reason}
                         </Text>
                     </Card>
                 )}
 
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 8 },
+                        ]}
+                    >
                         Bio
                     </Text>
                     <ScrollView style={{ maxHeight: 120 }}>
@@ -145,7 +172,9 @@ export default function AstrologerProfileEditScreen() {
                         </Text>
                     </ScrollView>
                     <View style={styles.fieldGroup}>
-                        <Text style={[typography.body, { color: colors.text }]}>Experience (years)</Text>
+                        <Text style={[typography.body, { color: colors.text }]}>
+                            Experience (years)
+                        </Text>
                         <View style={styles.counterRow}>
                             <Pressable
                                 style={styles.counterBtn}
@@ -154,15 +183,30 @@ export default function AstrologerProfileEditScreen() {
                                         p
                                             ? {
                                                   ...p,
-                                                  experience_years: Math.max(0, p.experience_years - 1),
+                                                  experience_years: Math.max(
+                                                      0,
+                                                      p.experience_years - 1,
+                                                  ),
                                               }
                                             : p,
                                     )
                                 }
                             >
-                                <Text style={[typography.subtitle, { color: colors.text }]}>−</Text>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.text },
+                                    ]}
+                                >
+                                    −
+                                </Text>
                             </Pressable>
-                            <Text style={[typography.subtitle, { color: colors.text }]}>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.text },
+                                ]}
+                            >
                                 {profile.experience_years}
                             </Text>
                             <Pressable
@@ -172,50 +216,99 @@ export default function AstrologerProfileEditScreen() {
                                         p
                                             ? {
                                                   ...p,
-                                                  experience_years: p.experience_years + 1,
+                                                  experience_years:
+                                                      p.experience_years + 1,
                                               }
                                             : p,
                                     )
                                 }
                             >
-                                <Text style={[typography.subtitle, { color: colors.text }]}>+</Text>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.text },
+                                    ]}
+                                >
+                                    +
+                                </Text>
                             </Pressable>
                         </View>
                     </View>
                 </Card>
 
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 12 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 12 },
+                        ]}
+                    >
                         Rates (₹ per min)
                     </Text>
                     <View style={styles.rateField}>
-                        <Text style={[typography.body, { color: colors.text }]}>Chat</Text>
+                        <Text style={[typography.body, { color: colors.text }]}>
+                            Chat
+                        </Text>
                         <View style={styles.rateInput}>
-                            <Text style={[typography.body, { color: colors.textDim }]}>₹</Text>
                             <Text
-                                style={[typography.subtitle, { color: colors.text, marginLeft: 4 }]}
+                                style={[
+                                    typography.body,
+                                    { color: colors.textDim },
+                                ]}
+                            >
+                                ₹
+                            </Text>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.text, marginLeft: 4 },
+                                ]}
                             >
                                 {profile.rate_chat_per_min}
                             </Text>
                         </View>
                     </View>
                     <View style={styles.rateField}>
-                        <Text style={[typography.body, { color: colors.text }]}>Call</Text>
+                        <Text style={[typography.body, { color: colors.text }]}>
+                            Call
+                        </Text>
                         <View style={styles.rateInput}>
-                            <Text style={[typography.body, { color: colors.textDim }]}>₹</Text>
                             <Text
-                                style={[typography.subtitle, { color: colors.text, marginLeft: 4 }]}
+                                style={[
+                                    typography.body,
+                                    { color: colors.textDim },
+                                ]}
+                            >
+                                ₹
+                            </Text>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.text, marginLeft: 4 },
+                                ]}
                             >
                                 {profile.rate_call_per_min}
                             </Text>
                         </View>
                     </View>
                     <View style={styles.rateField}>
-                        <Text style={[typography.body, { color: colors.text }]}>Video</Text>
+                        <Text style={[typography.body, { color: colors.text }]}>
+                            Video
+                        </Text>
                         <View style={styles.rateInput}>
-                            <Text style={[typography.body, { color: colors.textDim }]}>₹</Text>
                             <Text
-                                style={[typography.subtitle, { color: colors.text, marginLeft: 4 }]}
+                                style={[
+                                    typography.body,
+                                    { color: colors.textDim },
+                                ]}
+                            >
+                                ₹
+                            </Text>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.text, marginLeft: 4 },
+                                ]}
                             >
                                 {profile.rate_video_per_min}
                             </Text>
@@ -224,7 +317,12 @@ export default function AstrologerProfileEditScreen() {
                 </Card>
 
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 12 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 12 },
+                        ]}
+                    >
                         Specializations
                     </Text>
                     <View style={styles.chipWrap}>
@@ -233,14 +331,21 @@ export default function AstrologerProfileEditScreen() {
                                 key={s}
                                 label={s}
                                 selected={profile.specializations.includes(s)}
-                                onPress={() => toggleArrayItem('specializations', s)}
+                                onPress={() =>
+                                    toggleArrayItem('specializations', s)
+                                }
                             />
                         ))}
                     </View>
                 </Card>
 
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 12 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 12 },
+                        ]}
+                    >
                         Languages
                     </Text>
                     <View style={styles.chipWrap}>
@@ -255,11 +360,7 @@ export default function AstrologerProfileEditScreen() {
                     </View>
                 </Card>
 
-                <Button
-                    title="Save Changes"
-                    loading={saving}
-                    onPress={save}
-                />
+                <Button title="Save Changes" loading={saving} onPress={save} />
             </ScrollView>
         </Screen>
     );
@@ -267,7 +368,12 @@ export default function AstrologerProfileEditScreen() {
 
 const styles = StyleSheet.create({
     fieldGroup: { marginTop: 16 },
-    counterRow: { flexDirection: 'row', alignItems: 'center', gap: 24, marginTop: 8 },
+    counterRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 24,
+        marginTop: 8,
+    },
     counterBtn: {
         width: 36,
         height: 36,

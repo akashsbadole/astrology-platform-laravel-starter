@@ -14,10 +14,17 @@ type RazorpayOptions = {
 };
 
 export function useRazorpay() {
-    const checkout = useCallback(
-        (opts: RazorpayOptions) => {
-            const { amount, orderId, keyId, name, description, onSuccess, onError } = opts;
-            const html = `<!DOCTYPE html>
+    const checkout = useCallback((opts: RazorpayOptions) => {
+        const {
+            amount,
+            orderId,
+            keyId,
+            name,
+            description,
+            onSuccess,
+            onError,
+        } = opts;
+        const html = `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -44,20 +51,29 @@ export function useRazorpay() {
     </script>
 </body>
 </html>`;
-            Alert.alert('Razorpay', 'Checkout will open in WebView', [
-                { text: 'Cancel', onPress: () => onError('cancelled') },
-                {
-                    text: 'Pay',
-                    onPress: () => {
-                        Alert.alert('Payment', 'In production, Razorpay checkout opens here. For demo, payment is simulated.', [
-                            { text: 'OK', onPress: () => onSuccess('demo_pay_' + Date.now(), 'demo_sig_' + Date.now()) },
-                        ]);
-                    },
+        Alert.alert('Razorpay', 'Checkout will open in WebView', [
+            { text: 'Cancel', onPress: () => onError('cancelled') },
+            {
+                text: 'Pay',
+                onPress: () => {
+                    Alert.alert(
+                        'Payment',
+                        'In production, Razorpay checkout opens here. For demo, payment is simulated.',
+                        [
+                            {
+                                text: 'OK',
+                                onPress: () =>
+                                    onSuccess(
+                                        'demo_pay_' + Date.now(),
+                                        'demo_sig_' + Date.now(),
+                                    ),
+                            },
+                        ],
+                    );
                 },
-            ]);
-        },
-        [],
-    );
+            },
+        ]);
+    }, []);
 
     return { checkout };
 }

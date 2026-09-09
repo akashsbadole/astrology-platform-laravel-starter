@@ -66,7 +66,11 @@ export default function HoroscopeScreen() {
         <Screen padded={false}>
             <View style={styles.hero}>
                 <Text
-                    style={[typography.hero, styles.heroTitle, { color: '#fff' }]}
+                    style={[
+                        typography.hero,
+                        styles.heroTitle,
+                        { color: '#fff' },
+                    ]}
                 >
                     Horoscope
                 </Text>
@@ -88,10 +92,21 @@ export default function HoroscopeScreen() {
                         <View style={styles.rashiRow}>
                             <Text style={styles.emoji}>{r.emoji}</Text>
                             <View style={{ flex: 1 }}>
-                                <Text style={[typography.subtitle, { color: colors.text }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.text },
+                                    ]}
+                                >
                                     {r.rashi}
                                 </Text>
-                                <Text style={[typography.small, { color: colors.textDim }]} numberOfLines={1}>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textDim },
+                                    ]}
+                                    numberOfLines={1}
+                                >
                                     {r.daily}
                                 </Text>
                             </View>

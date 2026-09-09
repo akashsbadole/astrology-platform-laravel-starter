@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import {
+    Alert,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
@@ -16,7 +23,14 @@ type ShipmentOrder = {
     total: number;
 };
 
-const SHIPPING_STATUSES = ['pending', 'packed', 'shipped', 'in_transit', 'delivered', 'cancelled'] as const;
+const SHIPPING_STATUSES = [
+    'pending',
+    'packed',
+    'shipped',
+    'in_transit',
+    'delivered',
+    'cancelled',
+] as const;
 
 export default function AdminShipmentsScreen() {
     const [orders, setOrders] = useState<ShipmentOrder[]>([]);
@@ -33,9 +47,13 @@ export default function AdminShipmentsScreen() {
 
     const updateStatus = async (id: number, status: string) => {
         try {
-            await api.post(`/admin/ops/shipments/${id}`, { shipping_status: status });
+            await api.post(`/admin/ops/shipments/${id}`, {
+                shipping_status: status,
+            });
             setOrders((prev) =>
-                prev.map((o) => (o.id === id ? { ...o, shipping_status: status } : o)),
+                prev.map((o) =>
+                    o.id === id ? { ...o, shipping_status: status } : o,
+                ),
             );
         } catch (e) {
             Alert.alert('Error', apiErrorMessage(e));
@@ -48,11 +66,17 @@ export default function AdminShipmentsScreen() {
         setRefreshing(false);
     };
 
-    useEffect(() => { void load(); }, []);
+    useEffect(() => {
+        void load();
+    }, []);
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>Shipments</Text>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
+                Shipments
+            </Text>
             <FlatList
                 data={orders}
                 keyExtractor={(o) => String(o.id)}
@@ -61,17 +85,39 @@ export default function AdminShipmentsScreen() {
                     <Card>
                         <View style={styles.row}>
                             <View style={styles.info}>
-                                <Text style={[typography.subtitle, { color: colors.text }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.text },
+                                    ]}
+                                >
                                     Order #{item.id}
                                 </Text>
-                                <Text style={[typography.small, { color: colors.textDim }]}>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textDim },
+                                    ]}
+                                >
                                     {item.customer}
                                 </Text>
-                                <Text style={[typography.small, { color: colors.textFaint }]}>
-                                    {item.tracking_number ? `${item.carrier} · ${item.tracking_number}` : 'No tracking'}
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textFaint },
+                                    ]}
+                                >
+                                    {item.tracking_number
+                                        ? `${item.carrier} · ${item.tracking_number}`
+                                        : 'No tracking'}
                                 </Text>
                             </View>
-                            <Text style={[typography.subtitle, { color: colors.gold }]}>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.gold },
+                                ]}
+                            >
                                 {inr(item.total / 100)}
                             </Text>
                         </View>
@@ -81,14 +127,25 @@ export default function AdminShipmentsScreen() {
                                     key={status}
                                     style={[
                                         styles.statusChip,
-                                        item.shipping_status === status && { backgroundColor: colors.gold + '22', borderColor: colors.gold },
+                                        item.shipping_status === status && {
+                                            backgroundColor: colors.gold + '22',
+                                            borderColor: colors.gold,
+                                        },
                                     ]}
-                                    onPress={() => updateStatus(item.id, status)}
+                                    onPress={() =>
+                                        updateStatus(item.id, status)
+                                    }
                                 >
                                     <Text
                                         style={[
                                             styles.statusText,
-                                            { color: item.shipping_status === status ? colors.gold : colors.textDim },
+                                            {
+                                                color:
+                                                    item.shipping_status ===
+                                                    status
+                                                        ? colors.gold
+                                                        : colors.textDim,
+                                            },
                                         ]}
                                     >
                                         {status}
@@ -98,10 +155,23 @@ export default function AdminShipmentsScreen() {
                         </View>
                     </Card>
                 )}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
+                }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>No shipments yet.</Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            No shipments yet.
+                        </Text>
                     </Card>
                 }
             />
@@ -110,9 +180,18 @@ export default function AdminShipmentsScreen() {
 }
 
 const styles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
     info: { flex: 1 },
-    statusRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+    statusRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+        marginTop: 12,
+    },
     statusChip: {
         paddingHorizontal: 10,
         paddingVertical: 6,

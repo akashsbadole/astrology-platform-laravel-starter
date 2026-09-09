@@ -51,7 +51,9 @@ export default function ChatScreen() {
                 setTimeout(() => listRef.current?.scrollToEnd(), 100);
             },
             onEnded: () => {
-                setConsult((prev) => prev ? { ...prev, status: 'ended' } : prev);
+                setConsult((prev) =>
+                    prev ? { ...prev, status: 'ended' } : prev,
+                );
             },
         });
         return () => subscription.unsubscribe();
@@ -120,10 +122,16 @@ export default function ChatScreen() {
                 </View>
                 {consult?.status === 'active' && (
                     <View style={styles.callBtns}>
-                        <Pressable style={styles.callBtn} onPress={() => startCall('call')}>
+                        <Pressable
+                            style={styles.callBtn}
+                            onPress={() => startCall('call')}
+                        >
                             <Phone color={colors.gold} size={20} />
                         </Pressable>
-                        <Pressable style={styles.callBtn} onPress={() => startCall('video')}>
+                        <Pressable
+                            style={styles.callBtn}
+                            onPress={() => startCall('video')}
+                        >
                             <Video color={colors.gold} size={20} />
                         </Pressable>
                     </View>

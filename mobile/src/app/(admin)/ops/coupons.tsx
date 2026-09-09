@@ -1,6 +1,13 @@
 import { Plus } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import {
+    Alert,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
@@ -56,11 +63,17 @@ export default function AdminCouponsScreen() {
         ]);
     };
 
-    useEffect(() => { void load(); }, []);
+    useEffect(() => {
+        void load();
+    }, []);
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>Coupons</Text>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
+                Coupons
+            </Text>
             <FlatList
                 data={coupons}
                 keyExtractor={(c) => String(c.id)}
@@ -69,28 +82,60 @@ export default function AdminCouponsScreen() {
                     <Card>
                         <View style={styles.row}>
                             <View>
-                                <Text style={[typography.subtitle, { color: colors.text }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.text },
+                                    ]}
+                                >
                                     {item.code}
                                 </Text>
-                                <Text style={[typography.small, { color: colors.textDim }]}>
-                                    {item.type} · ₹{(item.value_paise / 100).toFixed(2)}
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textDim },
+                                    ]}
+                                >
+                                    {item.type} · ₹
+                                    {(item.value_paise / 100).toFixed(2)}
                                 </Text>
                             </View>
                         </View>
                     </Card>
                 )}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
+                }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>No coupons yet.</Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            No coupons yet.
+                        </Text>
                     </Card>
                 }
             />
-            <Button title="Add Coupon" icon={<Plus color="#1A1408" size={16} />} onPress={addCoupon} />
+            <Button
+                title="Add Coupon"
+                icon={<Plus color="#1A1408" size={16} />}
+                onPress={addCoupon}
+            />
         </Screen>
     );
 }
 
 const styles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
 });

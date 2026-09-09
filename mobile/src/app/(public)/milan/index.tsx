@@ -35,11 +35,18 @@ export default function MilanIndexScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Milan
             </Text>
             <Card>
-                <Text style={[typography.subtitle, { color: colors.text, marginBottom: 12 }]}>
+                <Text
+                    style={[
+                        typography.subtitle,
+                        { color: colors.text, marginBottom: 12 },
+                    ]}
+                >
                     Select two kundlis to match
                 </Text>
                 <FlatList
@@ -50,19 +57,46 @@ export default function MilanIndexScreen() {
                         <Card
                             style={[
                                 styles.kundliItem,
-                                aId === item.id && { backgroundColor: colors.gold + '22', borderColor: colors.gold },
-                                bId === item.id && { backgroundColor: colors.violet + '22', borderColor: colors.violet },
+                                aId === item.id && {
+                                    backgroundColor: colors.gold + '22',
+                                    borderColor: colors.gold,
+                                },
+                                bId === item.id && {
+                                    backgroundColor: colors.violet + '22',
+                                    borderColor: colors.violet,
+                                },
                             ]}
-                            onPress={() => setAId(aId === item.id ? null : item.id)}
+                            onPress={() =>
+                                setAId(aId === item.id ? null : item.id)
+                            }
                         >
-                            <Text style={[typography.body, { color: colors.text }]}>
+                            <Text
+                                style={[
+                                    typography.body,
+                                    { color: colors.text },
+                                ]}
+                            >
                                 {item.profile_name}
                             </Text>
                             {aId === item.id && (
-                                <Text style={[typography.small, { color: colors.gold }]}>Partner A</Text>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.gold },
+                                    ]}
+                                >
+                                    Partner A
+                                </Text>
                             )}
                             {bId === item.id && aId !== item.id && (
-                                <Text style={[typography.small, { color: colors.violet }]}>Partner B</Text>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.violet },
+                                    ]}
+                                >
+                                    Partner B
+                                </Text>
                             )}
                         </Card>
                     )}

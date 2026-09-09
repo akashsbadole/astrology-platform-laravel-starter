@@ -1,4 +1,9 @@
-import { Calendar, ClipboardList, LayoutDashboard, User } from 'lucide-react-native';
+import {
+    Calendar,
+    ClipboardList,
+    LayoutDashboard,
+    User,
+} from 'lucide-react-native';
 import { Tabs } from 'expo-router';
 import { colors } from '@/constants/theme';
 

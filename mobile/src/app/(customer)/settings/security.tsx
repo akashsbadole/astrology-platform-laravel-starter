@@ -6,11 +6,18 @@ import { colors, typography } from '@/constants/theme';
 export default function SettingsSecurityScreen() {
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Security
             </Text>
             <Card>
-                <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                <Text
+                    style={[
+                        typography.subtitle,
+                        { color: colors.text, marginBottom: 8 },
+                    ]}
+                >
                     Password
                 </Text>
                 <Text style={[typography.small, { color: colors.textDim }]}>
@@ -18,7 +25,12 @@ export default function SettingsSecurityScreen() {
                 </Text>
             </Card>
             <Card>
-                <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                <Text
+                    style={[
+                        typography.subtitle,
+                        { color: colors.text, marginBottom: 8 },
+                    ]}
+                >
                     Two-Factor Authentication
                 </Text>
                 <Text style={[typography.small, { color: colors.textDim }]}>
@@ -26,7 +38,12 @@ export default function SettingsSecurityScreen() {
                 </Text>
             </Card>
             <Card>
-                <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                <Text
+                    style={[
+                        typography.subtitle,
+                        { color: colors.text, marginBottom: 8 },
+                    ]}
+                >
                     Passkeys
                 </Text>
                 <Text style={[typography.small, { color: colors.textDim }]}>

@@ -6,7 +6,12 @@ import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 
-type Reply = { id: number; body: string; sender_name: string; created_at: string };
+type Reply = {
+    id: number;
+    body: string;
+    sender_name: string;
+    created_at: string;
+};
 
 export default function ForumThreadScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -27,7 +32,9 @@ export default function ForumThreadScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Thread #{id}
             </Text>
             <FlatList
@@ -36,20 +43,37 @@ export default function ForumThreadScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.sender_name}
                         </Text>
-                        <Text style={[typography.body, { color: colors.textDim }]}>
+                        <Text
+                            style={[typography.body, { color: colors.textDim }]}
+                        >
                             {item.body}
                         </Text>
-                        <Text style={[typography.tiny, { color: colors.textFaint, marginTop: 4 }]}>
+                        <Text
+                            style={[
+                                typography.tiny,
+                                { color: colors.textFaint, marginTop: 4 },
+                            ]}
+                        >
                             {item.created_at}
                         </Text>
                     </Card>
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             No replies yet.
                         </Text>
                     </Card>

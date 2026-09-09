@@ -10,7 +10,9 @@ export default function SettingsProfileScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Profile
             </Text>
             <Card>
@@ -20,7 +22,12 @@ export default function SettingsProfileScreen() {
                 <Text style={[typography.small, { color: colors.textDim }]}>
                     {user?.email}
                 </Text>
-                <Text style={[typography.small, { color: colors.textFaint, marginTop: 4 }]}>
+                <Text
+                    style={[
+                        typography.small,
+                        { color: colors.textFaint, marginTop: 4 },
+                    ]}
+                >
                     Role: {user?.role}
                 </Text>
             </Card>

@@ -7,7 +7,12 @@ import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 import { inr } from '@/lib/format';
 
-type CartItem = { id: number; name: string; price_paise: number; quantity: number };
+type CartItem = {
+    id: number;
+    name: string;
+    price_paise: number;
+    quantity: number;
+};
 
 export default function CartScreen() {
     const router = useRouter();
@@ -30,7 +35,9 @@ export default function CartScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Cart
             </Text>
             <FlatList
@@ -39,20 +46,40 @@ export default function CartScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.name}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             Qty: {item.quantity}
                         </Text>
-                        <Text style={[typography.subtitle, { color: colors.gold }]}>
-                            {inr(item.price_paise * item.quantity / 100)}
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.gold },
+                            ]}
+                        >
+                            {inr((item.price_paise * item.quantity) / 100)}
                         </Text>
                     </Card>
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             Your cart is empty.
                         </Text>
                     </Card>
@@ -61,8 +88,20 @@ export default function CartScreen() {
             {items.length > 0 && (
                 <Card>
                     <View style={styles.totalRow}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>Total</Text>
-                        <Text style={[typography.subtitle, { color: colors.gold }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
+                            Total
+                        </Text>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.gold },
+                            ]}
+                        >
                             {inr(total / 100)}
                         </Text>
                     </View>

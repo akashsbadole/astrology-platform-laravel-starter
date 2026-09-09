@@ -1,6 +1,13 @@
 import { Plus } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import {
+    Alert,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
@@ -52,11 +59,17 @@ export default function AdminProductsScreen() {
         setRefreshing(false);
     };
 
-    useEffect(() => { void load(); }, []);
+    useEffect(() => {
+        void load();
+    }, []);
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>Products</Text>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
+                Products
+            </Text>
             <FlatList
                 data={products}
                 keyExtractor={(p) => String(p.id)}
@@ -64,32 +77,68 @@ export default function AdminProductsScreen() {
                 renderItem={({ item }) => (
                     <Card>
                         <View style={styles.row}>
-                            <Text style={[typography.subtitle, { color: colors.text }]}>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.text },
+                                ]}
+                            >
                                 {item.name}
                             </Text>
                             <View style={{ alignItems: 'flex-end' }}>
-                                <Text style={[typography.subtitle, { color: colors.gold }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.gold },
+                                    ]}
+                                >
                                     {inr(item.price_paise / 100)}
                                 </Text>
-                                <Text style={[typography.small, { color: colors.textDim }]}>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textDim },
+                                    ]}
+                                >
                                     Stock: {item.stock}
                                 </Text>
                             </View>
                         </View>
                     </Card>
                 )}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
+                }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>No products yet.</Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            No products yet.
+                        </Text>
                     </Card>
                 }
             />
-            <Button title="Add Product" icon={<Plus color="#1A1408" size={16} />} onPress={add} />
+            <Button
+                title="Add Product"
+                icon={<Plus color="#1A1408" size={16} />}
+                onPress={add}
+            />
         </Screen>
     );
 }
 
 const styles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
 });

@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import {
+    Alert,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
@@ -28,7 +35,9 @@ export default function AdminDisputesScreen() {
                 onPress: async (resolution: string | undefined) => {
                     if (!resolution) return;
                     try {
-                        await api.post(`/admin/ops/disputes/${id}/resolve`, { resolution });
+                        await api.post(`/admin/ops/disputes/${id}/resolve`, {
+                            resolution,
+                        });
                         setDisputes((prev) => prev.filter((d) => d.id !== id));
                     } catch (e) {
                         Alert.alert('Error', apiErrorMessage(e));
@@ -44,39 +53,83 @@ export default function AdminDisputesScreen() {
         setRefreshing(false);
     };
 
-    useEffect(() => { void load(); }, []);
+    useEffect(() => {
+        void load();
+    }, []);
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>Disputes</Text>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
+                Disputes
+            </Text>
             <FlatList
                 data={disputes}
                 keyExtractor={(d) => String(d.id)}
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             Dispute #{item.id}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             {item.status}
                         </Text>
                         {item.resolution && (
-                            <Text style={[typography.small, { color: colors.textFaint, marginTop: 4 }]}>
+                            <Text
+                                style={[
+                                    typography.small,
+                                    { color: colors.textFaint, marginTop: 4 },
+                                ]}
+                            >
                                 {item.resolution}
                             </Text>
                         )}
                         {item.status === 'open' && (
-                            <Card style={styles.actionBtn} onPress={() => resolve(item.id)}>
-                                <Text style={[typography.small, { color: colors.success }]}>Resolve</Text>
+                            <Card
+                                style={styles.actionBtn}
+                                onPress={() => resolve(item.id)}
+                            >
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.success },
+                                    ]}
+                                >
+                                    Resolve
+                                </Text>
                             </Card>
                         )}
                     </Card>
                 )}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
+                }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>No open disputes.</Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            No open disputes.
+                        </Text>
                     </Card>
                 }
             />

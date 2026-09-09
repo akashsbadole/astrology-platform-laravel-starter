@@ -5,7 +5,21 @@ import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 import { useRazorpay } from '@/lib/razorpay';
 
-export function RazorpayCheckout({ visible, amount, orderId, keyId, onClose, onSuccess }: { visible: boolean; amount: number; orderId: string; keyId: string; onClose: () => void; onSuccess: (paymentId: string, signature: string) => void }) {
+export function RazorpayCheckout({
+    visible,
+    amount,
+    orderId,
+    keyId,
+    onClose,
+    onSuccess,
+}: {
+    visible: boolean;
+    amount: number;
+    orderId: string;
+    keyId: string;
+    onClose: () => void;
+    onSuccess: (paymentId: string, signature: string) => void;
+}) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { checkout } = useRazorpay();
@@ -42,7 +56,11 @@ export function RazorpayCheckout({ visible, amount, orderId, keyId, onClose, onS
         try {
             const data = JSON.parse(event.nativeEvent.data);
             if (data.status === 'success') {
-                await api.post('/wallet/verify', { razorpay_payment_id: data.razorpay_payment_id, razorpay_signature: data.razorpay_signature, order_id: orderId });
+                await api.post('/wallet/verify', {
+                    razorpay_payment_id: data.razorpay_payment_id,
+                    razorpay_signature: data.razorpay_signature,
+                    order_id: orderId,
+                });
                 onSuccess(data.razorpay_payment_id, data.razorpay_signature);
             } else if (data.status === 'cancelled') {
                 onClose();
@@ -59,19 +77,50 @@ export function RazorpayCheckout({ visible, amount, orderId, keyId, onClose, onS
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.title}>Razorpay Checkout</Text>
-                    <Text style={styles.subtitle}>₹{(amount / 100).toFixed(2)}</Text>
+                    <Text style={styles.subtitle}>
+                        ₹{(amount / 100).toFixed(2)}
+                    </Text>
                 </View>
                 {loading && !error && (
                     <View style={styles.loading}>
                         <ActivityIndicator size="large" color={colors.gold} />
-                        <Text style={[typography.small, { color: colors.textDim, marginTop: 12 }]}>Loading payment gateway…</Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim, marginTop: 12 },
+                            ]}
+                        >
+                            Loading payment gateway…
+                        </Text>
                     </View>
                 )}
                 {error && (
                     <View style={styles.errorWrap}>
-                        <Text style={[typography.subtitle, { color: colors.danger }]}>Payment Error</Text>
-                        <Text style={[typography.body, { color: colors.textDim, marginTop: 8 }]}>{error}</Text>
-                        <Text style={[typography.small, { color: colors.gold, marginTop: 12 }]} onPress={onClose}>Dismiss</Text>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.danger },
+                            ]}
+                        >
+                            Payment Error
+                        </Text>
+                        <Text
+                            style={[
+                                typography.body,
+                                { color: colors.textDim, marginTop: 8 },
+                            ]}
+                        >
+                            {error}
+                        </Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.gold, marginTop: 12 },
+                            ]}
+                            onPress={onClose}
+                        >
+                            Dismiss
+                        </Text>
                     </View>
                 )}
                 {!error && (
@@ -92,9 +141,23 @@ export function RazorpayCheckout({ visible, amount, orderId, keyId, onClose, onS
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.bg },
-    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, paddingTop: 48, backgroundColor: colors.bg2, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 16,
+        paddingTop: 48,
+        backgroundColor: colors.bg2,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: colors.border,
+    },
     title: { color: colors.text, fontSize: 18, fontWeight: '700' },
     subtitle: { color: colors.gold, fontSize: 16, fontWeight: '800' },
     loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-    errorWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
+    errorWrap: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+    },
 });

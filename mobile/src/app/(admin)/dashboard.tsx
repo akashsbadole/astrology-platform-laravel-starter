@@ -34,10 +34,30 @@ export default function AdminDashboardScreen() {
 
     const statItems = stats
         ? [
-              { icon: Users, label: 'Total Users', value: stats.total_users, color: colors.violet },
-              { icon: UserCheck, label: 'Customers', value: stats.total_customers, color: colors.success },
-              { icon: UserCheck, label: 'Astrologers', value: stats.total_astrologers, color: colors.gold },
-              { icon: Users, label: 'Pending', value: stats.pending_astrologers, color: colors.danger },
+              {
+                  icon: Users,
+                  label: 'Total Users',
+                  value: stats.total_users,
+                  color: colors.violet,
+              },
+              {
+                  icon: UserCheck,
+                  label: 'Customers',
+                  value: stats.total_customers,
+                  color: colors.success,
+              },
+              {
+                  icon: UserCheck,
+                  label: 'Astrologers',
+                  value: stats.total_astrologers,
+                  color: colors.gold,
+              },
+              {
+                  icon: Users,
+                  label: 'Pending',
+                  value: stats.pending_astrologers,
+                  color: colors.danger,
+              },
           ]
         : [];
 
@@ -67,16 +87,27 @@ export default function AdminDashboardScreen() {
                 </View>
 
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 12 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 12 },
+                        ]}
+                    >
                         Quick Actions
                     </Text>
                     <View style={styles.actionRow}>
-                        <Pressable style={styles.actionBtn} onPress={() => router.push('/(admin)/astrologers')}>
+                        <Pressable
+                            style={styles.actionBtn}
+                            onPress={() => router.push('/(admin)/astrologers')}
+                        >
                             <Users color={colors.gold} size={20} />
                             <Text style={styles.actionText}>Astrologers</Text>
                             <ArrowRight color={colors.textFaint} size={16} />
                         </Pressable>
-                        <Pressable style={styles.actionBtn} onPress={() => router.push('/(admin)/ops')}>
+                        <Pressable
+                            style={styles.actionBtn}
+                            onPress={() => router.push('/(admin)/ops')}
+                        >
                             <Wallet color={colors.gold} size={20} />
                             <Text style={styles.actionText}>Ops Hub</Text>
                             <ArrowRight color={colors.textFaint} size={16} />
@@ -110,5 +141,10 @@ const styles = StyleSheet.create({
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: colors.border,
     },
-    actionText: { flex: 1, color: colors.text, fontSize: 14, fontWeight: '700' },
+    actionText: {
+        flex: 1,
+        color: colors.text,
+        fontSize: 14,
+        fontWeight: '700',
+    },
 });

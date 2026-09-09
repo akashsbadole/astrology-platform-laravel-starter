@@ -176,62 +176,62 @@ astrology-platform-laravel-starter/
 
 ### 3.13 Astrologer (auth + role:astrologer)
 
-| Method | Path                                  | Name                           | State |
-| ------ | ------------------------------------- | ------------------------------ | ----- |
-| GET    | `/api/astrologer/dashboard`           | `api.astrologer.dashboard`     | 🟩    |
-| POST   | `/api/astrologer/status`              | `api.astrologer.status`        | 🟩    |
-| GET    | `/api/astrologer/profile`             | `api.astrologer.profile`       | 🟩    |
-| PUT    | `/api/astrologer/profile`             | `api.astrologer.profile.update`| 🟩    |
-| GET    | `/api/astrologer/availability`        | `api.astrologer.availability`  | 🟩    |
-| POST   | `/api/astrologer/availability`        | `api.astrologer.availability.store` | 🟩    |
-| DELETE | `/api/astrologer/availability/{id}`   | `api.astrologer.availability.destroy` | 🟩    |
-| GET    | `/api/astrologer/bookings`            | `api.astrologer.bookings`      | 🟩    |
-| PATCH  | `/api/astrologer/bookings/{id}/complete` | `api.astrologer.bookings.complete` | 🟩    |
-| PATCH  | `/api/astrologer/bookings/{id}/cancel`   | `api.astrologer.bookings.cancel`   | 🟩    |
+| Method | Path                                     | Name                                  | State |
+| ------ | ---------------------------------------- | ------------------------------------- | ----- |
+| GET    | `/api/astrologer/dashboard`              | `api.astrologer.dashboard`            | 🟩    |
+| POST   | `/api/astrologer/status`                 | `api.astrologer.status`               | 🟩    |
+| GET    | `/api/astrologer/profile`                | `api.astrologer.profile`              | 🟩    |
+| PUT    | `/api/astrologer/profile`                | `api.astrologer.profile.update`       | 🟩    |
+| GET    | `/api/astrologer/availability`           | `api.astrologer.availability`         | 🟩    |
+| POST   | `/api/astrologer/availability`           | `api.astrologer.availability.store`   | 🟩    |
+| DELETE | `/api/astrologer/availability/{id}`      | `api.astrologer.availability.destroy` | 🟩    |
+| GET    | `/api/astrologer/bookings`               | `api.astrologer.bookings`             | 🟩    |
+| PATCH  | `/api/astrologer/bookings/{id}/complete` | `api.astrologer.bookings.complete`    | 🟩    |
+| PATCH  | `/api/astrologer/bookings/{id}/cancel`   | `api.astrologer.bookings.cancel`      | 🟩    |
 
 ### 3.14 Admin (auth + role:admin)
 
-| Method | Path                                  | Name                           | State |
-| ------ | ------------------------------------- | ------------------------------ | ----- |
-| GET    | `/api/admin/dashboard`                | `api.admin.dashboard`          | 🟩    |
-| GET    | `/api/admin/astrologers`              | `api.admin.astrologers`        | 🟩    |
-| PATCH  | `/api/admin/astrologers/{id}/approve` | `api.admin.astrologers.approve`| 🟩    |
-| PATCH  | `/api/admin/astrologers/{id}/reject`  | `api.admin.astrologers.reject` | 🟩    |
-| GET    | `/api/admin/taxonomies`               | `api.admin.taxonomies`         | 🟩    |
-| POST   | `/api/admin/taxonomies`               | `api.admin.taxonomies.store`   | 🟩    |
-| PATCH  | `/api/admin/taxonomies/{id}`          | `api.admin.taxonomies.update`  | 🟩    |
-| DELETE | `/api/admin/taxonomies/{id}`          | `api.admin.taxonomies.destroy` | 🟩    |
-| GET    | `/api/admin/poojas`                   | `api.admin.poojas`             | 🟩    |
-| POST   | `/api/admin/poojas`                   | `api.admin.poojas.store`       | 🟩    |
-| GET    | `/api/admin/poojas/{id}`              | `api.admin.poojas.show`        | 🟩    |
-| PUT    | `/api/admin/poojas/{id}`              | `api.admin.poojas.update`      | 🟩    |
-| DELETE | `/api/admin/poojas/{id}`              | `api.admin.poojas.destroy`     | 🟩    |
-| GET    | `/api/admin/posts`                    | `api.admin.posts`              | 🟩    |
-| POST   | `/api/admin/posts`                    | `api.admin.posts.store`        | 🟩    |
-| GET    | `/api/admin/posts/{id}`               | `api.admin.posts.show`         | 🟩    |
-| PUT    | `/api/admin/posts/{id}`               | `api.admin.posts.update`       | 🟩    |
-| DELETE | `/api/admin/posts/{id}`               | `api.admin.posts.destroy`      | 🟩    |
-| GET    | `/api/admin/ops`                      | `api.admin.ops.dashboard`      | 🟩    |
-| GET    | `/api/admin/ops/coupons`              | `api.admin.ops.coupons`        | 🟩    |
-| POST   | `/api/admin/ops/coupons`              | `api.admin.ops.coupons.store`  | 🟩    |
-| GET    | `/api/admin/ops/payouts`              | `api.admin.ops.payouts`        | 🟩    |
-| POST   | `/api/admin/ops/payouts/{id}/approve` | `api.admin.ops.payouts.approve`| 🟩    |
-| GET    | `/api/admin/ops/refunds`              | `api.admin.ops.refunds`        | 🟩    |
-| POST   | `/api/admin/ops/refunds/{id}/process` | `api.admin.ops.refunds.process`| 🟩    |
-| GET    | `/api/admin/ops/disputes`             | `api.admin.ops.disputes`       | 🟩    |
-| POST   | `/api/admin/ops/disputes/{id}/resolve`| `api.admin.ops.disputes.resolve`| 🟩   |
-| GET    | `/api/admin/ops/horoscopes`           | `api.admin.ops.horoscopes`     | 🟩    |
-| POST   | `/api/admin/ops/horoscopes`           | `api.admin.ops.horoscopes.store`| 🟩   |
-| GET    | `/api/admin/ops/products`             | `api.admin.ops.products`       | 🟩    |
-| POST   | `/api/admin/ops/products`             | `api.admin.ops.products.store` | 🟩    |
-| GET    | `/api/admin/ops/live`                 | `api.admin.ops.live`           | 🟩    |
-| POST   | `/api/admin/ops/live`                 | `api.admin.ops.live.store`     | 🟩    |
-| POST   | `/api/admin/ops/live/{id}/toggle`     | `api.admin.ops.live.toggle`    | 🟩    |
-| GET    | `/api/admin/ops/banners`              | `api.admin.ops.banners`        | 🟩    |
-| POST   | `/api/admin/ops/banners`              | `api.admin.ops.banners.store`  | 🟩    |
-| GET    | `/api/admin/ops/support`              | `api.admin.ops.support`        | 🟩    |
-| GET    | `/api/admin/ops/shipments`            | `api.admin.ops.shipments`      | 🟩    |
-| POST   | `/api/admin/ops/shipments/{id}`       | `api.admin.ops.shipments.update`| 🟩  |
+| Method | Path                                   | Name                             | State |
+| ------ | -------------------------------------- | -------------------------------- | ----- |
+| GET    | `/api/admin/dashboard`                 | `api.admin.dashboard`            | 🟩    |
+| GET    | `/api/admin/astrologers`               | `api.admin.astrologers`          | 🟩    |
+| PATCH  | `/api/admin/astrologers/{id}/approve`  | `api.admin.astrologers.approve`  | 🟩    |
+| PATCH  | `/api/admin/astrologers/{id}/reject`   | `api.admin.astrologers.reject`   | 🟩    |
+| GET    | `/api/admin/taxonomies`                | `api.admin.taxonomies`           | 🟩    |
+| POST   | `/api/admin/taxonomies`                | `api.admin.taxonomies.store`     | 🟩    |
+| PATCH  | `/api/admin/taxonomies/{id}`           | `api.admin.taxonomies.update`    | 🟩    |
+| DELETE | `/api/admin/taxonomies/{id}`           | `api.admin.taxonomies.destroy`   | 🟩    |
+| GET    | `/api/admin/poojas`                    | `api.admin.poojas`               | 🟩    |
+| POST   | `/api/admin/poojas`                    | `api.admin.poojas.store`         | 🟩    |
+| GET    | `/api/admin/poojas/{id}`               | `api.admin.poojas.show`          | 🟩    |
+| PUT    | `/api/admin/poojas/{id}`               | `api.admin.poojas.update`        | 🟩    |
+| DELETE | `/api/admin/poojas/{id}`               | `api.admin.poojas.destroy`       | 🟩    |
+| GET    | `/api/admin/posts`                     | `api.admin.posts`                | 🟩    |
+| POST   | `/api/admin/posts`                     | `api.admin.posts.store`          | 🟩    |
+| GET    | `/api/admin/posts/{id}`                | `api.admin.posts.show`           | 🟩    |
+| PUT    | `/api/admin/posts/{id}`                | `api.admin.posts.update`         | 🟩    |
+| DELETE | `/api/admin/posts/{id}`                | `api.admin.posts.destroy`        | 🟩    |
+| GET    | `/api/admin/ops`                       | `api.admin.ops.dashboard`        | 🟩    |
+| GET    | `/api/admin/ops/coupons`               | `api.admin.ops.coupons`          | 🟩    |
+| POST   | `/api/admin/ops/coupons`               | `api.admin.ops.coupons.store`    | 🟩    |
+| GET    | `/api/admin/ops/payouts`               | `api.admin.ops.payouts`          | 🟩    |
+| POST   | `/api/admin/ops/payouts/{id}/approve`  | `api.admin.ops.payouts.approve`  | 🟩    |
+| GET    | `/api/admin/ops/refunds`               | `api.admin.ops.refunds`          | 🟩    |
+| POST   | `/api/admin/ops/refunds/{id}/process`  | `api.admin.ops.refunds.process`  | 🟩    |
+| GET    | `/api/admin/ops/disputes`              | `api.admin.ops.disputes`         | 🟩    |
+| POST   | `/api/admin/ops/disputes/{id}/resolve` | `api.admin.ops.disputes.resolve` | 🟩    |
+| GET    | `/api/admin/ops/horoscopes`            | `api.admin.ops.horoscopes`       | 🟩    |
+| POST   | `/api/admin/ops/horoscopes`            | `api.admin.ops.horoscopes.store` | 🟩    |
+| GET    | `/api/admin/ops/products`              | `api.admin.ops.products`         | 🟩    |
+| POST   | `/api/admin/ops/products`              | `api.admin.ops.products.store`   | 🟩    |
+| GET    | `/api/admin/ops/live`                  | `api.admin.ops.live`             | 🟩    |
+| POST   | `/api/admin/ops/live`                  | `api.admin.ops.live.store`       | 🟩    |
+| POST   | `/api/admin/ops/live/{id}/toggle`      | `api.admin.ops.live.toggle`      | 🟩    |
+| GET    | `/api/admin/ops/banners`               | `api.admin.ops.banners`          | 🟩    |
+| POST   | `/api/admin/ops/banners`               | `api.admin.ops.banners.store`    | 🟩    |
+| GET    | `/api/admin/ops/support`               | `api.admin.ops.support`          | 🟩    |
+| GET    | `/api/admin/ops/shipments`             | `api.admin.ops.shipments`        | 🟩    |
+| POST   | `/api/admin/ops/shipments/{id}`        | `api.admin.ops.shipments.update` | 🟩    |
 
 > **⚠️ Missing API routes needed for screen parity** (exist in `web.php` only) — Phase 1 must add JSON API versions:
 >
@@ -251,14 +251,14 @@ astrology-platform-laravel-starter/
 
 | Web page                                                                  | Mobile route                                                                | Backend JSON | Mobile build |
 | ------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------ | ------------ |
-| `welcome`                                                                 | `/` — Home (tabs index)                                                      | 🟩           | 🟩           |
+| `welcome`                                                                 | `/` — Home (tabs index)                                                     | 🟩           | 🟩           |
 | `auth/login`, `auth/register`                                             | `/(auth)/login`, `/(auth)/register`                                         | 🟨           | ⬜           |
 | `auth/forgot-password`, `auth/reset-password`                             | `/(auth)/forgot`, `/(auth)/reset`                                           | 🟨           | ⬜           |
 | `auth/verify-email`, `auth/two-factor-challenge`, `auth/confirm-password` | `/(auth)/verify-email`, `/(auth)/two-factor`, `/(auth)/confirm-password`    | 🟨           | ⬜           |
 | `auth/otp-request`, `auth/otp-verify`                                     | `/(auth)/otp-request`, `/(auth)/otp-verify`                                 | 🟩           | 🟩           |
 | `blog/index`, `blog/show`                                                 | `/(public)/blog`, `/(public)/blog/[slug]`                                   | 🟩           | 🟩           |
 | `astrologers/index`                                                       | `/(public)/astrologers` or `/(tabs)/astrologers`                            | 🟩           | 🟩           |
-| `astrologers/show`                                                        | `/(public)/astrologers/[id]` or `astrologer/[id]`                          | 🟩           | 🟩           |
+| `astrologers/show`                                                        | `/(public)/astrologers/[id]` or `astrologer/[id]`                           | 🟩           | 🟩           |
 | `horoscope/index`, `horoscope/show`                                       | `/(public)/horoscope`, `/(public)/horoscope/[rashi]`                        | 🟩           | 🟩           |
 | `panchang/show`                                                           | `/(public)/panchang`                                                        | 🟩           | 🟩           |
 | `forum/index`, `forum/category`, `forum/thread`                           | `/(public)/forum`, `/(public)/forum/[slug]`, `/(public)/forum/threads/[id]` | 🟩           | 🟩           |
@@ -268,30 +268,30 @@ astrology-platform-laravel-starter/
 
 ### 4.2 Customer
 
-| Web page                                         | Mobile route                                        | Backend JSON | Mobile build |
-| ------------------------------------------------ | --------------------------------------------------- | ------------ | ------------ |
-| `customer/dashboard`                             | `/(tabs)/` — Home dashboard                          | 🟩           | 🟩           |
-| `wallet/index`                                   | `/(tabs)/wallet`                                    | 🟩           | 🟩           |
+| Web page                                         | Mobile route                                             | Backend JSON | Mobile build |
+| ------------------------------------------------ | -------------------------------------------------------- | ------------ | ------------ |
+| `customer/dashboard`                             | `/(tabs)/` — Home dashboard                              | 🟩           | 🟩           |
+| `wallet/index`                                   | `/(tabs)/wallet`                                         | 🟩           | 🟩           |
 | `consult/index`                                  | `/(tabs)/` — Consultations tab or `/(customer)/consults` | 🟩           | 🟩           |
-| `consult/show` (chat/call/video)                 | `/(customer)/consults/[id]`                         | 🟩           | 🟩           |
-| `customer/bookings/index`                        | `/(customer)/bookings`                              | 🟨           | ⬜           |
-| `customer/bookings/checkout`                     | `/(customer)/bookings/[id]/checkout`                | 🟨           | ⬜           |
-| `customer/kundli/index`                          | `/(customer)/kundli`                                | 🟩           | 🟩           |
-| `customer/kundli/create`, `customer/kundli/show` | `/(customer)/kundli/new`, `/(customer)/kundli/[id]` | 🟩           | 🟩           |
-| `customer/poojas/index`, `customer/poojas/show`  | `/(customer)/poojas`, `/(customer)/poojas/[id]`     | 🟩           | 🟩           |
-| `customer/pooja-bookings/index`                  | `/(customer)/pooja-bookings`                        | 🟨           | ⬜           |
-| `customer/pooja-bookings/checkout`               | `/(customer)/pooja-bookings/[id]/checkout`          | 🟨           | ⬜           |
-| `chat/show` (booking chat)                       | `/(customer)/bookings/[id]/chat`                    | 🟨           | ⬜           |
-| `pooja-chat/show`                                | `/(customer)/pooja-bookings/[id]/chat`              | 🟨           | ⬜           |
-| `shop/cart`                                      | `/(customer)/cart`                                  | 🟩           | 🟩           |
-| `shop/checkout`                                  | `/(customer)/checkout`                              | 🟩           | 🟩           |
-| `shop/orders`, `shop/order-show`                 | `/(customer)/orders`, `/(customer)/orders/[id]`     | 🟩           | 🟩           |
-| `notifications/index`                            | `/(customer)/notifications`                         | 🟩           | 🟩           |
-| `referrals/index`                                | `/(customer)/referrals`                             | 🟩           | 🟩           |
-| `support/index`                                  | `/(customer)/support`                               | 🟩           | 🟩           |
-| `settings/profile`                               | `/(customer)/settings/profile`                      | 🟩           | 🟩           |
-| `settings/security`                              | `/(customer)/settings/security`                     | 🟩           | 🟩           |
-| `settings/appearance`                            | `/(customer)/settings/appearance`                   | 🟩           | 🟩           |
+| `consult/show` (chat/call/video)                 | `/(customer)/consults/[id]`                              | 🟩           | 🟩           |
+| `customer/bookings/index`                        | `/(customer)/bookings`                                   | 🟨           | ⬜           |
+| `customer/bookings/checkout`                     | `/(customer)/bookings/[id]/checkout`                     | 🟨           | ⬜           |
+| `customer/kundli/index`                          | `/(customer)/kundli`                                     | 🟩           | 🟩           |
+| `customer/kundli/create`, `customer/kundli/show` | `/(customer)/kundli/new`, `/(customer)/kundli/[id]`      | 🟩           | 🟩           |
+| `customer/poojas/index`, `customer/poojas/show`  | `/(customer)/poojas`, `/(customer)/poojas/[id]`          | 🟩           | 🟩           |
+| `customer/pooja-bookings/index`                  | `/(customer)/pooja-bookings`                             | 🟨           | ⬜           |
+| `customer/pooja-bookings/checkout`               | `/(customer)/pooja-bookings/[id]/checkout`               | 🟨           | ⬜           |
+| `chat/show` (booking chat)                       | `/(customer)/bookings/[id]/chat`                         | 🟨           | ⬜           |
+| `pooja-chat/show`                                | `/(customer)/pooja-bookings/[id]/chat`                   | 🟨           | ⬜           |
+| `shop/cart`                                      | `/(customer)/cart`                                       | 🟩           | 🟩           |
+| `shop/checkout`                                  | `/(customer)/checkout`                                   | 🟩           | 🟩           |
+| `shop/orders`, `shop/order-show`                 | `/(customer)/orders`, `/(customer)/orders/[id]`          | 🟩           | 🟩           |
+| `notifications/index`                            | `/(customer)/notifications`                              | 🟩           | 🟩           |
+| `referrals/index`                                | `/(customer)/referrals`                                  | 🟩           | 🟩           |
+| `support/index`                                  | `/(customer)/support`                                    | 🟩           | 🟩           |
+| `settings/profile`                               | `/(customer)/settings/profile`                           | 🟩           | 🟩           |
+| `settings/security`                              | `/(customer)/settings/security`                          | 🟩           | 🟩           |
+| `settings/appearance`                            | `/(customer)/settings/appearance`                        | 🟩           | 🟩           |
 
 ### 4.3 Astrologer
 

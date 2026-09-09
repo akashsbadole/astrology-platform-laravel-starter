@@ -6,7 +6,12 @@ import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 
-type Thread = { id: number; title: string; replies_count: number; created_at: string };
+type Thread = {
+    id: number;
+    title: string;
+    replies_count: number;
+    created_at: string;
+};
 
 export default function ForumCategoryScreen() {
     const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -27,7 +32,9 @@ export default function ForumCategoryScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 {slug?.toUpperCase()}
             </Text>
             <FlatList
@@ -36,17 +43,32 @@ export default function ForumCategoryScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.title}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             {item.replies_count} replies · {item.created_at}
                         </Text>
                     </Card>
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             No threads yet.
                         </Text>
                     </Card>

@@ -1,6 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+} from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Screen from '@/components/ui/Screen';
@@ -18,7 +25,11 @@ export default function CheckoutScreen() {
     const placeOrder = async () => {
         setLoading(true);
         try {
-            const { data } = await api.post('/shop/checkout', { address, city, pincode });
+            const { data } = await api.post('/shop/checkout', {
+                address,
+                city,
+                pincode,
+            });
             Alert.alert('Success', 'Order placed!', [
                 { text: 'OK', onPress: () => router.push('/orders') },
             ]);
@@ -35,11 +46,21 @@ export default function CheckoutScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     Checkout
                 </Text>
                 <Card>
-                    <Text style={[typography.subtitle, { color: colors.text, marginBottom: 8 }]}>
+                    <Text
+                        style={[
+                            typography.subtitle,
+                            { color: colors.text, marginBottom: 8 },
+                        ]}
+                    >
                         Shipping Address
                     </Text>
                     <TextInput

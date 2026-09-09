@@ -37,7 +37,9 @@ export default function OrderDetailScreen() {
     if (!order) {
         return (
             <Screen>
-                <Text style={[typography.small, { color: colors.textDim }]}>Loading…</Text>
+                <Text style={[typography.small, { color: colors.textDim }]}>
+                    Loading…
+                </Text>
             </Screen>
         );
     }
@@ -48,7 +50,12 @@ export default function OrderDetailScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     Order #{order.id}
                 </Text>
                 <Card>
@@ -59,29 +66,63 @@ export default function OrderDetailScreen() {
                         {order.status} · {order.shipping_status}
                     </Text>
                     {order.tracking_number && (
-                        <Text style={[typography.small, { color: colors.textFaint, marginTop: 4 }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textFaint, marginTop: 4 },
+                            ]}
+                        >
                             {order.carrier} · {order.tracking_number}
                         </Text>
                     )}
                 </Card>
-                <Text style={[typography.title, { color: colors.text }]}>Items</Text>
+                <Text style={[typography.title, { color: colors.text }]}>
+                    Items
+                </Text>
                 {order.items.map((item, i) => (
                     <Card key={i}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.name}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             Qty: {item.quantity}
                         </Text>
-                        <Text style={[typography.subtitle, { color: colors.gold }]}>
-                            {inr(item.price_paise * item.quantity / 100)}
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.gold },
+                            ]}
+                        >
+                            {inr((item.price_paise * item.quantity) / 100)}
                         </Text>
                     </Card>
                 ))}
                 <Card>
                     <View style={styles.totalRow}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>Total</Text>
-                        <Text style={[typography.subtitle, { color: colors.gold }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
+                            Total
+                        </Text>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.gold },
+                            ]}
+                        >
                             {inr(order.total / 100)}
                         </Text>
                     </View>

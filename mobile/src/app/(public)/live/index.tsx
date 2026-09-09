@@ -36,14 +36,38 @@ export default function LiveListScreen() {
 
     const renderItem = (item: LiveSession) => (
         <Card key={item.id} onPress={() => router.push(`/live/${item.id}`)}>
-            <Text style={[typography.subtitle, { color: colors.text }]} numberOfLines={1}>
+            <Text
+                style={[typography.subtitle, { color: colors.text }]}
+                numberOfLines={1}
+            >
                 {item.title}
             </Text>
             <Text style={[typography.small, { color: colors.textDim }]}>
-                {item.astrologer_name} · {item.entry_fee ? `₹${item.entry_fee}` : 'Free'}
+                {item.astrologer_name} ·{' '}
+                {item.entry_fee ? `₹${item.entry_fee}` : 'Free'}
             </Text>
-            <View style={[styles.badge, { backgroundColor: item.status === 'live' ? colors.success + '22' : colors.gold + '22' }]}>
-                <Text style={[styles.badgeText, { color: item.status === 'live' ? colors.success : colors.gold }]}>
+            <View
+                style={[
+                    styles.badge,
+                    {
+                        backgroundColor:
+                            item.status === 'live'
+                                ? colors.success + '22'
+                                : colors.gold + '22',
+                    },
+                ]}
+            >
+                <Text
+                    style={[
+                        styles.badgeText,
+                        {
+                            color:
+                                item.status === 'live'
+                                    ? colors.success
+                                    : colors.gold,
+                        },
+                    ]}
+                >
                     {item.status.toUpperCase()}
                 </Text>
             </View>
@@ -52,12 +76,19 @@ export default function LiveListScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Live Sessions
             </Text>
             {sessions.length > 0 && (
                 <>
-                    <Text style={[typography.title, { color: colors.text, marginBottom: 8 }]}>
+                    <Text
+                        style={[
+                            typography.title,
+                            { color: colors.text, marginBottom: 8 },
+                        ]}
+                    >
                         Live Now
                     </Text>
                     <FlatList
@@ -70,7 +101,12 @@ export default function LiveListScreen() {
             )}
             {upcoming.length > 0 && (
                 <>
-                    <Text style={[typography.title, { color: colors.text, marginBottom: 8 }]}>
+                    <Text
+                        style={[
+                            typography.title,
+                            { color: colors.text, marginBottom: 8 },
+                        ]}
+                    >
                         Upcoming
                     </Text>
                     <FlatList

@@ -33,12 +33,13 @@ const TYPE_ICON: Record<string, typeof MessageCircle> = {
     video: Video,
 };
 
-const STATUS_TONE: Record<string, 'success' | 'gold' | 'textFaint' | 'danger'> = {
-    confirmed: 'success',
-    completed: 'gold',
-    pending: 'textFaint',
-    cancelled: 'danger',
-};
+const STATUS_TONE: Record<string, 'success' | 'gold' | 'textFaint' | 'danger'> =
+    {
+        confirmed: 'success',
+        completed: 'gold',
+        pending: 'textFaint',
+        cancelled: 'danger',
+    };
 
 export default function AstrologerBookingsScreen() {
     const [bookings, setBookings] = useState<AstrologerBooking[]>([]);
@@ -70,7 +71,9 @@ export default function AstrologerBookingsScreen() {
         try {
             await api.patch(`/astrologer/bookings/${id}/complete`);
             setBookings((prev) =>
-                prev.map((b) => (b.id === id ? { ...b, status: 'completed' } : b)),
+                prev.map((b) =>
+                    b.id === id ? { ...b, status: 'completed' } : b,
+                ),
             );
         } catch (e) {
             Alert.alert('Error', apiErrorMessage(e));
@@ -78,23 +81,33 @@ export default function AstrologerBookingsScreen() {
     };
 
     const cancelBooking = async (id: number) => {
-        Alert.alert('Cancel booking', 'Are you sure you want to cancel this booking?', [
-            { text: 'No', style: 'cancel' },
-            {
-                text: 'Yes, cancel',
-                style: 'destructive',
-                onPress: async () => {
-                    try {
-                        await api.patch(`/astrologer/bookings/${id}/cancel`);
-                        setBookings((prev) =>
-                            prev.map((b) => (b.id === id ? { ...b, status: 'cancelled' } : b)),
-                        );
-                    } catch (e) {
-                        Alert.alert('Error', apiErrorMessage(e));
-                    }
+        Alert.alert(
+            'Cancel booking',
+            'Are you sure you want to cancel this booking?',
+            [
+                { text: 'No', style: 'cancel' },
+                {
+                    text: 'Yes, cancel',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await api.patch(
+                                `/astrologer/bookings/${id}/cancel`,
+                            );
+                            setBookings((prev) =>
+                                prev.map((b) =>
+                                    b.id === id
+                                        ? { ...b, status: 'cancelled' }
+                                        : b,
+                                ),
+                            );
+                        } catch (e) {
+                            Alert.alert('Error', apiErrorMessage(e));
+                        }
+                    },
                 },
-            },
-        ]);
+            ],
+        );
     };
 
     const formatDate = (iso: string) => {
@@ -110,9 +123,7 @@ export default function AstrologerBookingsScreen() {
 
     const renderItem = ({ item }: { item: AstrologerBooking }) => {
         const Icon = TYPE_ICON[item.consultation_type] ?? MessageCircle;
-        const canAct =
-            item.status === 'confirmed' ||
-            item.status === 'pending';
+        const canAct = item.status === 'confirmed' || item.status === 'pending';
         return (
             <Card>
                 <View style={styles.bookingRow}>
@@ -120,11 +131,22 @@ export default function AstrologerBookingsScreen() {
                         <Icon color={colors.gold} size={20} />
                     </View>
                     <View style={styles.bookingInfo}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.customer_name}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
-                            {formatDate(item.scheduled_at)} · {item.duration_minutes} min
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            {formatDate(item.scheduled_at)} ·{' '}
+                            {item.duration_minutes} min
                         </Text>
                         {item.customer_notes ? (
                             <Text
@@ -139,20 +161,36 @@ export default function AstrologerBookingsScreen() {
                         ) : null}
                     </View>
                     <View style={styles.rightCol}>
-                        <Text style={[typography.subtitle, { color: colors.gold }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.gold },
+                            ]}
+                        >
                             {inr(Number(item.amount) / 100)}
                         </Text>
                         <View style={styles.badgeRow}>
                             <View
                                 style={[
                                     styles.badge,
-                                    { backgroundColor: colors[STATUS_TONE[item.status] ?? 'textFaint'] + '22' },
+                                    {
+                                        backgroundColor:
+                                            colors[
+                                                STATUS_TONE[item.status] ??
+                                                    'textFaint'
+                                            ] + '22',
+                                    },
                                 ]}
                             >
                                 <Text
                                     style={[
                                         styles.badgeText,
-                                        { color: colors[STATUS_TONE[item.status] ?? 'textFaint'] },
+                                        {
+                                            color: colors[
+                                                STATUS_TONE[item.status] ??
+                                                    'textFaint'
+                                            ],
+                                        },
                                     ]}
                                 >
                                     {item.status.toUpperCase()}
@@ -171,12 +209,18 @@ export default function AstrologerBookingsScreen() {
                                 <Text style={styles.actionLabel}>Complete</Text>
                             </Card>
                         )}
-                        {(item.status === 'confirmed' || item.status === 'pending') && (
+                        {(item.status === 'confirmed' ||
+                            item.status === 'pending') && (
                             <Card
                                 style={[styles.actionBtn, styles.cancelBtn]}
                                 onPress={() => cancelBooking(item.id)}
                             >
-                                <Text style={[styles.actionLabel, { color: colors.danger }]}>
+                                <Text
+                                    style={[
+                                        styles.actionLabel,
+                                        { color: colors.danger },
+                                    ]}
+                                >
                                     Cancel
                                 </Text>
                             </Card>
@@ -197,14 +241,27 @@ export default function AstrologerBookingsScreen() {
             <FlatList
                 data={bookings}
                 keyExtractor={(b) => String(b.id)}
-                contentContainerStyle={{ gap: 12, paddingTop: 16, paddingBottom: 24 }}
+                contentContainerStyle={{
+                    gap: 12,
+                    paddingTop: 16,
+                    paddingBottom: 24,
+                }}
                 renderItem={renderItem}
                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
                 }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             {loading ? 'Loading bookings…' : 'No bookings yet.'}
                         </Text>
                     </Card>

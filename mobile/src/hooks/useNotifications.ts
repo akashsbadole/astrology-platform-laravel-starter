@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
 import * as Notifications from 'expo-notifications';
-import { registerForPushNotificationsAsync, sendDeviceTokenToBackend } from '@/lib/notifications';
+import {
+    registerForPushNotificationsAsync,
+    sendDeviceTokenToBackend,
+} from '@/lib/notifications';
 
 export function useNotifications() {
     const [token, setToken] = useState<string | null>(null);
-    const [permission, setPermission] = useState<'granted' | 'denied' | 'undetermined'>('undetermined');
+    const [permission, setPermission] = useState<
+        'granted' | 'denied' | 'undetermined'
+    >('undetermined');
 
     useEffect(() => {
         (async () => {

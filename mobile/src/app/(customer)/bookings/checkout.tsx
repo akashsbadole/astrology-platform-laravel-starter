@@ -56,7 +56,10 @@ export default function BookingCheckoutScreen() {
         }
     };
 
-    const handlePaymentSuccess = async (paymentId: string, signature: string) => {
+    const handlePaymentSuccess = async (
+        paymentId: string,
+        signature: string,
+    ) => {
         setCheckoutVisible(false);
         setLoading(true);
         try {
@@ -78,7 +81,9 @@ export default function BookingCheckoutScreen() {
     if (!booking) {
         return (
             <Screen>
-                <Text style={[typography.small, { color: colors.textDim }]}>Loading…</Text>
+                <Text style={[typography.small, { color: colors.textDim }]}>
+                    Loading…
+                </Text>
             </Screen>
         );
     }
@@ -89,7 +94,12 @@ export default function BookingCheckoutScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     Checkout
                 </Text>
                 <Card>
@@ -97,14 +107,29 @@ export default function BookingCheckoutScreen() {
                         {booking.astrologer_name}
                     </Text>
                     <Text style={[typography.small, { color: colors.textDim }]}>
-                        {booking.consultation_type.toUpperCase()} · {booking.duration_minutes} min
+                        {booking.consultation_type.toUpperCase()} ·{' '}
+                        {booking.duration_minutes} min
                     </Text>
-                    <Text style={[typography.small, { color: colors.textFaint }]}>
+                    <Text
+                        style={[typography.small, { color: colors.textFaint }]}
+                    >
                         {new Date(booking.scheduled_at).toLocaleString()}
                     </Text>
                     <View style={styles.totalRow}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>Total</Text>
-                        <Text style={[typography.subtitle, { color: colors.gold }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
+                            Total
+                        </Text>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.gold },
+                            ]}
+                        >
                             {inr(booking.amount / 100)}
                         </Text>
                     </View>

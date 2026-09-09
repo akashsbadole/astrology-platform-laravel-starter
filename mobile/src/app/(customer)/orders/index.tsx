@@ -7,7 +7,12 @@ import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 import { inr } from '@/lib/format';
 
-type Order = { id: number; status: string; shipping_status: string; total: number };
+type Order = {
+    id: number;
+    status: string;
+    shipping_status: string;
+    total: number;
+};
 
 export default function OrdersScreen() {
     const router = useRouter();
@@ -28,7 +33,9 @@ export default function OrdersScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Orders
             </Text>
             <FlatList
@@ -37,20 +44,40 @@ export default function OrdersScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card onPress={() => router.push(`/orders/${item.id}`)}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             Order #{item.id}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             {item.status} · {item.shipping_status}
                         </Text>
-                        <Text style={[typography.subtitle, { color: colors.gold }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.gold },
+                            ]}
+                        >
                             {inr(item.total / 100)}
                         </Text>
                     </Card>
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             No orders yet.
                         </Text>
                     </Card>

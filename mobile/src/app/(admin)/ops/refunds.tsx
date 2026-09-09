@@ -6,7 +6,12 @@ import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 import { inr } from '@/lib/format';
 
-type Refund = { id: number; amount_paise: number; status: string; user_id: number };
+type Refund = {
+    id: number;
+    amount_paise: number;
+    status: string;
+    user_id: number;
+};
 
 export default function AdminRefundsScreen() {
     const [refunds, setRefunds] = useState<Refund[]>([]);
@@ -36,11 +41,17 @@ export default function AdminRefundsScreen() {
         setRefreshing(false);
     };
 
-    useEffect(() => { void load(); }, []);
+    useEffect(() => {
+        void load();
+    }, []);
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>Refunds</Text>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
+                Refunds
+            </Text>
             <FlatList
                 data={refunds}
                 keyExtractor={(r) => String(r.id)}
@@ -49,30 +60,68 @@ export default function AdminRefundsScreen() {
                     <Card>
                         <View style={styles.row}>
                             <View>
-                                <Text style={[typography.subtitle, { color: colors.text }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.text },
+                                    ]}
+                                >
                                     Refund #{item.id}
                                 </Text>
-                                <Text style={[typography.small, { color: colors.textDim }]}>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textDim },
+                                    ]}
+                                >
                                     User #{item.user_id} · {item.status}
                                 </Text>
                             </View>
-                            <Text style={[typography.subtitle, { color: colors.gold }]}>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.gold },
+                                ]}
+                            >
                                 {inr(item.amount_paise / 100)}
                             </Text>
                         </View>
                         {item.status === 'requested' && (
                             <View style={styles.actions}>
-                                <Card style={styles.actionBtn} onPress={() => process(item.id)}>
-                                    <Text style={[typography.small, { color: colors.success }]}>Process</Text>
+                                <Card
+                                    style={styles.actionBtn}
+                                    onPress={() => process(item.id)}
+                                >
+                                    <Text
+                                        style={[
+                                            typography.small,
+                                            { color: colors.success },
+                                        ]}
+                                    >
+                                        Process
+                                    </Text>
                                 </Card>
                             </View>
                         )}
                     </Card>
                 )}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
+                }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>No refunds pending.</Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            No refunds pending.
+                        </Text>
                     </Card>
                 }
             />
@@ -81,7 +130,11 @@ export default function AdminRefundsScreen() {
 }
 
 const styles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
     actions: { marginTop: 12 },
     actionBtn: {
         alignSelf: 'flex-start',

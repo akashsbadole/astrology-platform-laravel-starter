@@ -6,7 +6,12 @@ import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 
-type LiveSession = { id: number; title: string; status: string; astrologer_id: number };
+type LiveSession = {
+    id: number;
+    title: string;
+    status: string;
+    astrologer_id: number;
+};
 
 export default function AdminLiveScreen() {
     const [sessions, setSessions] = useState<LiveSession[]>([]);
@@ -25,7 +30,15 @@ export default function AdminLiveScreen() {
         try {
             await api.post(`/admin/ops/live/${id}/toggle`);
             setSessions((prev) =>
-                prev.map((s) => (s.id === id ? { ...s, status: s.status === 'live' ? 'scheduled' : 'live' } : s)),
+                prev.map((s) =>
+                    s.id === id
+                        ? {
+                              ...s,
+                              status:
+                                  s.status === 'live' ? 'scheduled' : 'live',
+                          }
+                        : s,
+                ),
             );
         } catch (e) {
             console.warn('Toggle live:', apiErrorMessage(e));
@@ -38,7 +51,9 @@ export default function AdminLiveScreen() {
         setRefreshing(false);
     };
 
-    useEffect(() => { void load(); }, []);
+    useEffect(() => {
+        void load();
+    }, []);
 
     const statusTone: Record<string, 'success' | 'gold' | 'danger'> = {
         live: 'success',
@@ -48,7 +63,11 @@ export default function AdminLiveScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>Live Sessions</Text>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
+                Live Sessions
+            </Text>
             <FlatList
                 data={sessions}
                 keyExtractor={(s) => String(s.id)}
@@ -57,32 +76,89 @@ export default function AdminLiveScreen() {
                     <Card>
                         <View style={styles.row}>
                             <View style={styles.info}>
-                                <Text style={[typography.subtitle, { color: colors.text }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.text },
+                                    ]}
+                                >
                                     {item.title}
                                 </Text>
-                                <Text style={[typography.small, { color: colors.textDim }]}>
+                                <Text
+                                    style={[
+                                        typography.small,
+                                        { color: colors.textDim },
+                                    ]}
+                                >
                                     Astrologer #{item.astrologer_id}
                                 </Text>
-                                <View style={[styles.badge, { backgroundColor: colors[statusTone[item.status] ?? 'danger'] + '22' }]}>
-                                    <Text style={[styles.badgeText, { color: colors[statusTone[item.status] ?? 'danger'] }]}>
+                                <View
+                                    style={[
+                                        styles.badge,
+                                        {
+                                            backgroundColor:
+                                                colors[
+                                                    statusTone[item.status] ??
+                                                        'danger'
+                                                ] + '22',
+                                        },
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.badgeText,
+                                            {
+                                                color: colors[
+                                                    statusTone[item.status] ??
+                                                        'danger'
+                                                ],
+                                            },
+                                        ]}
+                                    >
                                         {item.status.toUpperCase()}
                                     </Text>
                                 </View>
                             </View>
-                            <View style={[styles.iconBtn, { backgroundColor: colors.success + '22' }]}>
+                            <View
+                                style={[
+                                    styles.iconBtn,
+                                    { backgroundColor: colors.success + '22' },
+                                ]}
+                            >
                                 {item.status === 'live' ? (
-                                    <Square color={colors.danger} size={18} onPress={() => toggle(item.id)} />
+                                    <Square
+                                        color={colors.danger}
+                                        size={18}
+                                        onPress={() => toggle(item.id)}
+                                    />
                                 ) : (
-                                    <Play color={colors.success} size={18} onPress={() => toggle(item.id)} />
+                                    <Play
+                                        color={colors.success}
+                                        size={18}
+                                        onPress={() => toggle(item.id)}
+                                    />
                                 )}
                             </View>
                         </View>
                     </Card>
                 )}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
+                }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>No live sessions.</Text>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            No live sessions.
+                        </Text>
                     </Card>
                 }
             />
@@ -91,7 +167,11 @@ export default function AdminLiveScreen() {
 }
 
 const styles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
     info: { flex: 1 },
     badge: {
         alignSelf: 'flex-start',

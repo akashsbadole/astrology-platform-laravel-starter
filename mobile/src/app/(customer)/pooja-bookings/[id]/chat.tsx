@@ -6,8 +6,19 @@ import Screen from '@/components/ui/Screen';
 import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 
-type Message = { id: number; sender_id: number; sender_name: string; body: string; created_at: string };
-type Booking = { id: number; pooja_name: string; status: string; is_chat_active: boolean };
+type Message = {
+    id: number;
+    sender_id: number;
+    sender_name: string;
+    body: string;
+    created_at: string;
+};
+type Booking = {
+    id: number;
+    pooja_name: string;
+    status: string;
+    is_chat_active: boolean;
+};
 
 export default function PoojaChatScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -30,7 +41,9 @@ export default function PoojaChatScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 {booking?.pooja_name ?? 'Pooja Chat'}
             </Text>
             <FlatList
@@ -39,21 +52,40 @@ export default function PoojaChatScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.sender_name}
                         </Text>
-                        <Text style={[typography.body, { color: colors.textDim }]}>
+                        <Text
+                            style={[typography.body, { color: colors.textDim }]}
+                        >
                             {item.body}
                         </Text>
-                        <Text style={[typography.tiny, { color: colors.textFaint, marginTop: 4 }]}>
+                        <Text
+                            style={[
+                                typography.tiny,
+                                { color: colors.textFaint, marginTop: 4 },
+                            ]}
+                        >
                             {new Date(item.created_at).toLocaleString()}
                         </Text>
                     </Card>
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
-                            {booking?.is_chat_active ? 'Chat is active. Send a message!' : 'Chat is not active yet.'}
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            {booking?.is_chat_active
+                                ? 'Chat is active. Send a message!'
+                                : 'Chat is not active yet.'}
                         </Text>
                     </Card>
                 }

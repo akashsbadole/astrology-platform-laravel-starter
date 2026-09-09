@@ -97,24 +97,42 @@ export default function AstrologerDashboardScreen() {
                 {earnings && (
                     <View style={styles.earningsGrid}>
                         <Card style={styles.earningCard}>
-                            <Text style={styles.earningLabel}>Total Earnings</Text>
-                            <Text style={styles.earningValue}>{inr(earnings.total_paise / 100)}</Text>
+                            <Text style={styles.earningLabel}>
+                                Total Earnings
+                            </Text>
+                            <Text style={styles.earningValue}>
+                                {inr(earnings.total_paise / 100)}
+                            </Text>
                         </Card>
                         <Card style={styles.earningCard}>
                             <Text style={styles.earningLabel}>Pending</Text>
-                            <Text style={[styles.earningValue, { color: colors.gold }]}>
+                            <Text
+                                style={[
+                                    styles.earningValue,
+                                    { color: colors.gold },
+                                ]}
+                            >
                                 {inr(earnings.pending_paise / 100)}
                             </Text>
                         </Card>
                         <Card style={styles.earningCard}>
                             <Text style={styles.earningLabel}>This Month</Text>
-                            <Text style={[styles.earningValue, { color: colors.success }]}>
+                            <Text
+                                style={[
+                                    styles.earningValue,
+                                    { color: colors.success },
+                                ]}
+                            >
                                 {inr(earnings.this_month_paise / 100)}
                             </Text>
                         </Card>
                         <Card style={styles.earningCard}>
-                            <Text style={styles.earningLabel}>Consultations</Text>
-                            <Text style={styles.earningValue}>{earnings.total_consultations}</Text>
+                            <Text style={styles.earningLabel}>
+                                Consultations
+                            </Text>
+                            <Text style={styles.earningValue}>
+                                {earnings.total_consultations}
+                            </Text>
                         </Card>
                     </View>
                 )}
@@ -132,55 +150,88 @@ export default function AstrologerDashboardScreen() {
                             </Text>
                             <View style={styles.toggleRow}>
                                 <View>
-                                    <Text style={[typography.body, { color: colors.text }]}>
+                                    <Text
+                                        style={[
+                                            typography.body,
+                                            { color: colors.text },
+                                        ]}
+                                    >
                                         Go Online
                                     </Text>
-                                    <Text style={[typography.small, { color: colors.textDim }]}>
+                                    <Text
+                                        style={[
+                                            typography.small,
+                                            { color: colors.textDim },
+                                        ]}
+                                    >
                                         Accept new consultations
                                     </Text>
                                 </View>
                                 <Switch
                                     value={status.is_online}
-                                    onValueChange={(v) => updateStatus({ is_online: v })}
+                                    onValueChange={(v) =>
+                                        updateStatus({ is_online: v })
+                                    }
                                     trackColor={{ true: colors.gold }}
                                 />
                             </View>
                             <View style={styles.divider} />
                             <View style={styles.toggleRow}>
                                 <View>
-                                    <Text style={[typography.body, { color: colors.text }]}>
+                                    <Text
+                                        style={[
+                                            typography.body,
+                                            { color: colors.text },
+                                        ]}
+                                    >
                                         Chat
                                     </Text>
                                 </View>
                                 <Switch
                                     value={status.accepts_chat}
-                                    onValueChange={(v) => updateStatus({ accepts_chat: v })}
+                                    onValueChange={(v) =>
+                                        updateStatus({ accepts_chat: v })
+                                    }
                                     trackColor={{ true: colors.gold }}
                                 />
                             </View>
                             <View style={styles.divider} />
                             <View style={styles.toggleRow}>
                                 <View>
-                                    <Text style={[typography.body, { color: colors.text }]}>
+                                    <Text
+                                        style={[
+                                            typography.body,
+                                            { color: colors.text },
+                                        ]}
+                                    >
                                         Call
                                     </Text>
                                 </View>
                                 <Switch
                                     value={status.accepts_call}
-                                    onValueChange={(v) => updateStatus({ accepts_call: v })}
+                                    onValueChange={(v) =>
+                                        updateStatus({ accepts_call: v })
+                                    }
                                     trackColor={{ true: colors.gold }}
                                 />
                             </View>
                             <View style={styles.divider} />
                             <View style={styles.toggleRow}>
                                 <View>
-                                    <Text style={[typography.body, { color: colors.text }]}>
+                                    <Text
+                                        style={[
+                                            typography.body,
+                                            { color: colors.text },
+                                        ]}
+                                    >
                                         Video
                                     </Text>
                                 </View>
                                 <Switch
                                     value={status.accepts_video}
-                                    onValueChange={(v) => updateStatus({ accepts_video: v })}
+                                    onValueChange={(v) =>
+                                        updateStatus({ accepts_video: v })
+                                    }
                                     trackColor={{ true: colors.gold }}
                                 />
                             </View>
@@ -215,26 +266,56 @@ export default function AstrologerDashboardScreen() {
                                 Rates (per min)
                             </Text>
                             <View style={styles.rateRow}>
-                                <Text style={[typography.body, { color: colors.textDim }]}>
+                                <Text
+                                    style={[
+                                        typography.body,
+                                        { color: colors.textDim },
+                                    ]}
+                                >
                                     Chat
                                 </Text>
-                                <Text style={[typography.subtitle, { color: colors.gold }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.gold },
+                                    ]}
+                                >
                                     {inr(profile.rate_chat_per_min)}
                                 </Text>
                             </View>
                             <View style={styles.rateRow}>
-                                <Text style={[typography.body, { color: colors.textDim }]}>
+                                <Text
+                                    style={[
+                                        typography.body,
+                                        { color: colors.textDim },
+                                    ]}
+                                >
                                     Call
                                 </Text>
-                                <Text style={[typography.subtitle, { color: colors.gold }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.gold },
+                                    ]}
+                                >
                                     {inr(profile.rate_call_per_min)}
                                 </Text>
                             </View>
                             <View style={styles.rateRow}>
-                                <Text style={[typography.body, { color: colors.textDim }]}>
+                                <Text
+                                    style={[
+                                        typography.body,
+                                        { color: colors.textDim },
+                                    ]}
+                                >
                                     Video
                                 </Text>
-                                <Text style={[typography.subtitle, { color: colors.gold }]}>
+                                <Text
+                                    style={[
+                                        typography.subtitle,
+                                        { color: colors.gold },
+                                    ]}
+                                >
                                     {inr(profile.rate_video_per_min)}
                                 </Text>
                             </View>
@@ -249,7 +330,12 @@ export default function AstrologerDashboardScreen() {
                             >
                                 Specializations
                             </Text>
-                            <Text style={[typography.body, { color: colors.textDim }]}>
+                            <Text
+                                style={[
+                                    typography.body,
+                                    { color: colors.textDim },
+                                ]}
+                            >
                                 {profile.specializations.join(', ')}
                             </Text>
                             <Text
@@ -264,7 +350,12 @@ export default function AstrologerDashboardScreen() {
                             >
                                 Languages
                             </Text>
-                            <Text style={[typography.body, { color: colors.textDim }]}>
+                            <Text
+                                style={[
+                                    typography.body,
+                                    { color: colors.textDim },
+                                ]}
+                            >
                                 {profile.languages.join(', ')}
                             </Text>
                         </Card>
@@ -278,7 +369,12 @@ export default function AstrologerDashboardScreen() {
 const styles = StyleSheet.create({
     earningsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
     earningCard: { width: '48%', paddingVertical: 14, gap: 4 },
-    earningLabel: { color: colors.textDim, fontSize: 10, fontWeight: '700', textTransform: 'uppercase' },
+    earningLabel: {
+        color: colors.textDim,
+        fontSize: 10,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+    },
     earningValue: { color: colors.text, fontSize: 18, fontWeight: '800' },
     toggleRow: {
         flexDirection: 'row',
@@ -286,7 +382,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingVertical: 10,
     },
-    divider: { height: StyleSheet.hairlineWidth, backgroundColor: colors.border, marginVertical: 2 },
+    divider: {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: colors.border,
+        marginVertical: 2,
+    },
     statsRow: { flexDirection: 'row', gap: 12 },
     statBox: {
         flex: 1,

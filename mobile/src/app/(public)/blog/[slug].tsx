@@ -36,7 +36,9 @@ export default function BlogDetailScreen() {
     if (!post) {
         return (
             <Screen>
-                <Text style={[typography.small, { color: colors.textDim }]}>Loading…</Text>
+                <Text style={[typography.small, { color: colors.textDim }]}>
+                    Loading…
+                </Text>
             </Screen>
         );
     }
@@ -47,14 +49,24 @@ export default function BlogDetailScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     {post.title}
                 </Text>
                 <Text style={[typography.small, { color: colors.textFaint }]}>
                     {post.author_name} · {post.published_at}
                 </Text>
                 <Card>
-                    <Text style={[typography.body, { color: colors.text, lineHeight: 22 }]}>
+                    <Text
+                        style={[
+                            typography.body,
+                            { color: colors.text, lineHeight: 22 },
+                        ]}
+                    >
                         {post.body}
                     </Text>
                 </Card>

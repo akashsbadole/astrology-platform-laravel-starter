@@ -13,7 +13,9 @@ export function getPusher(options: RealtimeOptions = {}): Pusher {
     if (pusherInstance) return pusherInstance;
 
     const key = process.env.EXPO_PUBLIC_PUSHER_KEY ?? 'astrotalk-app';
-    const host = process.env.EXPO_PUBLIC_PUSHER_HOST ?? API_URL.replace(/^https?:\/\//, '').replace(/\/api$/, '');
+    const host =
+        process.env.EXPO_PUBLIC_PUSHER_HOST ??
+        API_URL.replace(/^https?:\/\//, '').replace(/\/api$/, '');
     const port = parseInt(process.env.EXPO_PUBLIC_PUSHER_PORT ?? '8080', 10);
 
     pusherInstance = new Pusher(key, {
@@ -29,26 +31,35 @@ export function getPusher(options: RealtimeOptions = {}): Pusher {
     return pusherInstance;
 }
 
-export function subscribeToConsultation(consultationId: number, callbacks: {
-    onMessage?: (message: any) => void;
-    onEnded?: () => void;
-    onSignal?: (signal: any) => void;
-    onTick?: (data: any) => void;
-}) {
+export function subscribeToConsultation(
+    consultationId: number,
+    callbacks: {
+        onMessage?: (message: any) => void;
+        onEnded?: () => void;
+        onSignal?: (signal: any) => void;
+        onTick?: (data: any) => void;
+    },
+) {
     const pusher = getPusher();
     const channel = pusher.subscribe(`consultation.${consultationId}`);
 
     if (callbacks.onMessage) {
-        channel.bind('ConsultationMessageSent', (data: any) => callbacks.onMessage?.(data));
+        channel.bind('ConsultationMessageSent', (data: any) =>
+            callbacks.onMessage?.(data),
+        );
     }
     if (callbacks.onEnded) {
         channel.bind('ConsultationEnded', () => callbacks.onEnded?.());
     }
     if (callbacks.onSignal) {
-        channel.bind('CallSignalUpdated', (data: any) => callbacks.onSignal?.(data));
+        channel.bind('CallSignalUpdated', (data: any) =>
+            callbacks.onSignal?.(data),
+        );
     }
     if (callbacks.onTick) {
-        channel.bind('ConsultationTick', (data: any) => callbacks.onTick?.(data));
+        channel.bind('ConsultationTick', (data: any) =>
+            callbacks.onTick?.(data),
+        );
     }
 
     return {

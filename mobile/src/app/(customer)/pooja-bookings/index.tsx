@@ -35,7 +35,9 @@ export default function PoojaBookingsScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Pooja Bookings
             </Text>
             <FlatList
@@ -43,19 +45,48 @@ export default function PoojaBookingsScreen() {
                 keyExtractor={(b) => String(b.id)}
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
-                    <Card onPress={() => router.push(`/pooja-bookings/${item.id}/checkout`)}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                    <Card
+                        onPress={() =>
+                            router.push(`/pooja-bookings/${item.id}/checkout`)
+                        }
+                    >
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.pooja_name}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             {item.scheduled_date}
                         </Text>
                         <View style={styles.row}>
-                            <Text style={[typography.subtitle, { color: colors.gold }]}>
+                            <Text
+                                style={[
+                                    typography.subtitle,
+                                    { color: colors.gold },
+                                ]}
+                            >
                                 {inr(item.amount / 100)}
                             </Text>
-                            <View style={[styles.badge, { backgroundColor: colors.success + '22' }]}>
-                                <Text style={[styles.badgeText, { color: colors.success }]}>
+                            <View
+                                style={[
+                                    styles.badge,
+                                    { backgroundColor: colors.success + '22' },
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.badgeText,
+                                        { color: colors.success },
+                                    ]}
+                                >
                                     {item.status.toUpperCase()}
                                 </Text>
                             </View>
@@ -64,7 +95,12 @@ export default function PoojaBookingsScreen() {
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             No pooja bookings yet.
                         </Text>
                     </Card>
@@ -75,7 +111,12 @@ export default function PoojaBookingsScreen() {
 }
 
 const styles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 8,
+    },
     badge: {
         paddingHorizontal: 10,
         paddingVertical: 4,

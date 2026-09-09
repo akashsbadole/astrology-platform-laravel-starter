@@ -40,7 +40,9 @@ export default function LiveShowScreen() {
         setJoining(true);
         try {
             await api.post(`/live/${id}/join`);
-            setSession((prev) => prev ? { ...prev, isParticipant: true } : prev);
+            setSession((prev) =>
+                prev ? { ...prev, isParticipant: true } : prev,
+            );
         } catch (e) {
             console.warn('Join live:', apiErrorMessage(e));
         } finally {
@@ -51,7 +53,9 @@ export default function LiveShowScreen() {
     if (!session) {
         return (
             <Screen>
-                <Text style={[typography.small, { color: colors.textDim }]}>Loading…</Text>
+                <Text style={[typography.small, { color: colors.textDim }]}>
+                    Loading…
+                </Text>
             </Screen>
         );
     }
@@ -62,15 +66,26 @@ export default function LiveShowScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     {session.title}
                 </Text>
                 <Card>
                     <Text style={[typography.body, { color: colors.text }]}>
                         {session.description}
                     </Text>
-                    <Text style={[typography.small, { color: colors.textDim, marginTop: 8 }]}>
-                        {session.astrologer_name} · {session.entry_fee ? `₹${session.entry_fee}` : 'Free'}
+                    <Text
+                        style={[
+                            typography.small,
+                            { color: colors.textDim, marginTop: 8 },
+                        ]}
+                    >
+                        {session.astrologer_name} ·{' '}
+                        {session.entry_fee ? `₹${session.entry_fee}` : 'Free'}
                     </Text>
                     {!session.isParticipant && (
                         <Button
@@ -81,18 +96,32 @@ export default function LiveShowScreen() {
                         />
                     )}
                     {session.isParticipant && (
-                        <Text style={[typography.small, { color: colors.success, marginTop: 12 }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.success, marginTop: 12 },
+                            ]}
+                        >
                             You are in this session
                         </Text>
                     )}
                 </Card>
-                <Text style={[typography.title, { color: colors.text }]}>Messages</Text>
+                <Text style={[typography.title, { color: colors.text }]}>
+                    Messages
+                </Text>
                 {session.messages.map((m) => (
                     <Card key={m.id}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {m.sender_name}
                         </Text>
-                        <Text style={[typography.body, { color: colors.textDim }]}>
+                        <Text
+                            style={[typography.body, { color: colors.textDim }]}
+                        >
                             {m.body}
                         </Text>
                     </Card>

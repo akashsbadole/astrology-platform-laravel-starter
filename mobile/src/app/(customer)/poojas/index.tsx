@@ -7,7 +7,13 @@ import { colors, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 import { inr } from '@/lib/format';
 
-type Pooja = { id: number; name: string; category: string; price: number; is_online: boolean };
+type Pooja = {
+    id: number;
+    name: string;
+    category: string;
+    price: number;
+    is_online: boolean;
+};
 
 export default function PoojaListScreen() {
     const router = useRouter();
@@ -28,7 +34,9 @@ export default function PoojaListScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Poojas
             </Text>
             <FlatList
@@ -37,20 +45,41 @@ export default function PoojaListScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card onPress={() => router.push(`/poojas/${item.id}`)}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.name}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
-                            {item.category} · {item.is_online ? 'Online' : 'Offline'}
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
+                            {item.category} ·{' '}
+                            {item.is_online ? 'Online' : 'Offline'}
                         </Text>
-                        <Text style={[typography.subtitle, { color: colors.gold, marginTop: 4 }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.gold, marginTop: 4 },
+                            ]}
+                        >
                             {inr(item.price / 100)}
                         </Text>
                     </Card>
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             No poojas available.
                         </Text>
                     </Card>

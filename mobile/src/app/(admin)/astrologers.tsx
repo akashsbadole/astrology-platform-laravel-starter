@@ -37,7 +37,9 @@ export default function AdminAstrologersScreen() {
 
     const loadAstrologers = async () => {
         try {
-            const { data } = await api.get('/admin/astrologers', { params: { status: filter } });
+            const { data } = await api.get('/admin/astrologers', {
+                params: { status: filter },
+            });
             setAstrologers(data?.astrologers ?? []);
         } catch (e) {
             console.warn('Astrologers load:', apiErrorMessage(e));
@@ -56,7 +58,9 @@ export default function AdminAstrologersScreen() {
         try {
             await api.patch(`/admin/astrologers/${id}/approve`);
             setAstrologers((prev) =>
-                prev.map((a) => (a.id === id ? { ...a, status: 'approved' } : a)),
+                prev.map((a) =>
+                    a.id === id ? { ...a, status: 'approved' } : a,
+                ),
             );
         } catch (e) {
             Alert.alert('Error', apiErrorMessage(e));
@@ -72,10 +76,13 @@ export default function AdminAstrologersScreen() {
                 onPress: async () => {
                     try {
                         await api.patch(`/admin/astrologers/${id}/reject`, {
-                            rejection_reason: 'Application does not meet requirements.',
+                            rejection_reason:
+                                'Application does not meet requirements.',
                         });
                         setAstrologers((prev) =>
-                            prev.map((a) => (a.id === id ? { ...a, status: 'rejected' } : a)),
+                            prev.map((a) =>
+                                a.id === id ? { ...a, status: 'rejected' } : a,
+                            ),
                         );
                     } catch (e) {
                         Alert.alert('Error', apiErrorMessage(e));
@@ -97,28 +104,72 @@ export default function AdminAstrologersScreen() {
             <Card>
                 <View style={styles.row}>
                     <View style={styles.info}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
                             {item.name}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             {item.email}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textFaint }]}>
-                            {item.experience_years} yrs · {item.specializations.slice(0, 2).join(', ')}
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textFaint },
+                            ]}
+                        >
+                            {item.experience_years} yrs ·{' '}
+                            {item.specializations.slice(0, 2).join(', ')}
                         </Text>
-                        <View style={[styles.badge, { backgroundColor: colors[tone] + '22' }]}>
-                            <Text style={[styles.badgeText, { color: colors[tone] }]}>
+                        <View
+                            style={[
+                                styles.badge,
+                                { backgroundColor: colors[tone] + '22' },
+                            ]}
+                        >
+                            <Text
+                                style={[
+                                    styles.badgeText,
+                                    { color: colors[tone] },
+                                ]}
+                            >
                                 {item.status.toUpperCase()}
                             </Text>
                         </View>
                     </View>
                     {item.status === 'pending' && (
                         <View style={styles.actions}>
-                            <View style={[styles.iconBtn, { backgroundColor: colors.success + '22' }]}>
-                                <Check color={colors.success} size={18} onPress={() => approve(item.id)} />
+                            <View
+                                style={[
+                                    styles.iconBtn,
+                                    { backgroundColor: colors.success + '22' },
+                                ]}
+                            >
+                                <Check
+                                    color={colors.success}
+                                    size={18}
+                                    onPress={() => approve(item.id)}
+                                />
                             </View>
-                            <View style={[styles.iconBtn, { backgroundColor: colors.danger + '22' }]}>
-                                <X color={colors.danger} size={18} onPress={() => reject(item.id)} />
+                            <View
+                                style={[
+                                    styles.iconBtn,
+                                    { backgroundColor: colors.danger + '22' },
+                                ]}
+                            >
+                                <X
+                                    color={colors.danger}
+                                    size={18}
+                                    onPress={() => reject(item.id)}
+                                />
                             </View>
                         </View>
                     )}
@@ -135,7 +186,9 @@ export default function AdminAstrologersScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Astrologers
             </Text>
             <View style={styles.filterRow}>
@@ -144,14 +197,22 @@ export default function AdminAstrologersScreen() {
                         key={f.value}
                         style={[
                             styles.filterChip,
-                            filter === f.value && { backgroundColor: colors.gold + '22', borderColor: colors.gold },
+                            filter === f.value && {
+                                backgroundColor: colors.gold + '22',
+                                borderColor: colors.gold,
+                            },
                         ]}
                         onPress={() => setFilter(f.value)}
                     >
                         <Text
                             style={[
                                 styles.filterText,
-                                { color: filter === f.value ? colors.gold : colors.textDim },
+                                {
+                                    color:
+                                        filter === f.value
+                                            ? colors.gold
+                                            : colors.textDim,
+                                },
                             ]}
                         >
                             {f.label}
@@ -165,11 +226,20 @@ export default function AdminAstrologersScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={renderItem}
                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.gold} />
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.gold}
+                    />
                 }
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             {loading ? 'Loading…' : 'No astrologers found.'}
                         </Text>
                     </Card>
@@ -190,8 +260,16 @@ const styles = StyleSheet.create({
         borderColor: colors.border,
         backgroundColor: colors.surface,
     },
-    filterText: { fontSize: 12, fontWeight: '700', textTransform: 'capitalize' },
-    row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    filterText: {
+        fontSize: 12,
+        fontWeight: '700',
+        textTransform: 'capitalize',
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
     info: { flex: 1 },
     badge: {
         alignSelf: 'flex-start',

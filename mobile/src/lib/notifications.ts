@@ -11,7 +11,9 @@ Notifications.setNotificationHandler({
     }),
 } as any);
 
-export async function registerForPushNotificationsAsync(): Promise<string | null> {
+export async function registerForPushNotificationsAsync(): Promise<
+    string | null
+> {
     let token: string | null = null;
 
     if (Platform.OS === 'android') {
@@ -23,7 +25,8 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
         });
     }
 
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
     if (existingStatus !== 'granted') {

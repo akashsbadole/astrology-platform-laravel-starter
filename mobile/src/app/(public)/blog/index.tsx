@@ -35,7 +35,9 @@ export default function BlogListScreen() {
 
     return (
         <Screen>
-            <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+            <Text
+                style={[typography.hero, { color: colors.text, fontSize: 24 }]}
+            >
                 Blog
             </Text>
             <FlatList
@@ -44,20 +46,42 @@ export default function BlogListScreen() {
                 contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
                 renderItem={({ item }) => (
                     <Card onPress={() => router.push(`/blog/${item.slug}`)}>
-                        <Text style={[typography.subtitle, { color: colors.text }]} numberOfLines={2}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                            numberOfLines={2}
+                        >
                             {item.title}
                         </Text>
-                        <Text style={[typography.small, { color: colors.textDim, marginTop: 4 }]} numberOfLines={2}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim, marginTop: 4 },
+                            ]}
+                            numberOfLines={2}
+                        >
                             {item.excerpt}
                         </Text>
-                        <Text style={[typography.tiny, { color: colors.textFaint, marginTop: 6 }]}>
+                        <Text
+                            style={[
+                                typography.tiny,
+                                { color: colors.textFaint, marginTop: 6 },
+                            ]}
+                        >
                             {item.author_name} · {timeAgo(item.published_at)}
                         </Text>
                     </Card>
                 )}
                 ListEmptyComponent={
                     <Card>
-                        <Text style={[typography.small, { color: colors.textDim }]}>
+                        <Text
+                            style={[
+                                typography.small,
+                                { color: colors.textDim },
+                            ]}
+                        >
                             No posts yet.
                         </Text>
                     </Card>

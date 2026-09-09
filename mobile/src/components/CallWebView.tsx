@@ -11,7 +11,12 @@ type CallWebViewProps = {
     onEnded?: () => void;
 };
 
-export function CallWebView({ consultationId, visible, onClose, onEnded }: CallWebViewProps) {
+export function CallWebView({
+    consultationId,
+    visible,
+    onClose,
+    onEnded,
+}: CallWebViewProps) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [webUrl, setWebUrl] = useState<string>('');
@@ -22,7 +27,9 @@ export function CallWebView({ consultationId, visible, onClose, onEnded }: CallW
             try {
                 const { data } = await api.get(`/consult/${consultationId}`);
                 const token = (globalThis as any).__AUTH_TOKEN__;
-                const baseUrl = process.env.EXPO_PUBLIC_API_URL?.replace(/\/api$/, '') ?? 'http://10.0.2.2:8000';
+                const baseUrl =
+                    process.env.EXPO_PUBLIC_API_URL?.replace(/\/api$/, '') ??
+                    'http://10.0.2.2:8000';
                 const url = `${baseUrl}/consult/${consultationId}?token=${token}`;
                 setWebUrl(url);
             } catch (e) {
@@ -36,7 +43,10 @@ export function CallWebView({ consultationId, visible, onClose, onEnded }: CallW
     const handleMessage = (event: any) => {
         try {
             const data = JSON.parse(event.nativeEvent.data);
-            if (data.type === 'call-ended' || data.type === 'consultation-ended') {
+            if (
+                data.type === 'call-ended' ||
+                data.type === 'consultation-ended'
+            ) {
                 onEnded?.();
                 onClose();
             }
@@ -52,15 +62,31 @@ export function CallWebView({ consultationId, visible, onClose, onEnded }: CallW
             {loading && (
                 <View style={styles.loading}>
                     <ActivityIndicator size="large" color={colors.gold} />
-                    <Text style={[typography.small, { color: colors.textDim, marginTop: 12 }]}>
+                    <Text
+                        style={[
+                            typography.small,
+                            { color: colors.textDim, marginTop: 12 },
+                        ]}
+                    >
                         Connecting call…
                     </Text>
                 </View>
             )}
             {error && (
                 <View style={styles.errorWrap}>
-                    <Text style={[typography.subtitle, { color: colors.danger }]}>Call Error</Text>
-                    <Text style={[typography.body, { color: colors.textDim, marginTop: 8 }]}>{error}</Text>
+                    <Text
+                        style={[typography.subtitle, { color: colors.danger }]}
+                    >
+                        Call Error
+                    </Text>
+                    <Text
+                        style={[
+                            typography.body,
+                            { color: colors.textDim, marginTop: 8 },
+                        ]}
+                    >
+                        {error}
+                    </Text>
                 </View>
             )}
             {webUrl && !error && (
@@ -81,6 +107,16 @@ export function CallWebView({ consultationId, visible, onClose, onEnded }: CallW
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.bg },
-    loading: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg },
-    errorWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
+    loading: {
+        ...StyleSheet.absoluteFill,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.bg,
+    },
+    errorWrap: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+    },
 });

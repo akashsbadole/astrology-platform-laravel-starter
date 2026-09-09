@@ -43,7 +43,9 @@ export default function PoojaBookingCheckoutScreen() {
         if (!booking) return;
         setLoading(true);
         try {
-            const { data } = await api.post(`/pooja-bookings/${id}/payment/order`);
+            const { data } = await api.post(
+                `/pooja-bookings/${id}/payment/order`,
+            );
             setOrderId(data.order_id);
             setCheckoutVisible(true);
         } catch (e) {
@@ -53,7 +55,10 @@ export default function PoojaBookingCheckoutScreen() {
         }
     };
 
-    const handlePaymentSuccess = async (paymentId: string, signature: string) => {
+    const handlePaymentSuccess = async (
+        paymentId: string,
+        signature: string,
+    ) => {
         setCheckoutVisible(false);
         setLoading(true);
         try {
@@ -75,7 +80,9 @@ export default function PoojaBookingCheckoutScreen() {
     if (!booking) {
         return (
             <Screen>
-                <Text style={[typography.small, { color: colors.textDim }]}>Loading…</Text>
+                <Text style={[typography.small, { color: colors.textDim }]}>
+                    Loading…
+                </Text>
             </Screen>
         );
     }
@@ -86,7 +93,12 @@ export default function PoojaBookingCheckoutScreen() {
                 contentContainerStyle={{ gap: 16, paddingBottom: 24 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={[typography.hero, { color: colors.text, fontSize: 24 }]}>
+                <Text
+                    style={[
+                        typography.hero,
+                        { color: colors.text, fontSize: 24 },
+                    ]}
+                >
                     Pooja Checkout
                 </Text>
                 <Card>
@@ -97,8 +109,20 @@ export default function PoojaBookingCheckoutScreen() {
                         {booking.scheduled_date}
                     </Text>
                     <View style={styles.totalRow}>
-                        <Text style={[typography.subtitle, { color: colors.text }]}>Total</Text>
-                        <Text style={[typography.subtitle, { color: colors.gold }]}>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.text },
+                            ]}
+                        >
+                            Total
+                        </Text>
+                        <Text
+                            style={[
+                                typography.subtitle,
+                                { color: colors.gold },
+                            ]}
+                        >
                             {inr(booking.amount / 100)}
                         </Text>
                     </View>
