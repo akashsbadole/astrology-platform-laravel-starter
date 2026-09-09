@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PanchangItem {
     label: string;
@@ -16,18 +16,18 @@ export default function PanchangGrid({ items }: PanchangGridProps) {
             {items.map((item) => (
                 <Card
                     key={item.label}
-                    className="border-white/10 bg-white/5 text-white shadow-lg backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-yellow-500/30 hover:bg-white/10"
+                    className="border-slate-200 bg-white text-slate-900 shadow-sm transition-all hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-md"
                 >
                     <CardHeader>
-                        <CardTitle className="text-xs font-medium tracking-wider text-white/50 uppercase">
+                        <CardTitle className="text-xs font-medium tracking-wider text-slate-500 uppercase">
                             {item.label}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-lg font-bold text-white">
+                        <p className="text-lg font-bold text-slate-900">
                             {item.name}
                         </p>
-                        <p className="text-sm text-white/70">{item.extra}</p>
+                        <p className="text-sm text-slate-600">{item.extra}</p>
                     </CardContent>
                 </Card>
             ))}

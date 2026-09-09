@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ReferralService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,7 +11,7 @@ use Inertia\Response;
 
 class ReferralController extends Controller
 {
-    public function index(Request $request, ReferralService $referrals): Response
+    public function index(Request $request, ReferralService $referrals): Response|JsonResponse
     {
         $user = $request->user();
         $code = $referrals->codeFor($user);
@@ -27,24 +28,38 @@ class ReferralController extends Controller
         $history = $user->loyaltyLedger()->latest()->paginate(15);
         $referralsList = $user->referralsGiven()->with('referred:id,name,created_at')->latest()->paginate(10);
 
-        return Inertia::render('referrals/index', [
+        $payload = [
             'stats' => $stats,
             'history' => $history,
             'referrals' => $referralsList,
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('referrals/index', $payload);
     }
 
-    public function redeem(Request $request, ReferralService $referrals): RedirectResponse
+    public function redeem(Request $request, ReferralService $referrals): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'points' => ['required', 'integer', 'min:10'],
         ]);
 
         if ($request->user()->loyalty_points < $validated['points']) {
-            return back()->withErrors(['points' => 'Not enough points.']);
+            $msg = 'Not enough points.';
+            if ($request->wantsJson()) {
+                return response()->json(['message' => $msg], 422);
+            }
+            return back()->withErrors(['points' => $msg]);
         }
 
         $referrals->redeem($request->user(), $validated['points']);
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'points' => $request->user()->fresh()->loyalty_points]);
+        }
 
         return back()->with('status', $validated['points'].' points redeemed (₹'.$validated['points'].' off your next booking).');
     }

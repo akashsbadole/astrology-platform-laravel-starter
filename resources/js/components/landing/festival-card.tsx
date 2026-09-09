@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface Festival {
     name: string;
@@ -13,25 +13,25 @@ interface FestivalCardProps {
 
 export default function FestivalCard({ festival }: FestivalCardProps) {
     return (
-        <Card className="border-white/10 bg-white/5 text-white shadow-lg backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-yellow-500/30 hover:bg-white/10">
+        <Card className="border-orange-200 bg-white text-slate-900 shadow-sm transition-all hover:-translate-y-1 hover:border-orange-500/40 hover:shadow-md">
             <CardHeader className="space-y-2">
                 <div className="flex items-center justify-between">
                     <Badge
                         variant="outline"
-                        className="border-yellow-500/30 text-yellow-400"
+                        className="border-orange-500/30 text-orange-700"
                     >
                         Festival
                     </Badge>
-                    <span className="text-xs text-white/60">
+                    <span className="text-xs text-slate-500">
                         {festival.date}
                     </span>
                 </div>
-                <CardTitle className="text-lg font-bold text-white">
+                <CardTitle className="text-lg font-bold text-slate-900">
                     {festival.name}
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <p className="text-sm text-white/70">{festival.description}</p>
+                <p className="text-sm text-slate-600">{festival.description}</p>
             </CardContent>
         </Card>
     );

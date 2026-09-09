@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Period {
     starts_at: string;
@@ -13,19 +13,19 @@ interface MuhuratTimingsProps {
 
 const periods = [
     {
-        label: 'Rahu Kalam',
-        data: 'rahuKalam' as const,
-        description: 'Avoid new beginnings',
+        label: "Rahu Kalam",
+        data: "rahuKalam" as const,
+        description: "Avoid new beginnings",
     },
     {
-        label: 'Yamaganda',
-        data: 'yamaganda' as const,
-        description: 'Inauspicious for important tasks',
+        label: "Yamaganda",
+        data: "yamaganda" as const,
+        description: "Inauspicious for important tasks",
     },
     {
-        label: 'Gulika Kalam',
-        data: 'gulikaKalam' as const,
-        description: 'Unfavorable for auspicious work',
+        label: "Gulika Kalam",
+        data: "gulikaKalam" as const,
+        description: "Unfavorable for auspicious work",
     },
 ];
 
@@ -37,12 +37,12 @@ export default function MuhuratTimings({
     const map = { rahuKalam, yamaganda, gulikaKalam };
 
     return (
-        <Card className="border-white/10 bg-white/5 text-white shadow-xl backdrop-blur-sm">
+        <Card className="border-slate-200 bg-white text-slate-900 shadow-lg">
             <CardHeader>
-                <CardTitle className="text-base font-semibold text-white">
+                <CardTitle className="text-base font-semibold text-slate-900">
                     Inauspicious Muhurat Timings
                 </CardTitle>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-slate-500">
                     Avoid important activities during these periods
                 </p>
             </CardHeader>
@@ -52,18 +52,18 @@ export default function MuhuratTimings({
                     return (
                         <div
                             key={period.data}
-                            className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-3"
+                            className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-3"
                         >
                             <div>
-                                <p className="text-sm font-semibold text-white">
+                                <p className="text-sm font-semibold text-slate-900">
                                     {period.label}
                                 </p>
-                                <p className="text-xs text-white/60">
+                                <p className="text-xs text-slate-500">
                                     {period.description}
                                 </p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-medium text-yellow-400">
+                                <p className="text-sm font-medium text-orange-600">
                                     {timing.starts_at} – {timing.ends_at}
                                 </p>
                             </div>

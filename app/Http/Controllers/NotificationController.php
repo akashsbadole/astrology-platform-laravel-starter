@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -9,7 +10,7 @@ use Inertia\Response;
 
 class NotificationController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|JsonResponse
     {
         $notifications = $request->user()->notifications()
             ->latest()
@@ -25,7 +26,7 @@ class NotificationController extends Controller
         $prefs = $request->user()->notificationPreference
             ?? $request->user()->notificationPreference()->create([]);
 
-        return Inertia::render('notifications/index', [
+        $payload = [
             'notifications' => $notifications,
             'unreadCount' => $request->user()->unreadNotifications()->count(),
             'preferences' => [
@@ -33,27 +34,40 @@ class NotificationController extends Controller
                 'sms_enabled' => (bool) $prefs->sms_enabled,
                 'push_enabled' => (bool) $prefs->push_enabled,
             ],
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('notifications/index', $payload);
     }
 
-    public function read(Request $request, string $id): RedirectResponse
+    public function read(Request $request, string $id): RedirectResponse|JsonResponse
     {
         $notification = $request->user()->notifications()->findOrFail($id);
         $notification->markAsRead();
 
-        $url = $notification->data['url'] ?? '/notifications';
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
 
+        $url = $notification->data['url'] ?? '/notifications';
         return redirect($url);
     }
 
-    public function readAll(Request $request): RedirectResponse
+    public function readAll(Request $request): RedirectResponse|JsonResponse
     {
         $request->user()->unreadNotifications->markAsRead();
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
 
         return back();
     }
 
-    public function updatePreferences(Request $request): RedirectResponse
+    public function updatePreferences(Request $request): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'email_enabled' => ['required', 'boolean'],
@@ -66,10 +80,14 @@ class NotificationController extends Controller
             $validated
         );
 
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
+
         return back()->with('status', 'preferences-updated');
     }
 
-    public function storeToken(Request $request): RedirectResponse
+    public function storeToken(Request $request): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'token' => ['required', 'string', 'max:512'],
@@ -80,6 +98,10 @@ class NotificationController extends Controller
             ['token' => $validated['token']],
             ['platform' => $validated['platform'] ?? 'web']
         );
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
 
         return back();
     }
