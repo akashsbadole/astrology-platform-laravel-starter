@@ -18,7 +18,7 @@ class StatusController extends Controller
         $st->save();
         $request->user()->astrologerProfile?->update(['is_online' => $st->is_online, 'accepts_chat' => $st->accepts_chat, 'accepts_call' => $st->accepts_call, 'accepts_video' => $st->accepts_video, 'last_seen_at' => now()]);
         if ($request->wantsJson()) {
-            return response()->json(['ok' => true, 'is_online' => $st->is_online]);
+            return response()->json(['ok' => true, 'is_online' => $st->is_online, 'accepts_chat' => $st->accepts_chat, 'accepts_call' => $st->accepts_call, 'accepts_video' => $st->accepts_video]);
         }
 
         return back();

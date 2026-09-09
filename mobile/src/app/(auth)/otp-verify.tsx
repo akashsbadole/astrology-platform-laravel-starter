@@ -26,7 +26,13 @@ export default function OtpVerifyScreen() {
 
     const finishLogin = async (token: string, user: SessionUser) => {
         await login(token, user);
-        router.replace('/(tabs)/');
+        if (user.role === 'admin') {
+            router.replace('/(admin)/');
+        } else if (user.role === 'astrologer') {
+            router.replace('/(astrologer)/');
+        } else {
+            router.replace('/(tabs)/');
+        }
     };
 
     const verify = async () => {

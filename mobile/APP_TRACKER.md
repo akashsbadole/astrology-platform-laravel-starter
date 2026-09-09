@@ -174,11 +174,26 @@ astrology-platform-laravel-starter/
 | ------ | ------------- | ------------------- | ----- |
 | GET    | `/api/locale` | `api.locale.update` | 🟨    |
 
+### 3.13 Astrologer (auth + role:astrologer)
+
+| Method | Path                                  | Name                           | State |
+| ------ | ------------------------------------- | ------------------------------ | ----- |
+| GET    | `/api/astrologer/dashboard`           | `api.astrologer.dashboard`     | 🟩    |
+| POST   | `/api/astrologer/status`              | `api.astrologer.status`        | 🟩    |
+| GET    | `/api/astrologer/profile`             | `api.astrologer.profile`       | 🟩    |
+| PUT    | `/api/astrologer/profile`             | `api.astrologer.profile.update`| 🟩    |
+| GET    | `/api/astrologer/availability`        | `api.astrologer.availability`  | 🟩    |
+| POST   | `/api/astrologer/availability`        | `api.astrologer.availability.store` | 🟩    |
+| DELETE | `/api/astrologer/availability/{id}`   | `api.astrologer.availability.destroy` | 🟩    |
+| GET    | `/api/astrologer/bookings`            | `api.astrologer.bookings`      | 🟩    |
+| PATCH  | `/api/astrologer/bookings/{id}/complete` | `api.astrologer.bookings.complete` | 🟩    |
+| PATCH  | `/api/astrologer/bookings/{id}/cancel`   | `api.astrologer.bookings.cancel`   | 🟩    |
+
 > **⚠️ Missing API routes needed for screen parity** (exist in `web.php` only) — Phase 1 must add JSON API versions:
 >
 > - Public: `blog/index` + `blog/show`, `panchang`
 > - Customer: `bookings` list + checkout · `poojas` catalog/show · `pooja-bookings` list + checkout · reviews
-> - Astrologer: dashboard, profile, status, availability CRUD, bookings + complete/cancel
+> - ~~Astrologer: dashboard, profile, status, availability CRUD, bookings + complete/cancel~~ ✅ M5
 > - Admin: dashboard, astrologers approve/reject, taxonomy CRUD, pooja CRUD, post CRUD, ops hub (coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments)
 > - Chats: `bookings/{booking}/chat` · `pooja-bookings/{poojaBooking}/chat`
 
@@ -238,10 +253,10 @@ astrology-platform-laravel-starter/
 
 | Web page                    | Mobile route                                 | Backend JSON | Mobile build |
 | --------------------------- | -------------------------------------------- | ------------ | ------------ |
-| `astrologer/dashboard`      | `/(astrologer)/` — Dashboard + status toggle | 🟨           | ⬜           |
-| `astrologer/profile-edit`   | `/(astrologer)/profile`                      | 🟨           | ⬜           |
-| `astrologer/availability`   | `/(astrologer)/availability`                 | 🟨           | ⬜           |
-| `astrologer/bookings/index` | `/(astrologer)/bookings`                     | 🟨           | ⬜           |
+| `astrologer/dashboard`      | `/(astrologer)/` — Dashboard + status toggle | 🟩           | 🟩           |
+| `astrologer/profile-edit`   | `/(astrologer)/profile`                      | 🟩           | 🟩           |
+| `astrologer/availability`   | `/(astrologer)/availability`                 | 🟩           | 🟩           |
+| `astrologer/bookings/index` | `/(astrologer)/bookings`                     | 🟩           | 🟩           |
 
 ### 4.4 Admin
 
@@ -368,7 +383,7 @@ astrology-platform-laravel-starter/
 | M2  | Auth + public screens       | Login → Home → Browse → Astrologer profile                                             | ✅  |
 | M3  | Customer core               | Wallet + consult chat + bookings                                                       | ✅  |
 | M4  | Shop + pooja + support      | Full customer feature set (§6)                                                         | ✅  |
-| M5  | Astrologer app              | §6 Astrologer set                                                                      |
+| M5  | Astrologer app              | §6 Astrologer set                                                                      | ✅  |
 | M6  | Admin app                   | §6 Admin set                                                                           |
 | M7  | Realtime + payments + calls | §7.2–7.6                                                                               |
 
@@ -387,6 +402,7 @@ astrology-platform-laravel-starter/
 ## 11. Changelog
 
 - **2026-09-09 (f)** — Phase 4 (Shop + Pooja + Support — M4) complete. Added JSON branches to 3 controllers: `NotificationController` (index+read+readAll+preferences+token), `ReferralController` (index+redeem), `SupportController` (index+storeTicket+storeDispute+requestRefund). Built 4 new customer screens: Notifications (list with read/unread states, mark read/all read, bell icon with gold accent, empty state), Referrals (gold hero card with code, stats row: referred/rewarded/points, loyalty balance with redeem button), Support (tickets list, new ticket via Alert.prompt), Settings (user card, notification preferences with switches, menu items, sign out with confirmation). `tsc --noEmit` passes with zero errors. M4 milestone complete.
+- **2026-09-09 (g)** — Phase 5 (Astrologer app — M5) complete. Backend: registered 9 astrologer API routes under `auth:sanctum + role:astrologer` middleware in `routes/api.php`. Added JSON branches to `DashboardController` (profile + earnings summary with total/pending/this-month paise + consultation count), `StatusController` (returns all toggles: is_online, accepts_chat/call/video), `ProfileController` (edit + update JSON with taxonomy options), `BookingController` (paginated index + complete/cancel JSON responses). Mobile: role-based redirect from OTP verify (admin → /(admin)/, astrologer → /(astrologer)/, customer → /(tabs)/). Added `(astrologer)` route group to root layout. Built astrologer tab layout (4 tabs: Dashboard, Availability, Bookings, Profile). Updated astrologer dashboard with earnings cards (total/pending/month/consultations), online toggle, chat/call/video acceptance toggles. Built bookings list with complete/cancel actions and confirmation alerts. Built profile edit screen with bio, experience counter, rate display, specialization/language chip multi-select, rejection reason display. Added TypeScript types for `AstrologerEarnings`, `AstrologerProfileData`, `AstrologerBooking`. `tsc --noEmit` passes for all astrologer files. M5 milestone complete.
 - **2026-09-09 (e)** — Phase 3 (Customer core — M3) complete. Built consultations list (`src/app/consults/index.tsx`) and chat screen (`src/app/consults/[id].tsx`). Consultations list fetches from `GET /consultations`, shows type icons (chat/call/video), status badges (active/pending/ended/cancelled), billed minutes + amount, pull-to-refresh. Chat screen fetches messages from `GET /consult/{id}`, sends via `POST /consult/{id}/message`, shows gold/white bubbles for mine/theirs messages, auto-scrolls to bottom, keyboard-avoiding input bar, loading and empty states. Created `src/types/index.ts` with shared TypeScript types (Consultation, ConsultationMessage, ConsultationDetail, PaginatedResponse). Fixed Badge tone mapping to use available tones (success/gold/neutral/danger). `tsc --noEmit` passes with zero errors. M3 milestone complete.
 - **2026-09-09 (d)** — Phase 2 (API wiring) complete. All screens now fetch real data from Laravel API instead of mock data. Created `AuthContext` (`src/contexts/AuthContext.tsx`) with `useAuth()` hook for login state management. Updated `app.json` with `EXPO_PUBLIC_API_URL` env var. OTP screens now use real API flow: request shows `debug_code` alert (dev mode), verify calls `/auth/otp/verify` and stores token via context. Home screen fetches featured astrologers (`/astrologers?online=1`) and wallet balance (`/wallet`) in parallel. Astrologers tab fetches from `/astrologers` with filter params. Wallet tab fetches real balance + transactions from `/wallet`. Astrologer detail fetches from `/astrologers/{id}` with loading state. Profile uses AuthContext, sign-in navigates to `/(auth)/otp-request`, added sign-out button. `tsc --noEmit` passes with zero errors. M2 milestone complete.
 - **2026-09-09 (c)** — Phase 1 (Backend JSON + Sanctum) complete. Custom stateless Sanctum token guard built from scratch (no `laravel/sanctum` package dep): `HasApiTokens` trait + `PersonalAccessToken` model with `findToken()` (SHA-256), `sanctum-token` driver in `Auth::viaRequest`, personal-access-tokens migration. All 56 API routes registered with `auth:sanctum` where needed. Zero-inertia JSON branches added to 5 controllers: `OtpController` (request+verify), `WalletController` (index+order+verify+webhook), `ConsultationController` (index+store+show+accept+heartbeat+end), `AstrologerController` (index+show), `HoroscopeController` (index+show). Fixed duplicate `RedirectResponse` import fatal error in `OtpController`. Added `debug_code` field to local OTP request response for mobile dev testing. Tests: AstroTalkParityTest 10/10 passed (39 assertions), PlatformFeaturesTest 9/9 passed (44 assertions). End-to-end API verified: OTP request → verify → token → authenticated wallet/consultations access all return 200 JSON. M0 and M1 milestones complete.

@@ -100,6 +100,27 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 /*
 |--------------------------------------------------------------------------
+| Astrologer app (authenticated, role:astrologer)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth:sanctum', 'role:astrologer'])->prefix('astrologer')->name('api.astrologer.')->group(function () {
+    Route::get('dashboard', [\App\Http\Controllers\Astrologer\DashboardController::class, '__invoke'])->name('dashboard');
+    Route::post('status', [\App\Http\Controllers\Astrologer\StatusController::class, 'update'])->name('status');
+
+    Route::get('profile', [\App\Http\Controllers\Astrologer\ProfileController::class, 'edit'])->name('profile');
+    Route::put('profile', [\App\Http\Controllers\Astrologer\ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('availability', [\App\Http\Controllers\Astrologer\AvailabilityController::class, 'index'])->name('availability');
+    Route::post('availability', [\App\Http\Controllers\Astrologer\AvailabilityController::class, 'store'])->name('availability.store');
+    Route::delete('availability/{availability}', [\App\Http\Controllers\Astrologer\AvailabilityController::class, 'destroy'])->name('availability.destroy');
+
+    Route::get('bookings', [\App\Http\Controllers\Astrologer\BookingController::class, 'index'])->name('bookings');
+    Route::patch('bookings/{booking}/complete', [\App\Http\Controllers\Astrologer\BookingController::class, 'complete'])->name('bookings.complete');
+    Route::patch('bookings/{booking}/cancel', [\App\Http\Controllers\Astrologer\BookingController::class, 'cancel'])->name('bookings.cancel');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Shop / AstroMall (cart, orders, shipment) (authenticated)
 |--------------------------------------------------------------------------
 */

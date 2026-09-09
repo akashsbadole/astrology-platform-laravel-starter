@@ -18,6 +18,11 @@ export default function RootLayout() {
                 >
                     <Stack.Screen name="(tabs)" />
                     <Stack.Screen name="(auth)" />
+                    <Stack.Screen name="(astrologer)" />
+                    <Stack.Screen
+                        name="(admin)"
+                        options={{ animation: 'slide_from_right' }}
+                    />
                     <Stack.Screen
                         name="astrologer/[id]"
                         options={{ animation: 'slide_from_right' }}

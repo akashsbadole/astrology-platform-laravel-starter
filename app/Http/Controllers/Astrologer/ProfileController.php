@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Astrologer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Taxonomy;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -12,11 +13,11 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    public function edit(Request $request): Response
+    public function edit(Request $request): Response|JsonResponse
     {
         $profile = $request->user()->astrologerProfile;
 
-        return Inertia::render('astrologer/profile-edit', [
+        $payload = [
             'profile' => $profile ? [
                 'bio' => $profile->bio,
                 'specializations' => $profile->specializations ?? [],
@@ -29,10 +30,16 @@ class ProfileController extends Controller
             ] : null,
             'specializationOptions' => Taxonomy::activeNames('specialization'),
             'languageOptions' => Taxonomy::activeNames('language'),
-        ]);
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json($payload);
+        }
+
+        return Inertia::render('astrologer/profile-edit', $payload);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'bio' => ['nullable', 'string', 'max:2000'],
@@ -48,10 +55,13 @@ class ProfileController extends Controller
 
         $profile = $request->user()->astrologerProfile()->firstOrCreate([]);
 
-        // Editing an already-approved profile re-queues it for admin review.
         $validated['status'] = $profile->status === 'approved' ? 'pending' : $profile->status;
 
         $profile->update($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'profile' => array_merge($validated, ['status' => $profile->status])]);
+        }
 
         return back()->with('status', 'profile-updated');
     }

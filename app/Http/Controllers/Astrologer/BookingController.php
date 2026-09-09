@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Notifications\BookingCancelled;
 use App\Services\RazorpayService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +19,7 @@ class BookingController extends Controller
 {
     public function __construct(private readonly RazorpayService $razorpay) {}
 
-    public function index(Request $request): Response
+    public function index(Request $request): Response|JsonResponse
     {
         $bookings = $request->user()
             ->bookingsAsAstrologer()
@@ -38,22 +39,35 @@ class BookingController extends Controller
                 'customer_notes' => $booking->customer_notes,
             ]);
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'data' => $bookings->items(),
+                'total' => $bookings->total(),
+                'current_page' => $bookings->currentPage(),
+                'last_page' => $bookings->lastPage(),
+            ]);
+        }
+
         return Inertia::render('astrologer/bookings/index', [
             'bookings' => $bookings,
         ]);
     }
 
-    public function complete(Request $request, Booking $booking): RedirectResponse
+    public function complete(Request $request, Booking $booking): RedirectResponse|JsonResponse
     {
         abort_unless($booking->astrologer_id === $request->user()->id, 403);
         abort_unless($booking->status === BookingStatus::Confirmed, 422, 'Only confirmed bookings can be completed.');
 
         $booking->update(['status' => BookingStatus::Completed]);
 
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'status' => 'completed']);
+        }
+
         return back()->with('status', 'booking-completed');
     }
 
-    public function cancel(Request $request, Booking $booking): RedirectResponse
+    public function cancel(Request $request, Booking $booking): RedirectResponse|JsonResponse
     {
         abort_unless($booking->astrologer_id === $request->user()->id, 403);
         abort_unless(
@@ -79,6 +93,10 @@ class BookingController extends Controller
 
         $booking->loadMissing('customer');
         $booking->customer->notify(new BookingCancelled($booking));
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'status' => 'cancelled']);
+        }
 
         return back()->with('status', 'booking-cancelled');
     }
