@@ -1,9 +1,12 @@
-import { ArrowLeft, Send } from 'lucide-react-native';
+import { ArrowLeft, Phone, Send, Video } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
+    Alert,
     FlatList,
     KeyboardAvoidingView,
+    Linking,
+    Modal,
     Platform,
     Pressable,
     StyleSheet,
@@ -12,11 +15,13 @@ import {
     View,
 } from 'react-native';
 import Avatar from '@/components/ui/Avatar';
+import CallWebView from '@/components/CallWebView';
 import Screen from '@/components/ui/Screen';
 import { colors, radius, typography } from '@/constants/theme';
 import api, { apiErrorMessage } from '@/lib/api';
 import { timeAgo } from '@/lib/format';
 import { useAuth } from '@/contexts/AuthContext';
+import { subscribeToConsultation } from '@/lib/realtime';
 import type { Consultation, ConsultationMessage } from '@/types';
 
 export default function ChatScreen() {
@@ -28,10 +33,28 @@ export default function ChatScreen() {
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
+    const [inCall, setInCall] = useState(false);
     const listRef = useRef<FlatList>(null);
 
     useEffect(() => {
         void loadChat();
+    }, [id]);
+
+    useEffect(() => {
+        if (!id) return;
+        const subscription = subscribeToConsultation(Number(id), {
+            onMessage: (msg: ConsultationMessage) => {
+                setMessages((prev) => {
+                    if (prev.some((m) => m.id === msg.id)) return prev;
+                    return [...prev, msg];
+                });
+                setTimeout(() => listRef.current?.scrollToEnd(), 100);
+            },
+            onEnded: () => {
+                setConsult((prev) => prev ? { ...prev, status: 'ended' } : prev);
+            },
+        });
+        return () => subscription.unsubscribe();
     }, [id]);
 
     const loadChat = async () => {
@@ -63,6 +86,15 @@ export default function ChatScreen() {
         }
     };
 
+    const startCall = async (type: 'call' | 'video') => {
+        try {
+            await api.post(`/consult/${id}/signal`, { kind: 'start', type });
+            setInCall(true);
+        } catch (e) {
+            Alert.alert('Error', apiErrorMessage(e));
+        }
+    };
+
     const otherName = consult
         ? user?.role === 'customer'
             ? (consult.astrologer?.name ?? 'Astrologer')
@@ -86,6 +118,16 @@ export default function ChatScreen() {
                         </Text>
                     ) : null}
                 </View>
+                {consult?.status === 'active' && (
+                    <View style={styles.callBtns}>
+                        <Pressable style={styles.callBtn} onPress={() => startCall('call')}>
+                            <Phone color={colors.gold} size={20} />
+                        </Pressable>
+                        <Pressable style={styles.callBtn} onPress={() => startCall('video')}>
+                            <Video color={colors.gold} size={20} />
+                        </Pressable>
+                    </View>
+                )}
             </View>
 
             {loading ? (
@@ -190,6 +232,16 @@ export default function ChatScreen() {
                     <Send color="#1A1408" size={18} />
                 </Pressable>
             </KeyboardAvoidingView>
+
+            <CallWebView
+                consultationId={Number(id)}
+                visible={inCall}
+                onClose={() => setInCall(false)}
+                onEnded={() => {
+                    setInCall(false);
+                    loadChat();
+                }}
+            />
         </Screen>
     );
 }
@@ -215,6 +267,17 @@ const styles = StyleSheet.create({
     },
     headerName: { color: colors.text, fontWeight: '700', fontSize: 16 },
     headerSub: { color: colors.textFaint, fontSize: 11, fontWeight: '600' },
+    callBtns: { flexDirection: 'row', gap: 8 },
+    callBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.surface,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.border,
+    },
     loadingWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     msgList: { padding: 16, gap: 12 },
     msgRow: { alignItems: 'flex-start', gap: 4 },

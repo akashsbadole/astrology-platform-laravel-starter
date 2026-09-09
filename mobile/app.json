@@ -33,7 +33,8 @@
                     "imageWidth": 76
                 }
             ],
-            "expo-secure-store"
+            "expo-secure-store",
+            "expo-notifications"
         ],
         "experiments": {
             "typedRoutes": true,
@@ -41,7 +42,11 @@
         },
         "env": {
             "EXPO_PUBLIC_API_URL": "http://127.0.0.1:8000/api",
-            "EXPO_PUBLIC_APP_NAME": "AstroTalk"
+            "EXPO_PUBLIC_APP_NAME": "AstroTalk",
+            "EXPO_PUBLIC_PUSHER_KEY": "astrotalk-app",
+            "EXPO_PUBLIC_PUSHER_HOST": "10.0.2.2",
+            "EXPO_PUBLIC_PUSHER_PORT": "8080",
+            "EXPO_PUBLIC_PROJECT_ID": "your-project-id"
         }
     }
 }

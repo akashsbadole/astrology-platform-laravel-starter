@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import RazorpayCheckout from '@/components/RazorpayCheckout';
 import Screen from '@/components/ui/Screen';
 import {
     colors,
@@ -23,9 +24,13 @@ export default function WalletScreen() {
     const [loading, setLoading] = useState(false);
     const [txns, setTxns] = useState<WalletTransaction[]>([]);
     const [balance, setBalance] = useState<number>(0);
+    const [razorpayKey, setRazorpayKey] = useState<string>('');
+    const [checkoutVisible, setCheckoutVisible] = useState(false);
+    const [orderId, setOrderId] = useState<string>('');
 
     useEffect(() => {
         void loadWallet();
+        void loadRazorpayKey();
     }, []);
 
     const loadWallet = async () => {
@@ -38,20 +43,37 @@ export default function WalletScreen() {
         }
     };
 
-    const recharge = async () => {
+    const loadRazorpayKey = async () => {
+        try {
+            const { data } = await api.get('/wallet/order');
+            setRazorpayKey(data?.key_id || 'rzp_test_demo');
+        } catch {
+            setRazorpayKey('rzp_test_demo');
+        }
+    };
+
+    const initiateRecharge = async () => {
         setLoading(true);
         try {
-            // Backend tracker §3.2: POST /wallet/order → Razorpay order.
             const { data } = await api.post('/wallet/order', { amount });
-            Alert.alert(
-                'Razorpay order created',
-                `Order ${data.order_id} for ${inr(data.amount / 100)}.\nCheckout opens once payments are configured (tracker §7.2).`,
-            );
+            setOrderId(data.order_id);
+            setCheckoutVisible(true);
         } catch (e) {
-            Alert.alert(
-                'Recharge (demo)',
-                `${apiErrorMessage(e)}\n\nWiring: /wallet/order → Razorpay Checkout → /wallet/verify. See tracker §7.2.`,
-            );
+            Alert.alert('Recharge failed', apiErrorMessage(e));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handlePaymentSuccess = async (paymentId: string, signature: string) => {
+        setCheckoutVisible(false);
+        setLoading(true);
+        try {
+            await api.post('/wallet/verify', { razorpay_payment_id: paymentId, razorpay_signature: signature, order_id: orderId });
+            await loadWallet();
+            Alert.alert('Success', `₹${inr(amount / 100)} added to your wallet!`);
+        } catch (e) {
+            Alert.alert('Verification failed', apiErrorMessage(e));
         } finally {
             setLoading(false);
         }
@@ -112,7 +134,7 @@ export default function WalletScreen() {
                     title={`Add ${inr(amount)}`}
                     icon={<Plus color="#1A1408" size={16} />}
                     loading={loading}
-                    onPress={recharge}
+                    onPress={initiateRecharge}
                 />
             </Card>
 
@@ -193,6 +215,15 @@ export default function WalletScreen() {
                         </Card>
                     );
                 }}
+            />
+
+            <RazorpayCheckout
+                visible={checkoutVisible}
+                amount={amount}
+                orderId={orderId}
+                keyId={razorpayKey}
+                onClose={() => setCheckoutVisible(false)}
+                onSuccess={handlePaymentSuccess}
             />
         </Screen>
     );

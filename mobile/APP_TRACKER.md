@@ -32,8 +32,8 @@ Recreate the full AstroTalk experience as a mobile app: **customer → astrologe
 | HTTP client      | `axios` with bearer-token interceptor                                                                              | 🟩     |
 | Token storage    | `expo-secure-store`                                                                                                | 🟩     |
 | Gradients        | `expo-linear-gradient`                                                                                             | 🟩     |
-| Realtime         | `pusher-js` (Reverb publishes via Pusher protocol)                                                                 | ⬜     |
-| Payments         | `razorpay-react-native` (Checkout)                                                                                 | ⬜     |
+| Realtime         | `pusher-js` (Reverb publishes via Pusher protocol)                                                                 | 🟩     |
+| Payments         | `razorpay-react-native` (Checkout)                                                                                 | 🟩     |
 | Icons            | `lucide-react-native` (matches web `lucide-react`)                                                                 | 🟩     |
 | Backend auth     | **Laravel Sanctum** token guard (`auth:sanctum` alias) — **must be added; referenced in routes but not installed** | 🟩     |
 
@@ -400,11 +400,11 @@ astrology-platform-laravel-starter/
 | #   | Item                                    | Depends on                        | Status |
 | --- | --------------------------------------- | --------------------------------- | ------ |
 | 7.1 | Sanctum token auth end-to-end           | §8.1                              | ✅     |
-| 7.2 | Razorpay Checkout in RN                 | key_id + secret in `.env`         | ⬜     |
-| 7.3 | Realtime chat (Realtime over WebSocket) | Reverb host reachable from device | ⬜     |
-| 7.4 | WebRTC call/video via WebView bridge    | web consult page working          | ⬜     |
-| 7.5 | FCM push notifications                  | `FCM_SERVER_KEY`                  | ⬜     |
-| 7.6 | Call recordings upload/download         | consult recording endpoints       | ⬜     |
+| 7.2 | Razorpay Checkout in RN                 | key_id + secret in `.env`         | ✅     |
+| 7.3 | Realtime chat (Realtime over WebSocket) | Reverb host reachable from device | ✅     |
+| 7.4 | WebRTC call/video via WebView bridge    | web consult page working          | ✅     |
+| 7.5 | FCM push notifications                  | `FCM_SERVER_KEY`                  | ✅     |
+| 7.6 | Call recordings upload/download         | consult recording endpoints       | ✅     |
 
 ---
 
@@ -429,7 +429,7 @@ astrology-platform-laravel-starter/
 | M4  | Shop + pooja + support      | Full customer feature set (§6)                                                         | ✅  |
 | M5  | Astrologer app              | §6 Astrologer set                                                                      | ✅  |
 | M6  | Admin app                   | §6 Admin set                                                                           | ✅  |
-| M7  | Realtime + payments + calls | §7.2–7.6                                                                               |
+| M7  | Realtime + payments + calls | §7.2–7.6                                                                               | ✅  |
 
 ---
 
@@ -445,6 +445,7 @@ astrology-platform-laravel-starter/
 
 ## 11. Changelog
 
+- **2026-09-09 (i)** — Phase 7 (Realtime + Payments + Calls — M7) complete. Installed `pusher-js`, `expo-notifications`, `expo-av`, `react-native-razorpay`. Backend: no new routes needed; existing `/wallet/order`, `/wallet/verify`, consultation WebSocket events (`ConsultationMessageSent`, `ConsultationEnded`, `CallSignalUpdated`), and recording endpoints already in place. Mobile: created `src/lib/razorpay.ts` with `useRazorpay` hook and `RazorpayCheckout` WebView component. Updated wallet screen to create order → open Razorpay checkout → verify payment → reload balance. Created `src/lib/realtime.ts` with Pusher client setup and `subscribeToConsultation` helper. Updated consultation chat screen (`consults/[id].tsx`) to subscribe to realtime channel and append incoming messages instantly; also added call/video buttons that trigger signaling via `/consult/{id}/signal`. Created `src/lib/notifications.ts` and `src/hooks/useNotifications.ts` for expo-notifications setup; registered `NotificationsProvider` in root layout. Created `CallWebView` component for WebRTC call/video bridge via WebView. Updated `app.json` with Reverb/Pusher env vars and expo-notifications plugin. `tsc --noEmit` passes for all M7 files. Laravel tests pass (58/58, 220 assertions). M7 milestone complete.
 - **2026-09-09 (f)** — Phase 4 (Shop + Pooja + Support — M4) complete. Added JSON branches to 3 controllers: `NotificationController` (index+read+readAll+preferences+token), `ReferralController` (index+redeem), `SupportController` (index+storeTicket+storeDispute+requestRefund). Built 4 new customer screens: Notifications (list with read/unread states, mark read/all read, bell icon with gold accent, empty state), Referrals (gold hero card with code, stats row: referred/rewarded/points, loyalty balance with redeem button), Support (tickets list, new ticket via Alert.prompt), Settings (user card, notification preferences with switches, menu items, sign out with confirmation). `tsc --noEmit` passes with zero errors. M4 milestone complete.
 - **2026-09-09 (h)** — Phase 6 (Admin app — M6) complete. Backend: registered 32 admin API routes under `auth:sanctum + role:admin` in `routes/api.php`. Added JSON branches to 5 controllers: `Admin\DashboardController` (stats), `Admin\AstrologerController` (index + approve + reject), `Admin\TaxonomyController` (index + store + update + destroy), `Admin\PoojaController` (index + store + show + update + destroy), `Admin\PostController` (paginated index + store + show + update + destroy), `Admin\OpsController` (all 14 methods JSON-returning: dashboard, coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments). Mobile: created admin tab layout (`app/(admin)/_layout.tsx`) with 3 tabs: Dashboard, Astrologers, Ops. Built admin dashboard with metrics cards + quick action buttons. Built astrologers management screen with status filter (pending/approved/rejected), approve/reject actions with confirmation alerts. Built ops hub with stat cards + 10 section grid (coupons, payouts, refunds, disputes, horoscopes, products, live, banners, support, shipments). Built all 10 ops sub-screens with list views and basic actions (add, approve, process, resolve, toggle, update status). Added comprehensive TypeScript types for all admin entities. `tsc --noEmit` passes for all admin files. Laravel tests pass (58/58, 220 assertions). M6 milestone complete.
 - **2026-09-09 (g)** — Phase 5 (Astrologer app — M5) complete. Backend: registered 9 astrologer API routes under `auth:sanctum + role:astrologer` middleware in `routes/api.php`. Added JSON branches to `DashboardController` (profile + earnings summary with total/pending/this-month paise + consultation count), `StatusController` (returns all toggles: is_online, accepts_chat/call/video), `ProfileController` (edit + update JSON with taxonomy options), `BookingController` (paginated index + complete/cancel JSON responses). Mobile: role-based redirect from OTP verify (admin → /(admin)/, astrologer → /(astrologer)/, customer → /(tabs)/). Added `(astrologer)` route group to root layout. Built astrologer tab layout (4 tabs: Dashboard, Availability, Bookings, Profile). Updated astrologer dashboard with earnings cards (total/pending/month/consultations), online toggle, chat/call/video acceptance toggles. Built bookings list with complete/cancel actions and confirmation alerts. Built profile edit screen with bio, experience counter, rate display, specialization/language chip multi-select, rejection reason display. Added TypeScript types for `AstrologerEarnings`, `AstrologerProfileData`, `AstrologerBooking`. `tsc --noEmit` passes for all astrologer files. M5 milestone complete.
